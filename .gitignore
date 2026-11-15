@@ -1,0 +1,34 @@
+# Thư mục biên dịch của Maven và Java
+target/
+build/
+bin/
+out/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Nhật ký lỗi của máy ảo Java
+hs_err_pid*
+replay_pid*
+
+# Cấu hình cá nhân trên VS Code, IntelliJ IDEA, Eclipse, NetBeans
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+nbproject/
+
+# Tệp hệ thống Windows / macOS và biến môi trường
+Thumbs.db
+Desktop.ini
+.DS_Store
+.env
