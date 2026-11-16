@@ -46,10 +46,10 @@ Phí gửi xe và thu hộ điện, nước, internet để v2.0. Chi tiết yê
 
 ## Thành viên
 
-| Họ tên | MSSV | Vai trò | Mảng phụ trách |
-|---|---|---|---|
-| Đoàn Quốc Khánh | 202416243 | Scrum Master | Quản lý dự án |
-| Nguyễn Đình Dũng | 202416173 | Thành viên | Phân tích yêu cầu, thiết kế UI, lập trình |
-| Đinh Phi Hùng | 202416215 | Thành viên | Lập trình CSDL và nghiệp vụ |
-| Cao Thành Đạt | 202416152 | Thành viên | Lập trình giao diện JavaFX |
-| Vũ Nhật Huy | 202416229 | Thành viên | Kiểm thử và tài liệu |
+| Thành viên | Họ và tên | MSSV | Vai trò chính |
+| :-- | :-- | :-- | :-- |
+| TV1 | Đoàn Quốc Khánh | 202416243 | Quản lý dự án / Scrum Master |
+| TV2 | Nguyễn Đình Dũng | 202416173 | Phân tích yêu cầu, Thiết kế UI, Dev |
+| TV3 | Đinh Phi Hùng | 202416215 | Lập trình CSDL và nghiệp vụ |
+| TV4 | Cao Thành Đạt | 202416152 | Lập trình giao diện JavaFX |
+| TV5 | Vũ Nhật Huy | 202416229 | Kiểm thử và tài liệu |
