@@ -2,6 +2,8 @@
 
 Dự án phát triển ứng dụng Desktop quản lý hộ khẩu, nhân khẩu và thu phí tại chung cư BlueMoon theo mô hình kiến trúc MVC.
 
+**Bài toán (v1.0):** Ban quản trị chung cư BlueMoon đang quản lý hộ khẩu bằng sổ và Excel, thu phí bằng sổ ghi tay nên hay tính nhầm, khó tìm hộ, không truy vết được ai sửa gì. Phần mềm v1.0 cần: quản lý hộ gia đình, nhân khẩu, tạm trú/tạm vắng và báo cáo cho công an phường; tự tính phí dịch vụ (2.500–16.500 đ/m²) và phí quản lý (7.000 đ/m²) theo diện tích, tạo các quỹ tự nguyện, chốt công nợ hằng tháng; tra cứu theo mã phòng, thu tiền (tiền mặt/chuyển khoản), in biên lai, hủy phiếu nhầm trong ngày; thống kê tổng thu, hộ nợ quá 3 tháng, xuất Excel; đăng nhập và phân quyền Quản trị viên / Thủ quỹ. Phí gửi xe và thu hộ điện, nước, internet để v2.0. Chi tiết: [docs/requirements](docs/requirements).
+
 ## 1. Phân công thành viên và nhánh làm việc
 
 | Thành viên | Họ và tên        | MSSV      | Vai trò chính                       | Nhánh Git |
@@ -78,3 +80,17 @@ Nhấn F5 (Execute) để tạo tự động CSDL bluemoon_db cùng 7 bảng và
 Mở thư mục dự án bằng IDE, đợi Maven tải xong thư viện trong tệp pom.xml.
 
 Mở tệp src/main/java/services/DatabaseConnection.java và chạy hàm main. Nếu cửa sổ Console hiện thông báo kết nối thành công và in ra danh sách tài khoản mẫu là hoàn tất.
+
+## 5. Tài liệu dự án
+
+| Tài liệu | Nội dung |
+| :-- | :-- |
+| [docs/requirements](docs/requirements) | Khai phá yêu cầu: wish list, As-Is, Visionary, NFR, raw log, epic/feature, user story và AC, product backlog, ma trận truy vết, Definition of Done, giả định |
+| [docs/setup.md](docs/setup.md) | Cài môi trường, cấu hình kết nối CSDL, chạy test |
+| [docs/workflow.md](docs/workflow.md) | Quy trình Scrum, nhánh, commit, Pull Request, phát hành |
+| [docs/design/coding-convention.md](docs/design/coding-convention.md) | Quy ước viết mã |
+| [docs/design/ui.md](docs/design/ui.md) | Quy tắc giao diện chung |
+| [docs/thuat-ngu.md](docs/thuat-ngu.md) | Thuật ngữ thống nhất |
+| [CHANGELOG.md](CHANGELOG.md) | Nhật ký thay đổi |
+
+**Bắt đầu:** cài môi trường theo [setup.md](docs/setup.md), rồi đọc [workflow.md](docs/workflow.md) trước khi nhận Issue đầu tiên.
