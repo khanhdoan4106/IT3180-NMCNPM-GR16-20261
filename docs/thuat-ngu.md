@@ -23,3 +23,16 @@ Một khái niệm chỉ dùng một tên trong tài liệu, giao diện và mã
 | Quỹ | Khoản thu tự nguyện có thời gian thu riêng (vd Quỹ vì người nghèo) |
 | Thông báo phí | Giấy báo các khoản hộ cần đóng đến hết một tháng đã chốt, in cho từng hộ |
 | Hủy phiếu | Hủy phiếu thu nhầm trong ngày; khoản phải nộp trở lại chưa đóng, phiếu vẫn được lưu |
+
+## Thuật ngữ kỹ thuật
+
+Dùng trong mã nguồn và tài liệu thiết kế; chi tiết ở
+[kiến trúc mã nguồn](design/kien-truc.md).
+
+| Thuật ngữ | Nghĩa |
+|---|---|
+| DAO | Lớp đọc, ghi cơ sở dữ liệu bằng câu lệnh SQL; phần khác của chương trình gọi DAO, không tự viết SQL. Xem [mục 7](design/kien-truc.md#7-đối-chiếu-với-kiến-trúc-mvc-của-môn-học) |
+| Service | Lớp chứa quy tắc nghiệp vụ, vd kiểm tra dữ liệu nhập trước khi lưu; lấy và ghi dữ liệu qua DAO. Xem [mục 1](design/kien-truc.md#1-các-tầng) |
+| Controller | Lớp gắn với một màn hình: nhận thao tác của người dùng (bấm nút, nhập ô), gọi Service rồi hiện kết quả. Xem [mục 1](design/kien-truc.md#1-các-tầng) |
+| DAO giả | DAO viết riêng cho test, giữ dữ liệu trong bộ nhớ thay cho MySQL để test Service chạy nhanh trên máy nào cũng được. Xem [mục 7](design/kien-truc.md#7-đối-chiếu-với-kiến-trúc-mvc-của-môn-học) |
+| Kiểm thử tích hợp | Test chạy trên MySQL thật để kiểm câu SQL của DAO; chạy ở CI, không chạy trong `mvn verify` thường. Xem [mục 6](design/kien-truc.md#6-kiểm-thử-tích-hợp) |

@@ -110,3 +110,32 @@ Lớp `*IT` chạy bằng `mvn verify -Pmysql` (job `build-mysql` của CI), tr�
 CSDL có chữ `test` trong tên. `CsdlKiemThu` xóa và tạo lại bảng theo
 `database/schema.sql` trước mỗi test, nên test không phụ thuộc dữ liệu cũ.
 Cách đặt biến môi trường: [setup.md](../setup.md), mục 4.
+
+## 7. Đối chiếu với kiến trúc MVC của môn học
+
+Môn học chia ứng dụng thành `views`, `controllers`, `services`, `models`;
+biểu đồ lớp phân tích dùng lớp biên, lớp điều khiển, lớp thực thể. Dự án
+giữ đúng cách chia đó, chỉ thêm một tầng **DAO** (Data Access Object).
+
+**DAO là gì.** Là lớp chỉ làm một việc: đọc, ghi CSDL bằng câu lệnh SQL.
+Phần còn lại của chương trình gọi DAO qua các phương thức có tên theo
+nghiệp vụ, vd `demDangO()`, và không thấy câu SQL nào.
+
+**Vì sao tách DAO khỏi Service.**
+
+- **Test được mà không cần MySQL.** Vì Service chỉ biết interface DAO
+  (mục 1), test đưa vào một DAO giả giữ dữ liệu trong bộ nhớ, như
+  `CuDanServiceTest`. Test loại này chạy trong vài giây trên máy nào cũng
+  được; câu SQL thật thì kiểm riêng bằng kiểm thử tích hợp (mục 6).
+- **Tách SQL khỏi quy tắc nghiệp vụ.** Đọc Service là thấy ngay quy tắc
+  (vd số tiền không được âm), không lẫn JDBC. Đổi tên cột hay
+  viết lại câu SQL chỉ sửa DAO, quy tắc nghiệp vụ không bị đụng tới.
+
+**Bảng đối chiếu**
+
+| Môn học | Dự án | Ghi chú |
+|---|---|---|
+| `views` (tệp `.fxml`) / lớp biên | View | Phần người dùng nhìn và thao tác |
+| `controllers` | Controller | Controller của JavaFX, gắn với một tệp FXML |
+| `services` / lớp điều khiển | Service | Lớp điều khiển trong biểu đồ phân tích ứng với Service, không phải Controller của JavaFX |
+| `models` / lớp thực thể | Model (dữ liệu) và DAO (đọc, ghi CSDL) | Lớp thực thể tách làm hai: Model chỉ mang dữ liệu, DAO lưu và lấy dữ liệu đó từ MySQL |
