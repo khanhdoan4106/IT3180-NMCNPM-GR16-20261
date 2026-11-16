@@ -1,12 +1,14 @@
 ---
 name: User Story
 about: Một User Story trong Product Backlog
-title: "[US-xxx] "
+title: "[TVx Tên] [US-xxx] "
 labels: ""
 ---
 
+<!-- Tên Issue: [TVx Tên] [US-xxx] Tiêu đề story, ví dụ "[TV2 Dũng] [US-001] Quản lý hộ gia đình". TVx Tên lấy theo người ở dòng Phụ trách. -->
+
 **Story:** US-xxx – xem [07-user-stories.md](../blob/main/docs/requirements/07-user-stories.md)
-**Sprint:** · **Story Point:** · **Phụ trách:** · **Review:**
+**Sprint:** · **Story Point:** · **Phụ trách:** TVx Tên · **Review:**
 
 ## Acceptance Criteria
 
