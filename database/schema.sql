@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     ngay_sinh   DATE         NOT NULL,
     gioi_tinh   ENUM('NAM', 'NU') NOT NULL,
     so_cccd     CHAR(12)     NULL,
+    ngay_cap_cccd DATE         NULL,
+    noi_cap_cccd  VARCHAR(150) NULL,
     quan_he     ENUM('CHU_HO', 'VO_CHONG', 'CON', 'KHAC') NOT NULL,
     trang_thai  ENUM('DANG_O', 'DA_CHUYEN_DI') NOT NULL DEFAULT 'DANG_O',
     -- US-003: loai dang ky cu tru, khong doi theo ngay. noi_thuong_tru bat
@@ -65,6 +67,10 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     CONSTRAINT fk_nk_ho FOREIGN KEY (ho_id) REFERENCES ho_gia_dinh (id),
     CONSTRAINT uq_nk_cccd_dang_o UNIQUE (cccd_dang_o),
     CONSTRAINT uq_nk_chu_ho UNIQUE (chu_ho_cua),
+    -- Chua co so CCCD thi khong co ngay cap, noi cap
+    CONSTRAINT chk_nk_cap_cccd CHECK (
+        so_cccd IS NOT NULL
+        OR (ngay_cap_cccd IS NULL AND noi_cap_cccd IS NULL)),
     INDEX idx_nk_so_cccd (so_cccd),
     INDEX idx_nk_ho_ten (ho_ten)
 );
