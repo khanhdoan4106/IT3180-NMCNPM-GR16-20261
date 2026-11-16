@@ -223,6 +223,54 @@
     -fx-background-insets: 0, 2;
 }
 
+/* Ô đang sai: viền màu lỗi, giữ nguyên kích thước. */
+.text-field.o-sai,
+.combo-box.o-sai {
+    -fx-background-color: -mau-loi, -mau-be-mat;
+    -fx-background-insets: 0, 2;
+}
+
+/* ---- Khung và form ---- */
+
+/* Khung nền trắng chứa một form hoặc một nhóm nội dung. */
+.khung {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 24;
+    -fx-spacing: 16;
+}
+
+.luoi-form {
+    -fx-hgap: 24;
+    -fx-vgap: 16;
+}
+
+/* Phần ô nhập của form dài: cuộn được, nền trong suốt; chừa lề để viền
+   tiêu điểm không bị cắt. */
+.cuon-form,
+.cuon-form > .viewport {
+    -fx-background-color: transparent;
+}
+
+.cuon-form {
+    -fx-padding: 2;
+}
+
+/* Một ô của form: nhãn, ô nhập, gợi ý, lỗi xếp dọc. */
+.o-form {
+    -fx-spacing: 6;
+}
+
+.chu-goi-y {
+    -fx-text-fill: -mau-chu-phu;
+    -fx-font-size: 14px;
+}
+
+.hang-nut {
+    -fx-spacing: 8;
+}
+
 /* ---- Bảng ---- */
 
 .table-view {

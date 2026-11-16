@@ -7,6 +7,11 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-020: màn hình Tài khoản (menu Hệ thống) để Quản trị viên tạo tài
+  khoản, chọn vai trò Quản trị viên hoặc Thủ quỹ; báo trùng tên đăng nhập
+  (không phân biệt chữ hoa, chữ thường) và mật khẩu dưới 8 ký tự ngay dưới
+  ô sai. Mật khẩu băm BCrypt cost 12 (thư viện `at.favre.lib:bcrypt`),
+  cùng chuẩn với tài khoản admin trong `seed.sql`.
 - TS-003: lớp khởi động `Launcher` và `App`; khi mở, ứng dụng thử kết nối
   MySQL, lỗi thì báo nguyên nhân và cách sửa bằng tiếng Việt rồi thoát
   (AC-070). Lỗi CSDL dùng chung lớp `LoiCsdl`.
