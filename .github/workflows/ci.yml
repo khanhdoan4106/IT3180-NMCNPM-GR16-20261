@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build và chạy test
+        run: mvn -B verify
+
+  # Kiểm thử tích hợp trên MySQL thật (lớp *IT). CSDL có chữ "test" trong
+  # tên vì test được phép xóa và tạo lại bảng.
+  build-mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: bluemoon_ci
+          MYSQL_DATABASE: bluemoon_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pbluemoon_ci"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      BLUEMOON_DB_URL: jdbc:mysql://127.0.0.1:3306/bluemoon_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8
+      # User ứng dụng chỉ có SELECT, INSERT, UPDATE như khi chạy thật;
+      # tạo bảng và nạp dữ liệu mẫu bằng user quản trị.
+      BLUEMOON_DB_USER: bluemoon_app
+      BLUEMOON_DB_PASSWORD: bluemoon_ci_app
+      BLUEMOON_DB_ADMIN_USER: root
+      BLUEMOON_DB_ADMIN_PASSWORD: bluemoon_ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Tạo user ứng dụng quyền tối thiểu
+        run: |
+          mysql -h127.0.0.1 -P3306 -uroot -p"$BLUEMOON_DB_ADMIN_PASSWORD" -e "
+            CREATE USER '$BLUEMOON_DB_USER'@'%' IDENTIFIED BY '$BLUEMOON_DB_PASSWORD';
+            GRANT SELECT, INSERT, UPDATE ON bluemoon_test.* TO '$BLUEMOON_DB_USER'@'%';
+            SHOW GRANTS FOR '$BLUEMOON_DB_USER'@'%';"
+      - name: Nạp schema.sql và seed.sql (nếu có)
+        run: |
+          for tep in schema seed; do
+            if [ -f "database/$tep.sql" ]; then
+              mysql -h127.0.0.1 -P3306 -uroot -p"$BLUEMOON_DB_ADMIN_PASSWORD" \
+                --default-character-set=utf8mb4 < "database/$tep.sql"
+              echo "Đã nạp database/$tep.sql"
+            fi
+          done
+      - name: Build, test và kiểm thử tích hợp MySQL
+        run: mvn -B verify -Pmysql
