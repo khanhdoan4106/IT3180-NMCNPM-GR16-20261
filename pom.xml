@@ -53,8 +53,8 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <!-- Lop khoi dong JavaFX, tao o TS-003. -->
-                    <mainClass>com.bluemoon.App</mainClass>
+                    <!-- Launcher goi App (TS-003); chay: mvn javafx:run -->
+                    <mainClass>com.bluemoon.Launcher</mainClass>
                 </configuration>
             </plugin>
             <!-- Quy uoc ma (docs/design/coding-convention.md): dong toi da
