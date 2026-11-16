@@ -135,8 +135,8 @@ nhận lời mời.
 | Sprint | Story (người phụ trách) | SP |
 |---|---|---|
 | Sprint 1 | TS-003, US-020, US-021 (TV1); US-001, US-002, US-003 (TV2); US-006 (TV3); TS-001 (TV5); thiết kế Figma cho các story Sprint 1–2 (TV4, #70) | 32 |
-| Sprint 2 | US-022, US-023 (TV1); US-026, US-027 (TV2); US-005, US-009 (TV3); US-007 (TV4); TS-002 (TV5) | 36 |
-| Sprint 3 | US-008, US-015 (TV3); US-010, US-011, US-012 (TV4); US-004 (TV5) | 20 |
+| Sprint 2 | US-022, US-023 (TV1); US-026, US-027 (TV2); US-005, US-009 (TV3); TS-002 (TV5); thiết kế Figma cho các story Sprint 3–4 (TV4, không tính SP) | 31 |
+| Sprint 3 | US-008, US-015 (TV3); US-010, US-011, US-012, US-007 (TV4); US-004 (TV5) | 25 |
 | Sprint 4 | TS-004 (TV2); US-013, US-014 (TV4); US-016, US-017, US-018, US-019 (TV5) | 24 |
 | **Tổng** | | **112** |
 
@@ -147,8 +147,10 @@ SP từng người theo Sprint:
 | TV1 Khánh | 11 | 8 | 0 | 0 | 19 |
 | TV2 Dũng | 13 | 8 | 0 | 2 | 23 |
 | TV3 Hùng | 3 | 10 | 6 | 0 | 19 |
-| TV4 Đạt | Figma (#70) | 5 | 11 | 6 | 22 |
+| TV4 Đạt | 0 | 0 | 16 | 6 | 22 |
 | TV5 Huy | 5 | 5 | 3 | 16 | 29 |
+
+TV4 Đạt ở Sprint 1–2 không nhận story mà làm thiết kế Figma (#70): màn hình cho các story Sprint 1–2 trong Sprint 1, cho Sprint 3–4 trước 13/12. US-007 chuyển sang Sprint 3, làm sau US-011 vì cần phiếu thu.
 
 - **Sprint 4 nặng nhất với TV5 (16 SP).** Nếu không kịp thì bỏ trước
   **US-018** (xuất báo cáo Excel, ưu tiên Could, 5 SP), giữ các story
