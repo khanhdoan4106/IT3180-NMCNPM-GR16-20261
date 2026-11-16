@@ -65,7 +65,8 @@ Cần đối chiếu với lịch nộp bài của môn trước khi chốt.
 Chọn theo hai tiêu chí: ưu tiên **Must** trong
 [08-product-backlog.md](../requirements/08-product-backlog.md) và **phụ
 thuộc** ghi trong [07-user-stories.md](../requirements/07-user-stories.md):
-story nào nhiều story khác cần đến thì làm trước.
+story nào nhiều story khác cần đến thì làm trước. Thêm US-006 và TS-001
+(chỉ cần nền tảng TS-003) để TV3 và TV5 có story ngay từ Sprint 1.
 
 | ID | Mô tả ngắn | Ưu tiên | SP (ước lượng ban đầu) | Phụ thuộc |
 |---|---|---|---|---|
@@ -75,7 +76,9 @@ story nào nhiều story khác cần đến thì làm trước.
 | US-001 | Thêm hộ gia đình và diện tích căn hộ | Must | 3 | TS-003 |
 | US-002 | Thông tin nhân khẩu và quan hệ với chủ hộ | Must | 5 | US-001 |
 | US-003 | Tạm trú, tạm vắng kèm ngày bắt đầu và kết thúc | Must | 5 | US-002 |
-| **Tổng** | | | **24 SP** | |
+| US-006 | Tạo khoản thu tự nguyện theo từng đợt | Must | 3 | Không phụ thuộc story khác, chỉ cần nền tảng TS-003 |
+| TS-001 | Sao lưu dữ liệu MySQL định kỳ | Should | 5 | TS-003 (chỉ cần CSDL MySQL) |
+| **Tổng** | | | **32 SP** | |
 
 ### 3.2. Chuỗi phụ thuộc
 
@@ -86,20 +89,25 @@ flowchart LR
     TS003 --> US001[US-001<br/>Hộ gia đình]
     US001 --> US002[US-002<br/>Nhân khẩu]
     US002 --> US003[US-003<br/>Tạm trú, tạm vắng]
+    TS003 --> US006[US-006<br/>Khoản thu tự nguyện]
+    TS003 --> TS001[TS-001<br/>Sao lưu CSDL]
 ```
 
-- **TS-003 phải xong sớm, trong 2–3 ngày đầu Sprint:** cả hai nhánh
-  (tài khoản và hộ khẩu) đều bắt đầu từ nó, và theo backlog thì hầu hết các
+- **TS-003 phải xong sớm, trong 2–3 ngày đầu Sprint:** cả bốn nhánh
+  (tài khoản, hộ khẩu, khoản thu, sao lưu) đều bắt đầu từ nó, và theo backlog thì hầu hết các
   story còn lại đều phụ thuộc trực tiếp hoặc gián tiếp vào TS-003.
 - Nhánh hộ khẩu là chuỗi dài nhất (US-001 → US-002 → US-003, 13 SP), nên
   bắt đầu US-001 ngay khi TS-003 có kết nối CSDL chạy được.
+- TS-001 chỉ cần CSDL MySQL đã dựng theo `database/schema.sql`, nên TV5
+  bắt đầu được song song với TS-003.
 - US-022 (phân quyền) và US-023 (quản lý tài khoản) phụ thuộc US-021, để
   Sprint 2.
 
 ### 3.3. Sprint Goal (đề xuất)
 
 > Người dùng có tài khoản đăng nhập được vào ứng dụng, quản lý được hộ gia
-> đình, nhân khẩu và tạm trú/tạm vắng, dữ liệu lưu trên MySQL.
+> đình, nhân khẩu và tạm trú/tạm vắng, tạo được khoản thu tự nguyện và có
+> bản sao lưu CSDL định kỳ; dữ liệu lưu trên MySQL.
 
 ## 4. Đề xuất phân công theo mảng
 
@@ -117,11 +125,17 @@ mã; cân lại trong họp theo năng lực và thời gian của từng ngư�
 
 Tổng 112 SP (không gồm US-024, US-025 của v2.0).
 
-**Trong Sprint 1** chỉ TV1 (TS-003, US-020, US-021: 11 SP) và TV2 (US-001,
-US-002, US-003: 13 SP) có story. Đề xuất cho TV3, TV4, TV5 trong Sprint 1:
-review Pull Request của TV1, TV2; viết test theo AC; phác thảo màn hình và
-bảng dữ liệu cho mảng mình để Sprint 2 bắt đầu ngay; hoặc làm cặp với TV1,
-TV2 nếu nhóm muốn chia nhỏ hơn.
+**Trong Sprint 1:**
+
+| Thành viên | Việc | SP |
+|---|---|---|
+| TV1 Khánh | TS-003, US-020, US-021 | 11 |
+| TV2 Dũng | US-001, US-002, US-003 | 13 |
+| TV3 Hùng | US-006 | 3 |
+| TV4 Đạt | Thiết kế màn hình trên Figma: chọn bố cục, bảng phối màu và vẽ màn hình cho các story Sprint 1–2, để các bạn dựng giao diện theo | – |
+| TV5 Huy | TS-001 | 5 |
+
+Mọi người vẫn review Pull Request chéo cho nhau.
 
 ## 5. Quyết định
 
