@@ -1,14 +1,10 @@
-# Sprint Planning 1 (dự thảo)
+# Sprint Planning 1
 
-> **Dự thảo** do Scrum Master chuẩn bị trước buổi họp. Mọi đề xuất bên dưới
-> để cả nhóm sửa trong họp; sau họp ghi kết quả vào các bảng "Quyết định" và
-> "Việc cần làm". Nếu họp khác ngày 16/11/2026 thì đổi ngày trong tên tệp.
-
-- **Thời gian:** ……… · **Hình thức:** ………
+- **Thời gian:** 16/11/2026 · **Hình thức:** thống nhất qua nhóm chat
 - **Thành phần:** Đoàn Quốc Khánh (TV1, Scrum Master), Nguyễn Đình Dũng
   (TV2), Đinh Phi Hùng (TV3), Cao Thành Đạt (TV4), Vũ Nhật Huy (TV5)
-- **Vắng:** ………
-- **Thư ký:** ………
+- **Vắng:** không
+- **Thư ký:** Đoàn Quốc Khánh
 
 ## 1. Chương trình họp
 
@@ -45,7 +41,7 @@ người nộp trên phiếu thu) đang chờ duyệt, xác nhận cùng lúc kh
 Ghi kết quả vào bảng "Quyết định" (mục 5); giả định bị sửa hoặc bỏ thì cập
 nhật tệp 11 trong một Pull Request riêng.
 
-## 2. Thời gian 4 Sprint và tuần chốt (đề xuất)
+## 2. Thời gian 4 Sprint và tuần chốt
 
 Mỗi Sprint 1 tuần, thêm 1 tuần chốt. Dự án kết thúc sau 5 tuần, tính từ
 16/11/2026.
@@ -61,9 +57,9 @@ Mỗi Sprint 1 tuần, thêm 1 tuần chốt. Dự án kết thúc sau 5 tuần,
 Sprint Review, Retrospective và Sprint Planning của vòng sau gộp một buổi
 khoảng 1,5 giờ vào Chủ nhật cuối mỗi Sprint.
 
-## 3. Đề xuất Sprint 1
+## 3. Sprint 1
 
-### 3.1. Story đề xuất
+### 3.1. Story của Sprint 1
 
 Chọn theo hai tiêu chí: ưu tiên **Must** trong
 [08-product-backlog.md](../requirements/08-product-backlog.md) và **phụ
@@ -106,7 +102,7 @@ flowchart LR
 - US-022 (phân quyền) và US-023 (quản lý tài khoản) phụ thuộc US-021, để
   Sprint 2.
 
-### 3.3. Sprint Goal (đề xuất)
+### 3.3. Sprint Goal
 
 > Người dùng có tài khoản đăng nhập được vào ứng dụng, quản lý được hộ gia
 > đình, nhân khẩu và tạm trú/tạm vắng, tạo được khoản thu tự nguyện và có
@@ -169,18 +165,20 @@ TV4 Đạt ở Sprint 1–2 không nhận story mà làm thiết kế Figma (#70
 
 | # | Nội dung quyết định | Ghi chú |
 |---|---|---|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+| 1 | Mỗi Sprint 1 tuần, 4 Sprint và 1 tuần chốt: Sprint 1 16/11–22/11, Sprint 2 23/11–29/11, Sprint 3 30/11–06/12, Sprint 4 07/12–13/12, tuần chốt 14/12–20/12 | Mục 2 |
+| 2 | Sprint 1 gồm TS-003, US-020, US-021 (TV1); US-001, US-002, US-003 (TV2); US-006 (TV3); TS-001 (TV5); TV4 thiết kế Figma (#70). Tổng 32 SP | Sprint Goal như mục 3.3 |
+| 3 | Phân công và kế hoạch 4 Sprint theo mục 4, khớp milestone và Issue trên GitHub | Người review theo Issue kế hoạch #72–#74 |
+| 4 | Nếu US-003 không kịp 22/11 thì chuyển sang Sprint 2; nếu Sprint 4 không kịp thì bỏ US-018 (Could) trước | |
+| 5 | Bố cục giao diện: menu trái (trái – đầu – thân), màu phương án A | Chỉnh theo Figma (#70); xem [ui.md](../design/ui.md) |
+| 6 | Daily mỗi tối 21:00 qua nhóm chat; Sprint Review, Retrospective và Sprint Planning gộp một buổi vào Chủ nhật cuối mỗi Sprint | |
+| 7 | Các giả định trong [11-chot-va-gia-dinh.md](../requirements/11-chot-va-gia-dinh.md) (gồm 47–49) chưa xác nhận | Bàn ở buổi họp 22/11 |
 
 ## 6. Việc cần làm
 
 | # | Việc | Người phụ trách | Hạn |
 |---|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| 1 | Dựng môi trường theo [setup.md](../setup.md), đọc [kien-truc.md](../design/kien-truc.md) | Cả nhóm | 17/11 |
+| 2 | Mời TV3 Hùng làm collaborator, gán Issue #13, #14, #16, #17, #23 | TV1 | 17/11 |
+| 3 | Làm Issue Sprint 1 của mình theo bảng giao việc | Mỗi người | 22/11 |
+| 4 | Màn hình Figma cho Sprint 1 và Sprint 2 | TV4 | Sprint 1: 18/11; Sprint 2: 22/11 |
+| 5 | Chuẩn bị buổi Sprint Review và Sprint Planning 2 | TV1 | 22/11 |
