@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tai_khoan (
     hoat_dong     BOOLEAN      NOT NULL DEFAULT TRUE,
     -- US-023: so dien thoai lien he, khong bat buoc
     so_dien_thoai VARCHAR(15)  NULL,
+    email         VARCHAR(100) NULL,
     ngay_tao      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
