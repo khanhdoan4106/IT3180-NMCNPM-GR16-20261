@@ -92,13 +92,18 @@ CREATE TABLE IF NOT EXISTS tam_tru_tam_vang (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     nhan_khau_id INT          NOT NULL,
     loai         ENUM('TAM_TRU', 'TAM_VANG') NOT NULL,
+    so_giay      VARCHAR(30)  NULL UNIQUE,
     tu_ngay      DATE         NOT NULL,
     den_ngay     DATE         NOT NULL,
     ly_do        VARCHAR(200) NULL,
+    -- Noi den khi tam vang; de trong voi dot tam tru
+    dia_chi_tam_vang VARCHAR(200) NULL,
     ngay_tao     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ttv_nhan_khau FOREIGN KEY (nhan_khau_id)
         REFERENCES nhan_khau (id),
     CONSTRAINT chk_ttv_ngay CHECK (den_ngay >= tu_ngay),
+    CONSTRAINT chk_ttv_dia_chi CHECK (
+        loai = 'TAM_VANG' OR dia_chi_tam_vang IS NULL),
     INDEX idx_ttv_nhan_khau (nhan_khau_id, tu_ngay)
 );
 
