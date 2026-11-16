@@ -47,6 +47,8 @@ thanh đầu có tên ứng dụng và chỗ hiện người đăng nhập (US-0
 do `DieuHuong` nạp màn hình. Bố cục và màu sẽ chỉnh theo thiết kế Figma
 (#70).
 
+![Trang chính với dữ liệu mẫu](anh/ts-003/trang-chinh.png)
+
 ## 3. Đặt tên
 
 Theo [quy ước mã](coding-convention.md): tên lớp, phương thức, biến bằng
