@@ -49,7 +49,9 @@ tác nhân (giả định 2 trong tệp 11).
 **Tiền điều kiện chung.** Mọi UC trừ UC001 có tiền điều kiện "Người dùng đã
 đăng nhập"; sơ đồ không vẽ `<<include>>` Đăng nhập.
 
-Mỗi UC ứng một user story v1.0 (US-024, US-025 thuộc v2.0, không vẽ).
+Mỗi UC ứng một user story v1.0, riêng UC017 Thu phí gồm US-011 và US-012
+(chọn hình thức thanh toán, lưu người thu là một bước của lần thu, không
+phải UC riêng). US-024, US-025 thuộc v2.0, không vẽ.
 
 | Mã UC | Tên | Tác nhân | US nguồn | Nhóm |
 |---|---|---|---|---|
@@ -69,15 +71,14 @@ Mỗi UC ứng một user story v1.0 (US-024, US-025 thuộc v2.0, không vẽ).
 | UC014 | Chốt công nợ | Người dùng | US-009 | Khoản thu |
 | UC015 | In thông báo phí | Quản trị viên | US-015 | Khoản thu |
 | UC016 | Tra cứu phí | Người dùng | US-010 | Thu phí |
-| UC017 | Thu phí | Người dùng | US-011 | Thu phí |
-| UC018 | Chọn hình thức thanh toán | Người dùng | US-012 | Thu phí |
-| UC019 | Ghi nhận đóng góp tự nguyện | Người dùng | US-007 | Thu phí |
-| UC020 | In biên lai | Người dùng | US-013 | Thu phí |
-| UC021 | Hủy phiếu thu | Người dùng | US-014 | Thu phí |
-| UC022 | Xem tổng thu tháng | Quản trị viên | US-016 | Thống kê |
-| UC023 | Lọc hộ nợ đọng | Quản trị viên | US-017 | Thống kê |
-| UC024 | Xuất báo cáo thu | Người dùng | US-018 | Thống kê |
-| UC025 | Thống kê theo khoản thu | Quản trị viên | US-019 | Thống kê |
+| UC017 | Thu phí | Người dùng | US-011, US-012 | Thu phí |
+| UC018 | Ghi nhận đóng góp tự nguyện | Người dùng | US-007 | Thu phí |
+| UC019 | In biên lai | Người dùng | US-013 | Thu phí |
+| UC020 | Hủy phiếu thu | Người dùng | US-014 | Thu phí |
+| UC021 | Xem tổng thu tháng | Quản trị viên | US-016 | Thống kê |
+| UC022 | Lọc hộ nợ đọng | Quản trị viên | US-017 | Thống kê |
+| UC023 | Xuất báo cáo thu | Người dùng | US-018 | Thống kê |
+| UC024 | Thống kê theo khoản thu | Quản trị viên | US-019 | Thống kê |
 
 ## 3. ERD khái niệm (tên thực thể chung)
 
@@ -103,6 +104,7 @@ công nợ, số tháng nợ, "đang tạm trú/tạm vắng" tính theo ngày).
 | Quan hệ | Giữa | Bản số | Thuộc tính của quan hệ | Cột trong `schema.sql` |
 |---|---|---|---|---|
 | Thuộc | NHÂN KHẨU – HỘ GIA ĐÌNH | N : 1 | Quan hệ với chủ hộ | `nhan_khau.ho_id`, `.quan_he` |
+| Là chủ hộ | NHÂN KHẨU – HỘ GIA ĐÌNH | 1 : 1 | – | `nhan_khau.chu_ho_cua` (cột sinh, UNIQUE: mỗi hộ tối đa một chủ hộ) |
 | Đăng ký | NHÂN KHẨU – ĐỢT TẠM TRÚ, TẠM VẮNG | 1 : N | – | `tam_tru_tam_vang.nhan_khau_id` |
 | Xảy ra với | NHÂN KHẨU – BIẾN ĐỘNG NHÂN KHẨU | 1 : N | – | `bien_dong_nhan_khau.nhan_khau_id` |
 | Xảy ra ở | HỘ GIA ĐÌNH – BIẾN ĐỘNG NHÂN KHẨU | 1 : N | – | `bien_dong_nhan_khau.ho_id` |
@@ -136,14 +138,14 @@ Chỉ có ở mức cài đặt, không có trong ERD khái niệm: bảng `bo_d
 | 2.0 Quản lý cư trú | UC005 – UC010 | D2 – D5, ghi D10 |
 | 3.0 Quản lý khoản thu | UC011 (đơn giá), UC012 | D6, ghi D10 |
 | 4.0 Lập công nợ | UC011 (tính phí), UC013 – UC015 | đọc D2, D6, D9; D7, D8; ghi D10 |
-| 5.0 Thu phí | UC016 – UC021 | đọc D2, D3, D6, D8; D9; ghi D10 |
-| 6.0 Lập báo cáo thống kê | UC022 – UC025 | đọc D2, D3, D6 – D9 |
+| 5.0 Thu phí | UC016 – UC020 | đọc D2, D3, D6, D8; D9; ghi D10 |
+| 6.0 Lập báo cáo thống kê | UC021 – UC024 | đọc D2, D3, D6 – D9 |
 
 | Kho | Thực thể / quan hệ ERD |
 |---|---|
 | D1 | TÀI KHOẢN |
 | D2 | HỘ GIA ĐÌNH |
-| D3 | NHÂN KHẨU (gồm quan hệ Thuộc) |
+| D3 | NHÂN KHẨU (gồm quan hệ Thuộc, Là chủ hộ) |
 | D4 | ĐỢT TẠM TRÚ, TẠM VẮNG |
 | D5 | BIẾN ĐỘNG NHÂN KHẨU |
 | D6 | KHOẢN THU |
@@ -168,8 +170,8 @@ có gắn «dự kiến». Tên lớp, thuộc tính theo bảng trong `schema.s
 |---|---|
 | TV2 Dũng | Biểu đồ UC nhóm Cư trú (UC005 – UC010); đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009); máy trạng thái Nhân khẩu. Review ERD khái niệm và lược đồ CSDL |
 | TV3 Hùng | Biểu đồ UC nhóm Khoản thu (UC011 – UC015); đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014); máy trạng thái Khoản phải nộp |
-| TV4 Đạt | Biểu đồ UC nhóm Thu phí (UC016 – UC021); đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí; máy trạng thái Phiếu thu |
-| TV5 Huy | Biểu đồ UC nhóm Thống kê (UC022 – UC025); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC025); biểu đồ tuần tự Xuất báo cáo (UC024) |
+| TV4 Đạt | Biểu đồ UC nhóm Thu phí (UC016 – UC020); đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí; máy trạng thái Phiếu thu |
+| TV5 Huy | Biểu đồ UC nhóm Thống kê (UC021 – UC024); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC024); biểu đồ tuần tự Xuất báo cáo (UC023) |
 
 Ghi chú:
 
@@ -182,37 +184,48 @@ Ghi chú:
 
 ## Giả định
 
-1. **Tác nhân theo story hay theo AC-060.** US-005, US-008, US-009, US-018
-   viết "Là Thủ quỹ", nhưng AC-060 nói Thủ quỹ "chỉ dùng được chức năng thu
-   phí và tra cứu". Sơ đồ theo story: UC011, UC013, UC014, UC024 nối với
-   "Người dùng" (cả hai vai trò). Cần chốt khi làm US-022.
-2. **Đổi đơn giá.** US-005 chỉ nói hệ thống tự tính; AC-016 cho "BQT có thể
-   thay đổi" đơn giá. UC011 gồm cả đổi đơn giá và tính phí khi chốt; DFD tách
-   phần đổi đơn giá vào 3.0, phần tính phí vào 4.0.
-3. **US-021 "Là Ban quản trị"** nhưng Thủ quỹ cũng phải đăng nhập, nên UC001
+### Cần chốt ở họp 22/11
+
+Sơ đồ giữ nguyên theo story cho tới khi nhóm chốt.
+
+- **(a) Quyền của Thủ quỹ.** US-005, US-008, US-009, US-018 viết "Là Thủ
+  quỹ", nhưng AC-060 nói Thủ quỹ "chỉ dùng được chức năng thu phí và tra
+  cứu". Sơ đồ đang theo story: UC011, UC013, UC014, UC023 nối với "Người
+  dùng" (cả hai vai trò). Kết quả chốt ảnh hưởng phân quyền US-022.
+- **(b) UC011 "Tính phí theo diện tích" (US-005).** Việc tính diện tích ×
+  đơn giá do hệ thống tự làm khi chốt công nợ (UC014), không phải mục tiêu
+  của tác nhân. Cần chọn: đổi thành "Cập nhật đơn giá phí" (AC-016: BQT có
+  thể thay đổi đơn giá) hay bỏ UC011. DFD hiện tách phần đổi đơn giá vào
+  tiến trình 3.0, phần tính phí vào 4.0.
+
+### Giả định khác
+
+1. **US-021 "Là Ban quản trị"** nhưng Thủ quỹ cũng phải đăng nhập, nên UC001
    nối với "Người dùng".
-4. **UC018 Chọn hình thức thanh toán** (US-012) là một phần của lần thu; giữ
-   thành UC riêng vì mỗi UC ứng một story. Sơ đồ nhóm Thu phí của TV4 có thể
-   nối nó với UC017 bằng `<<include>>`.
-5. **Câu chuyện kỹ thuật không thành UC** (TS-001 sao lưu, TS-002 nhật ký,
+2. **Câu chuyện kỹ thuật không thành UC** (TS-001 sao lưu, TS-002 nhật ký,
    TS-003 nền tảng, TS-004 giao diện) vì không phải user story. Riêng phần
    xem nhật ký của TS-002 (AC-069) có trong DFD (tiến trình 1.0, kho D10) để
    kho nhật ký có tiến trình đọc.
-6. **Quản trị viên trong DFD.** Luồng của các chức năng dùng chung chỉ vẽ ở
+3. **Quản trị viên trong DFD.** Luồng của các chức năng dùng chung chỉ vẽ ở
    Thủ quỹ cho dễ đọc; Quản trị viên cũng gửi, nhận được các luồng đó
    (AC-061). Luồng đăng nhập vẽ cho cả hai.
-7. **Khoản phải nộp là thực thể** (thực thể kết hợp) chứ không phải quan hệ ba
+4. **Khoản phải nộp là thực thể** (thực thể kết hợp) chứ không phải quan hệ ba
    ngôi Hộ – Khoản thu – Đợt thu, vì nó còn tham gia quan hệ Thu và Sửa.
-8. **Thu và Đóng góp là hai quan hệ** dù cùng lưu ở `phieu_thu_chi_tiet`: Thu
+5. **Thu và Đóng góp là hai quan hệ** dù cùng lưu ở `phieu_thu_chi_tiet`: Thu
    nối với khoản phải nộp, Đóng góp nối thẳng với khoản thu tự nguyện (giả
    định 16 trong tệp 11: khoản tự nguyện không tạo công nợ).
-9. **Biến động nối cả hộ và nhân khẩu**, vì nhân khẩu có thể chuyển hộ (giả
+6. **Biến động nối cả hộ và nhân khẩu**, vì nhân khẩu có thể chuyển hộ (giả
    định 6) mà lịch sử vẫn xem theo hộ cũ (AC-079).
-10. **Khóa tự sinh** cho Mã hộ, Mã nhân khẩu, Mã đợt, Mã khoản, Mã biến động,
-    Mã nhật ký, Mã khoản phải nộp: nghiệp vụ không có khóa tự nhiên (mã căn
-    hộ dùng lại khi hộ cũ chuyển đi, số CCCD có thể trống).
-11. **Email tài khoản** có trong `schema.sql` nhưng không story hay giả định
-    nào nhắc tới; vẫn ghi trong bảng thuộc tính.
-12. **Lớp model** chưa có trên `main` trừ `SoLieuCuDan`; `TaiKhoan`,
+7. **Là chủ hộ tách khỏi Thuộc.** "Thuộc" (N : 1, thuộc tính "Quan hệ với
+   chủ hộ") cho biết nhân khẩu ở hộ nào; "Là chủ hộ" (1 : 1) theo cột
+   `chu_ho_cua` UNIQUE trong `schema.sql`. Mỗi hộ có **đúng** một chủ hộ
+   (AC-007) do ứng dụng bảo đảm khi thêm hộ cùng chủ hộ trong một giao dịch;
+   CSDL chỉ chặn được "tối đa một".
+8. **Khóa tự sinh** cho Mã hộ, Mã nhân khẩu, Mã đợt, Mã khoản, Mã biến động,
+   Mã nhật ký, Mã khoản phải nộp: nghiệp vụ không có khóa tự nhiên (mã căn
+   hộ dùng lại khi hộ cũ chuyển đi, số CCCD có thể trống).
+9. **Email tài khoản** có trong `schema.sql` nhưng không story hay giả định
+   nào nhắc tới; vẫn ghi trong bảng thuộc tính.
+10. **Lớp model** chưa có trên `main` trừ `SoLieuCuDan`; `TaiKhoan`,
     `NguoiDung`, `TaiKhoanMoi`, `VaiTro` đã viết ở PR #81, #82 (chưa merge).
     Các lớp khác đặt tên theo bảng và quy ước đặt tên, có thể đổi khi cài.

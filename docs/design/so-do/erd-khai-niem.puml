@@ -83,6 +83,8 @@ entity "NHẬT KÝ THAO TÁC" as NKY {
 relationship "Thuộc" as THUOC {
   Quan hệ với chủ hộ
 }
+relationship "Là chủ hộ" as LACHUHO {
+}
 relationship "Đăng ký" as DANGKY {
 }
 relationship "Xảy ra với" as XAYRAVOI {
@@ -125,6 +127,8 @@ relationship "Thực hiện" as THUCHIEN {
 ' Cư trú
 NK -N- THUOC
 THUOC -1- HO
+NK -1- LACHUHO
+LACHUHO -1- HO
 NK -1- DANGKY
 DANGKY -N- DOT
 NK -1- XAYRAVOI
