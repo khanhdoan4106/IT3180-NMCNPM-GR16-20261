@@ -39,12 +39,19 @@ Quy tắc:
 ## 2. Khởi động
 
 `Launcher` → `App`: nạp phông Be Vietnam Pro, thử kết nối CSDL
-(AC-070), rồi mở `cua-so-chinh.fxml`. Không kết nối được thì hiện hộp
-thoại nói nguyên nhân, cách sửa và thoát.
+(AC-070), rồi mở màn đăng nhập `dang-nhap.fxml` (US-021). Không kết nối
+được thì hiện hộp thoại nói nguyên nhân, cách sửa và thoát.
+
+`CuaSoUngDung` chuyển cửa sổ giữa màn đăng nhập và `cua-so-chinh.fxml`.
+Đăng nhập đúng thì `DangNhapService` ghi người dùng vào `PhienDangNhap`
+rồi mở cửa sổ chính; Đăng xuất xóa phiên và về màn đăng nhập.
 
 Cửa sổ chính có bố cục trái – đầu – thân: menu trái dựng từ `ManHinh`,
-thanh đầu có tên ứng dụng và chỗ hiện người đăng nhập (US-021), vùng thân
-do `DieuHuong` nạp màn hình. Bố cục và màu sẽ chỉnh theo thiết kế Figma
+thanh đầu có tên ứng dụng, họ tên và vai trò người đăng nhập, nút Đăng
+xuất; vùng thân do `DieuHuong` nạp màn hình. `DieuHuong` chặn mọi màn
+hình khi chưa đăng nhập (AC-059), nên màn hình mới không cần tự kiểm tra.
+Cần biết ai đang dùng (vd ghi người thu, phân quyền US-022) thì lấy
+`PhienDangNhap.nguoiDung()`. Bố cục và màu sẽ chỉnh theo thiết kế Figma
 (#70).
 
 ![Trang chính với dữ liệu mẫu](anh/ts-003/trang-chinh.png)

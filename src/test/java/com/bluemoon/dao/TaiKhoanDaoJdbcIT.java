@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
 import com.bluemoon.util.MatKhau;
@@ -64,5 +65,34 @@ class TaiKhoanDaoJdbcIT {
             assertEquals(1, kq.getInt(1));
             assertEquals("Trần Thị Mai", kq.getString(2));
         }
+    }
+
+    /** US-021: tìm theo tên không phân biệt hoa thường, đọc đủ cột. */
+    @Test
+    void timTheoTenDangNhap() throws SQLException {
+        String bam = MatKhau.bam("MatKhau@1");
+        dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai", VaiTro.THU_QUY,
+                bam));
+        TaiKhoan tk = dao.timTheoTenDangNhap("ThuQuy01").orElseThrow();
+        assertEquals("thuquy01", tk.tenDangNhap());
+        assertEquals("Trần Thị Mai", tk.hoTen());
+        assertEquals(VaiTro.THU_QUY, tk.vaiTro());
+        assertEquals(bam, tk.matKhauBam());
+        assertTrue(tk.hoatDong());
+        assertTrue(dao.timTheoTenDangNhap("khongco").isEmpty());
+    }
+
+    /** US-021: đọc đúng tài khoản đã bị khóa (hoat_dong = false). */
+    @Test
+    void docTaiKhoanBiKhoa() throws SQLException {
+        dao.them(new TaiKhoanMoi("thuquy02", "Lê Thị Lan", VaiTro.THU_QUY,
+                MatKhau.bam("MatKhau@1")));
+        try (Connection ketNoi = nguon.moKetNoi();
+                Statement lenh = ketNoi.createStatement()) {
+            lenh.executeUpdate("UPDATE tai_khoan SET hoat_dong = FALSE "
+                    + "WHERE ten_dang_nhap = 'thuquy02'");
+        }
+        assertFalse(dao.timTheoTenDangNhap("thuquy02").orElseThrow()
+                .hoatDong());
     }
 }

@@ -2,10 +2,14 @@ package com.bluemoon.dao;
 
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
+import com.bluemoon.model.VaiTro;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /** Bản JDBC của {@link TaiKhoanDao}. */
 public class TaiKhoanDaoJdbc implements TaiKhoanDao {
@@ -16,6 +20,10 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
     private static final String SQL_THEM = "INSERT INTO tai_khoan "
             + "(ten_dang_nhap, mat_khau_bam, ho_ten, vai_tro) "
             + "VALUES (?, ?, ?, ?)";
+
+    private static final String SQL_TIM_THEO_TEN = "SELECT id, "
+            + "ten_dang_nhap, ho_ten, vai_tro, mat_khau_bam, hoat_dong "
+            + "FROM tai_khoan WHERE ten_dang_nhap = ?";
 
     private final NguonKetNoi nguonKetNoi;
 
@@ -49,6 +57,28 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
             if (e.getErrorCode() == MA_TRUNG_KHOA) {
                 return false;
             }
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public Optional<TaiKhoan> timTheoTenDangNhap(String tenDangNhap) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi();
+                PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_TIM_THEO_TEN)) {
+            lenh.setString(1, tenDangNhap);
+            try (ResultSet kq = lenh.executeQuery()) {
+                if (!kq.next()) {
+                    return Optional.empty();
+                }
+                return Optional.of(new TaiKhoan(kq.getInt("id"),
+                        kq.getString("ten_dang_nhap"),
+                        kq.getString("ho_ten"),
+                        VaiTro.valueOf(kq.getString("vai_tro")),
+                        kq.getString("mat_khau_bam"),
+                        kq.getBoolean("hoat_dong")));
+            }
+        } catch (SQLException e) {
             throw LoiCsdl.tu(e);
         }
     }

@@ -79,6 +79,58 @@
     -fx-cursor: hand;
 }
 
+/* Người đăng nhập và nút Đăng xuất ở cuối thanh đầu (US-021). */
+.nguoi-dang-nhap {
+    -fx-alignment: center-right;
+}
+
+.ten-nguoi-dung {
+    -fx-font-weight: bold;
+}
+
+/* Chữ trắng như cả thanh đầu (tương phản 5,2:1 trên màu chính). */
+.vai-tro-nguoi-dung {
+    -fx-font-size: 14px;
+}
+
+/* Nút trên nền màu chính: viền và chữ trắng. */
+.button.nut-tren-nen-dam {
+    -fx-background-color: white, -mau-chinh;
+    -fx-background-insets: 0, 1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.nut-tren-nen-dam:hover {
+    -fx-background-color: white, -mau-chinh-dam;
+}
+
+.button.nut-tren-nen-dam:focused {
+    -fx-background-color: white, -mau-chinh-dam;
+    -fx-background-insets: 0, 2;
+}
+
+/* ---- Màn đăng nhập ---- */
+
+.nen-dang-nhap {
+    -fx-background-color: -mau-nen;
+    -fx-padding: 24;
+}
+
+.khung-dang-nhap {
+    -fx-padding: 32;
+}
+
+.dau-dang-nhap {
+    -fx-spacing: 2;
+}
+
+.ten-ung-dung-lon {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -mau-chinh;
+}
+
 .menu-trai,
 .menu-trai > .viewport {
     -fx-background-color: -mau-be-mat;

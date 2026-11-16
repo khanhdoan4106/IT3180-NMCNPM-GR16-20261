@@ -71,7 +71,7 @@ Story Point là ước lượng ban đầu, chốt lại bằng Planning Poker (
 | ID | Mô tả ngắn | Ưu tiên | Sprint | Phụ trách | Trạng thái | SP |
 |---|---|---|---|---|---|---|
 | US-020 | Đăng ký tài khoản đăng nhập | Must | Sprint 1 | TV1 Khánh | Hoàn thành | 3 |
-| US-021 | Đăng nhập bằng tên đăng nhập và mật khẩu | Must | | | Chưa bắt đầu | 3 |
+| US-021 | Đăng nhập bằng tên đăng nhập và mật khẩu | Must | Sprint 1 | TV1 Khánh | Hoàn thành | 3 |
 | US-022 | Phân quyền Quản trị viên và Thủ quỹ | Should | | | Chưa bắt đầu | 5 |
 | US-023 | Đổi mật khẩu và cập nhật thông tin cá nhân | Should | | | Chưa bắt đầu | 3 |
 | TS-001 | Sao lưu dữ liệu MySQL định kỳ (hàng ngày/tuần) để tránh mất dữ liệu | Should | | | Chưa bắt đầu | 5 |

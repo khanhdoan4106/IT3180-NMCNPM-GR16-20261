@@ -1,5 +1,6 @@
 package com.bluemoon.util;
 
+import com.bluemoon.service.PhienDangNhap;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 /**
  * Nạp màn hình vào vùng thân của cửa sổ chính theo {@link ManHinh}. Màn
  * hình chưa có tệp FXML thì hiện trang "Chức năng đang được xây dựng".
+ * Mọi màn hình đều mở qua đây nên chỉ cần chặn chưa đăng nhập ở một chỗ.
  */
 public final class DieuHuong {
 
@@ -18,24 +20,35 @@ public final class DieuHuong {
     private static final String THU_MUC_VIEW = "/com/bluemoon/view/";
 
     private final Pane vungThan;
+    private final Runnable khiChuaDangNhap;
 
     /**
      * Tạo bộ điều hướng cho một vùng thân.
      *
      * @param vungThan vùng hiện màn hình; nội dung cũ được thay khi mở
+     * @param khiChuaDangNhap việc làm khi mở màn hình mà chưa đăng nhập,
+     *        thường là về màn đăng nhập (AC-059)
      */
-    public DieuHuong(Pane vungThan) {
+    public DieuHuong(Pane vungThan, Runnable khiChuaDangNhap) {
         this.vungThan = vungThan;
+        this.khiChuaDangNhap = khiChuaDangNhap;
     }
 
     /**
-     * Mở một màn hình, thay màn hình đang hiện.
+     * Mở một màn hình, thay màn hình đang hiện. Chưa đăng nhập thì không
+     * mở mà chạy việc {@code khiChuaDangNhap}.
      *
      * @param manHinh màn hình cần mở
      * @throws IllegalStateException khi thiếu hoặc lỗi tệp FXML (lỗi lập
      *         trình, cần sửa mã)
      */
     public void mo(ManHinh manHinh) {
+        // AC-059: chưa đăng nhập thì không mở màn hình chức năng nào.
+        if (!PhienDangNhap.daDangNhap()) {
+            vungThan.getChildren().clear();
+            khiChuaDangNhap.run();
+            return;
+        }
         Node noiDung = manHinh.getTepFxml() == null
                 ? trangDangXayDung(manHinh)
                 : napFxml(manHinh.getTepFxml());

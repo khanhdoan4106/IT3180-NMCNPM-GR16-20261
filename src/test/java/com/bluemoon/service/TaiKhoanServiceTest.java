@@ -10,12 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bluemoon.dao.LoaiLoiCsdl;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TaiKhoanDao;
+import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
 import com.bluemoon.service.TaiKhoanService.O;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 /** Test {@link TaiKhoanService} bằng DAO giả, không cần MySQL. */
@@ -39,6 +41,11 @@ class TaiKhoanServiceTest {
             }
             daThem.add(taiKhoan);
             return true;
+        }
+
+        @Override
+        public Optional<TaiKhoan> timTheoTenDangNhap(String tenDangNhap) {
+            throw new UnsupportedOperationException();
         }
     }
 
