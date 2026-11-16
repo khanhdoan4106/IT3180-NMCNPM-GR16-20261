@@ -45,18 +45,21 @@ người nộp trên phiếu thu) đang chờ duyệt, xác nhận cùng lúc kh
 Ghi kết quả vào bảng "Quyết định" (mục 5); giả định bị sửa hoặc bỏ thì cập
 nhật tệp 11 trong một Pull Request riêng.
 
-## 2. Thời gian 4 Sprint (đề xuất)
+## 2. Thời gian 4 Sprint và tuần chốt (đề xuất)
 
-Mỗi Sprint 2 tuần, theo [workflow.md](../workflow.md).
+Mỗi Sprint 1 tuần, thêm 1 tuần chốt. Dự án kết thúc sau 5 tuần, tính từ
+16/11/2026.
 
-| Sprint | Từ ngày | Đến ngày | Mốc |
-|---|---|---|---|
-| Sprint 1 | 16/11/2026 | 29/11/2026 | Phát hành `v0.1.0` |
-| Sprint 2 | 30/11/2026 | 13/12/2026 | `v0.2.0` |
-| Sprint 3 | 14/12/2026 | 27/12/2026 | `v0.3.0`, UAT lần 1 |
-| Sprint 4 | 28/12/2026 | 10/01/2027 | `v1.0.0`, UAT lần 2 |
+| Vòng | Từ ngày | Đến ngày | SP | Mốc |
+|---|---|---|---|---|
+| Sprint 1 | Thứ Hai 16/11/2026 | Chủ nhật 22/11/2026 | 32 | Phát hành `v0.1.0` |
+| Sprint 2 | Thứ Hai 23/11/2026 | Chủ nhật 29/11/2026 | 31 | `v0.2.0` |
+| Sprint 3 | Thứ Hai 30/11/2026 | Chủ nhật 06/12/2026 | 25 | `v0.3.0`, UAT lần 1 |
+| Sprint 4 | Thứ Hai 07/12/2026 | Chủ nhật 13/12/2026 | 24 | `v0.4.0` |
+| Tuần chốt | Thứ Hai 14/12/2026 | Chủ nhật 20/12/2026 | 0 (không nhận story mới) | Sửa lỗi UAT, UAT lần 2, phát hành `v1.0.0`, tài liệu nộp |
 
-Cần đối chiếu với lịch nộp bài của môn trước khi chốt.
+Sprint Review, Retrospective và Sprint Planning của vòng sau gộp một buổi
+khoảng 1,5 giờ vào Chủ nhật cuối mỗi Sprint.
 
 ## 3. Đề xuất Sprint 1
 
@@ -93,7 +96,7 @@ flowchart LR
     TS003 --> TS001[TS-001<br/>Sao lưu CSDL]
 ```
 
-- **TS-003 phải xong sớm, trong 2–3 ngày đầu Sprint:** cả bốn nhánh
+- **TS-003 phải xong sớm, trong 1–2 ngày đầu Sprint 1:** cả bốn nhánh
   (tài khoản, hộ khẩu, khoản thu, sao lưu) đều bắt đầu từ nó, và theo backlog thì hầu hết các
   story còn lại đều phụ thuộc trực tiếp hoặc gián tiếp vào TS-003.
 - Nhánh hộ khẩu là chuỗi dài nhất (US-001 → US-002 → US-003, 13 SP), nên
@@ -150,7 +153,7 @@ SP từng người theo Sprint:
 | TV4 Đạt | 0 | 0 | 16 | 6 | 22 |
 | TV5 Huy | 5 | 5 | 3 | 16 | 29 |
 
-TV4 Đạt ở Sprint 1–2 không nhận story mà làm thiết kế Figma (#70): màn hình cho các story Sprint 1–2 trong Sprint 1, cho Sprint 3–4 trước 13/12. US-007 chuyển sang Sprint 3, làm sau US-011 vì cần phiếu thu.
+TV4 Đạt ở Sprint 1–2 không nhận story mà làm thiết kế Figma (#70): màn hình cho các story Sprint 1–2 trong Sprint 1 (trước 22/11), cho Sprint 3 trước 26/11 và Sprint 4 trước 29/11. US-007 chuyển sang Sprint 3, làm sau US-011 vì cần phiếu thu.
 
 - **Sprint 4 nặng nhất với TV5 (16 SP).** Nếu không kịp thì bỏ trước
   **US-018** (xuất báo cáo Excel, ưu tiên Could, 5 SP), giữ các story
@@ -158,6 +161,9 @@ TV4 Đạt ở Sprint 1–2 không nhận story mà làm thiết kế Figma (#70
 - TV1 trống story ở Sprint 3–4 để dành thời gian duyệt Pull Request và hỗ
   trợ các mảng còn nhiều việc.
 - Mọi người vẫn review Pull Request chéo cho nhau.
+- TS-004 (rà giao diện) làm ở cuối Sprint 4, sau khi mọi màn hình đã
+  merge. Tuần chốt 14/12 – 20/12 không nhận story mới, chỉ để sửa lỗi,
+  UAT lần 2, phát hành `v1.0.0` và nộp bài.
 
 ## 5. Quyết định
 
