@@ -1,80 +1,55 @@
-# Phần mềm Quản lý và Thu phí Chung cư BlueMoon v1.0 (IT3180 - Nhóm 16)
+# BlueMoon – Phần mềm quản lý chung cư (IT3180 – Nhóm 16)
 
-Dự án phát triển ứng dụng Desktop quản lý hộ khẩu, nhân khẩu và thu phí tại chung cư BlueMoon theo mô hình kiến trúc MVC.
+Đồ án môn Nhập môn Công nghệ phần mềm (IT3180), Đại học Bách khoa Hà Nội.
 
-## 1. Phân công thành viên và nhánh làm việc
+## Bài toán (v1.0)
 
-| Thành viên | Họ và tên        | MSSV      | Vai trò chính                       | Nhánh Git |
-| :--------- | :--------------- | :-------- | :---------------------------------- | :-------- |
-| TV1        | Đoàn Quốc Khánh  | 202416243 | Quản lý dự án / Scrum Master        | tv1       |
-| TV2        | Nguyễn Đình Dũng | 202416173 | Phân tích yêu cầu, Thiết kế UI, Dev | tv2       |
-| TV3        | Đinh Phi Hùng    | 202416215 | Lập trình CSDL và nghiệp vụ         | tv3       |
-| TV4        | Cao Thành Đạt    | 202416152 | Lập trình giao diện JavaFX          | tv4       |
-| TV5        | Vũ Nhật Huy      | 202416229 | Kiểm thử và tài liệu                | tv5       |
+Ban quản trị chung cư BlueMoon đang quản lý hộ khẩu bằng sổ và Excel, thu
+phí bằng sổ ghi tay: tính phí theo diện tích dễ nhầm, tìm hộ chậm, cộng tổng
+sai, không biết ai đã sửa gì. Phần mềm v1.0 cần:
 
-## 2. Công nghệ sử dụng
+- Quản lý hộ gia đình, nhân khẩu, tạm trú/tạm vắng; xuất danh sách tạm vắng
+  cho công an phường.
+- Tự tính phí dịch vụ (2.500–16.500 đ/m²) và phí quản lý (7.000 đ/m²) theo
+  diện tích; tạo các quỹ tự nguyện theo đợt; chốt công nợ hằng tháng.
+- Tra cứu theo mã phòng, "Thu tất cả", chọn tiền mặt/chuyển khoản, tự lưu
+  người thu, in biên lai, hủy phiếu thu nhầm trong ngày.
+- Tổng thu tháng trên màn hình chính, lọc hộ nợ quá 3 tháng, thống kê theo
+  quỹ, xuất Excel.
+- Đăng nhập, phân quyền Quản trị viên / Thủ quỹ, đổi mật khẩu.
 
-- **Ngôn ngữ:** Java 17 trở lên, Maven, JavaFX 21.0.2 (Mô hình MVC)
-- **Hệ quản trị CSDL:** Microsoft SQL Server và SQL Server Management Studio 22 (SSMS 22)
-- **Quản lý mã nguồn:** Git và GitHub
+Phí gửi xe và thu hộ điện, nước, internet để v2.0. Chi tiết yêu cầu:
+[docs/requirements](docs/requirements).
 
-## 3. Cấu trúc thư mục dự án
+## Công nghệ
 
-- docs/requirements/: Tài liệu Project Charter, SRS, Product Backlog
-- docs/design/figma/: Sơ đồ ERD, biểu đồ lớp, thiết kế giao diện Figma
-- scripts/bluemoon_db.sql: Kịch bản khởi tạo 7 bảng CSDL và dữ liệu mẫu trên SQL Server
-- src/main/java/application/: Chứa lớp khởi chạy ứng dụng JavaFX (Main.java)
-- src/main/java/models/: Các lớp thực thể ánh xạ bảng dữ liệu CSDL
-- src/main/java/services/: Lớp kết nối DatabaseConnection.java và các lớp truy vấn SQL
-- src/main/java/controller/: Các lớp điều khiển nghiệp vụ theo từng phân hệ (admin, hokhau, nhankhau, khoanthu, noptien)
-- src/main/resources/views/: Các tệp giao diện .fxml và .css tương ứng với từng phân hệ
-- test/: Kịch bản và dữ liệu kiểm thử hộp trắng, hộp đen
+- Java 21, JavaFX 21 (ứng dụng máy tính để bàn), Maven
+- MySQL 8.0 (CSDL tập trung)
+- JUnit 5, Checkstyle; GitHub Actions chạy `mvn verify` cho mọi Pull Request
 
-## 4. Hướng dẫn cài đặt SQL Server cho thành viên mới (Làm 1 lần duy nhất)
+## Tài liệu
 
-Khi kéo dự án về máy, mỗi thành viên cần thực hiện 4 bước sau để kết nối Java với SQL Server ở cổng 1433:
+| Tài liệu | Nội dung |
+|---|---|
+| [docs/requirements](docs/requirements) | Wish list, As-Is, Visionary, NFR, raw log, epic/feature, user story và AC, product backlog, ma trận truy vết, Definition of Done, giả định |
+| [docs/setup.md](docs/setup.md) | Cài môi trường, dựng CSDL, chạy test |
+| [docs/workflow.md](docs/workflow.md) | Quy trình Scrum, nhánh, commit, Pull Request, phát hành |
+| [docs/design/coding-convention.md](docs/design/coding-convention.md) | Quy ước viết mã |
+| [docs/design/ui.md](docs/design/ui.md) | Quy tắc giao diện chung |
+| [docs/thuat-ngu.md](docs/thuat-ngu.md) | Thuật ngữ thống nhất |
+| [CHANGELOG.md](CHANGELOG.md) | Nhật ký thay đổi |
 
-### Bước 1: Bật chế độ Mixed Mode và tài khoản sa trên SSMS 22
+## Bắt đầu
 
-1. Mở SQL Server Management Studio 22 (SSMS 22), kết nối bằng Windows Authentication.
-2. Nhấn Ctrl + N để mở cửa sổ New Query, dán đoạn lệnh dưới đây và nhấn F5:
+1. Cài môi trường và dựng CSDL theo [setup.md](docs/setup.md).
+2. Đọc [workflow.md](docs/workflow.md) trước khi nhận Issue đầu tiên.
 
-```sql
-USE [master];
-GO
-EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE',
-     N'Software\Microsoft\MSSQLServer\MSSQLServer',
-     N'LoginMode', REG_DWORD, 2;
-GO
-ALTER LOGIN [sa] WITH PASSWORD = N'team16chanhet', CHECK_POLICY = OFF, CHECK_EXPIRATION = OFF;
-ALTER LOGIN [sa] ENABLE;
-GO
-```
+## Thành viên
 
-### Bước 2: Mở cổng TCP/IP 1433 cho SQL Server
-
-Nhấn tổ hợp phím Windows + R, gõ "compmgmt.msc" và nhấn Enter.
-
-Ở cột bên trái, mở rộng mục Services and Applications -> chọn SQL Server Configuration Manager.
-
-Mở rộng SQL Server Network Configuration -> chọn Protocols for MSSQLSERVER (hoặc SQLEXPRESS).
-
-Nhấp đúp vào TCP/IP ở khung bên phải:
-
-Tab Protocol: Đổi mục Enabled thành Yes.
-
-Tab IP Addresses: Kéo xuống cuối cùng mục IPAll, xóa trống ô TCP Dynamic Ports và điền 1433 vào ô TCP Port -> nhấn OK.
-
-Chọn mục SQL Server Services ở cột bên trái -> chuột phải vào SQL Server (MSSQLSERVER) -> chọn Restart.
-
-### Bước 3: Khởi tạo cơ sở dữ liệu bluemoon_db
-
-Trong SSMS 22, chọn File -> Open -> File... và mở tệp scripts/bluemoon_db.sql trong thư mục dự án.
-
-Nhấn F5 (Execute) để tạo tự động CSDL bluemoon_db cùng 7 bảng và dữ liệu mẫu.
-
-### Bước 4: Kiểm tra kết nối trên VS Code hoặc IntelliJ
-
-Mở thư mục dự án bằng IDE, đợi Maven tải xong thư viện trong tệp pom.xml.
-
-Mở tệp src/main/java/services/DatabaseConnection.java và chạy hàm main. Nếu cửa sổ Console hiện thông báo kết nối thành công và in ra danh sách tài khoản mẫu là hoàn tất.
+| Họ tên | MSSV | Vai trò | Mảng phụ trách |
+|---|---|---|---|
+| Đoàn Quốc Khánh | 202416243 | Scrum Master | Quản lý dự án |
+| Nguyễn Đình Dũng | 202416173 | Thành viên | Phân tích yêu cầu, thiết kế UI, lập trình |
+| Đinh Phi Hùng | 202416215 | Thành viên | Lập trình CSDL và nghiệp vụ |
+| Cao Thành Đạt | 202416152 | Thành viên | Lập trình giao diện JavaFX |
+| Vũ Nhật Huy | 202416229 | Thành viên | Kiểm thử và tài liệu |
