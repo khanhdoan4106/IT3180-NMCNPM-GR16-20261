@@ -220,12 +220,15 @@ CREATE TABLE IF NOT EXISTS phieu_thu (
     tong_tien     DECIMAL(14, 2) NOT NULL,
     hinh_thuc     ENUM('TIEN_MAT', 'CHUYEN_KHOAN') NULL,
     nguoi_thu     INT            NOT NULL,
+    -- Ho ten nguoi nop tien, co the khac chu ho
+    nguoi_nop     VARCHAR(100)   NULL,
     thoi_diem     DATETIME       NOT NULL,
     so_lan_in     INT            NOT NULL DEFAULT 0,
     da_huy        BOOLEAN        NOT NULL DEFAULT FALSE,
     nguoi_huy     INT            NULL,
     thoi_diem_huy DATETIME       NULL,
     ly_do_huy     VARCHAR(200)   NULL,
+    ghi_chu       VARCHAR(255)   NULL,
     CONSTRAINT fk_pt_ho FOREIGN KEY (ho_id) REFERENCES ho_gia_dinh (id),
     CONSTRAINT fk_pt_nguoi_thu FOREIGN KEY (nguoi_thu)
         REFERENCES tai_khoan (id),
