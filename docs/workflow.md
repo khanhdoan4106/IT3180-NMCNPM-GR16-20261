@@ -1,8 +1,9 @@
 # Quy trình làm việc
 
-Nhóm làm theo Scrum, mỗi Sprint 2 tuần. Tài liệu này mô tả một vòng làm
-việc từ lúc nhận việc đến lúc phát hành, để mọi thành viên làm cùng một
-cách.
+Nhóm làm theo Scrum, mỗi Sprint 1 tuần, cuối dự án có 1 tuần chốt (không
+nhận story mới, chỉ sửa lỗi, UAT và nộp bài). Tài liệu này mô tả một vòng
+làm việc từ lúc nhận việc đến lúc phát hành, để mọi thành viên làm cùng
+một cách.
 
 ## Tổng quan một Sprint
 
@@ -94,7 +95,8 @@ rồi commit, thay vì sửa trên giao diện web GitHub.
    (số phiên bản, ngày), thêm mục "Chưa phát hành" trống bên trên. Ghi chú
    nâng cấp CSDL ở [setup.md](setup.md) nếu bản này đổi cấu trúc bảng đã có.
 3. GitHub → Releases → Draft a new release, tạo tag trên `main`:
-   Sprint 1 `v0.1.0`, Sprint 2 `v0.2.0`, Sprint 3 `v0.3.0`, Sprint 4 `v1.0.0`.
+   Sprint 1 `v0.1.0`, Sprint 2 `v0.2.0`, Sprint 3 `v0.3.0`, Sprint 4 `v0.4.0`,
+   tuần chốt `v1.0.0`.
 4. Mô tả gồm story đã xong (kèm AC, Pull Request), kết quả test, hạn chế
    còn lại, cách nâng cấp CSDL (lấy từ `CHANGELOG.md`); đính kèm
    `database/schema.sql` và `database/seed.sql`.
