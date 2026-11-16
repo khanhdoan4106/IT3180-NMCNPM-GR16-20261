@@ -6,8 +6,12 @@ nhóm vẽ trên Figma và lưu ở [docs/design](.).
 
 ## Bố cục
 
-- Toàn ứng dụng dùng bố cục **đầu – thân**: thanh menu trên cùng (logo, các
-  mục chức năng, người dùng, Đăng xuất), màn hình chức năng ở phần thân.
+- Toàn ứng dụng dùng bố cục **trái – đầu – thân**: menu bên trái chia nhóm
+  theo mảng (Hộ gia đình, Khoản thu, Thu phí, Thống kê, Hệ thống); thanh
+  đầu có tên ứng dụng, người đăng nhập và Đăng xuất; màn hình chức năng ở
+  phần thân. Menu trái thay cho thanh menu trên cùng vì 13 mục xếp dọc,
+  mỗi mục một dòng, dễ đọc hơn với người lớn tuổi. Bố cục sẽ chỉnh theo
+  thiết kế Figma (#70).
 - Kích thước theo Bộ bài tập: màn hình chính 1440×1024; đăng nhập và các
   màn hình chức năng 1120×645. Mọi màn phải dùng được ở 1120×645, không mất
   nút hay bị cắt chữ.
