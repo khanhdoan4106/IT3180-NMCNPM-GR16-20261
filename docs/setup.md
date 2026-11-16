@@ -32,6 +32,10 @@ IntelliJ → Open → chọn thư mục repo → Trust Project, chờ tải thư
 3. Sao chép `config/db.properties.example` thành `config/db.properties`,
    điền `user` và `password`. File này nằm trong `.gitignore`, **không
    commit**; không viết mật khẩu vào mã nguồn.
+4. Chạy ứng dụng: mở lớp `com.bluemoon.Launcher` → Run, hoặc Maven →
+   Plugins → javafx → `javafx:run` (dòng lệnh: `mvn javafx:run`). Thư mục
+   chạy là thư mục gốc repo để ứng dụng tìm thấy `config/db.properties`.
+   Không kết nối được CSDL thì ứng dụng báo nguyên nhân, cách sửa rồi thoát.
 
 ## 4. Chạy test
 

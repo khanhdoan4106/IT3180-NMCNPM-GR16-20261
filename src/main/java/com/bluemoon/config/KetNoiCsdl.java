@@ -40,20 +40,21 @@ public final class KetNoiCsdl {
      *
      * @param tep đường dẫn tệp {@code .properties}
      * @return cấu hình có đủ {@code url} và {@code user}
-     * @throws SQLException khi thiếu tệp, không đọc được hoặc thiếu khóa
+     * @throws LoiCauHinh khi thiếu tệp, không đọc được hoặc thiếu khóa
      */
-    public static Properties docCauHinh(Path tep) throws SQLException {
+    public static Properties docCauHinh(Path tep) throws LoiCauHinh {
         Properties cauHinh = new Properties();
         try (InputStream vao = Files.newInputStream(tep)) {
             cauHinh.load(vao);
         } catch (IOException e) {
-            throw new SQLException("Thiếu hoặc không đọc được tệp cấu hình "
+            throw new LoiCauHinh("Thiếu hoặc không đọc được tệp cấu hình "
                     + tep + "; sao chép từ db.properties.example", e);
         }
         for (String khoa : new String[] {"url", "user"}) {
             String giaTri = cauHinh.getProperty(khoa);
             if (giaTri == null || giaTri.isBlank()) {
-                throw new SQLException("Tệp " + tep + " thiếu khóa " + khoa);
+                throw new LoiCauHinh("Tệp " + tep + " thiếu khóa " + khoa,
+                        null);
             }
         }
         return cauHinh;
