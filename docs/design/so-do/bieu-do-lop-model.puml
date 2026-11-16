@@ -1,0 +1,235 @@
+@startuml
+' Biểu đồ lớp tầng model (gói com.bluemoon.model) theo database/schema.sql
+' và mã nguồn trong src/main/java. Lớp chưa có trên main gắn «dự kiến».
+' Tên lớp, thuộc tính theo quy ước đặt tên ở docs/design/kien-truc.md mục 3
+' (tiếng Việt không dấu, camelCase). Kiểu tiền: BigDecimal; ngày: LocalDate;
+' ngày giờ: LocalDateTime. Bản số theo khóa ngoại trong schema.sql.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+hide empty methods
+
+title Biểu đồ lớp tầng model – com.bluemoon.model
+
+package "Tài khoản" {
+  class TaiKhoan <<dự kiến>> {
+    id : int
+    tenDangNhap : String
+    matKhauBam : String
+    hoTen : String
+    vaiTro : VaiTro
+    hoatDong : boolean
+    soDienThoai : String
+    email : String
+    ngayTao : LocalDateTime
+  }
+  enum VaiTro <<dự kiến>> {
+    QUAN_TRI
+    THU_QUY
+  }
+  class NguoiDung <<dự kiến>> {
+    id : int
+    tenDangNhap : String
+    hoTen : String
+    vaiTro : VaiTro
+  }
+  class TaiKhoanMoi <<dự kiến>> {
+    tenDangNhap : String
+    hoTen : String
+    vaiTro : VaiTro
+    matKhauBam : String
+  }
+  class NhatKy <<dự kiến>> {
+    id : int
+    thoiDiem : LocalDateTime
+    thaoTac : String
+    doiTuong : String
+    noiDung : String
+  }
+}
+
+package "Cư trú" {
+  class HoGiaDinh <<dự kiến>> {
+    id : int
+    maCanHo : String
+    loaiCanHo : LoaiCanHo
+    tang : int
+    dienTich : BigDecimal
+    soDienThoai : String
+    ngayChuyenDen : LocalDate
+    trangThai : TrangThaiCuTru
+  }
+  class NhanKhau <<dự kiến>> {
+    id : int
+    hoTen : String
+    ngaySinh : LocalDate
+    gioiTinh : GioiTinh
+    soCccd : String
+    ngayCapCccd : LocalDate
+    noiCapCccd : String
+    biDanh, noiSinh, queQuan : String
+    danToc, tonGiao : String
+    ngheNghiep, noiLamViec : String
+    quanHe : QuanHe
+    trangThai : TrangThaiCuTru
+    loaiCuTru : LoaiCuTru
+    noiThuongTru : String
+    ghiChu : String
+  }
+  class TamTruTamVang <<dự kiến>> {
+    id : int
+    loai : LoaiTamTruTamVang
+    soGiay : String
+    tuNgay : LocalDate
+    denNgay : LocalDate
+    lyDo : String
+    diaChiTamVang : String
+  }
+  class BienDongNhanKhau <<dự kiến>> {
+    id : int
+    loai : LoaiBienDong
+    ngay : LocalDate
+    ghiChu : String
+    thoiDiem : LocalDateTime
+  }
+  class SoLieuCuDan {
+    soHo : int
+    soNhanKhau : int
+  }
+  enum LoaiCanHo <<dự kiến>> {
+    CAN_HO
+    KIOT
+    PENTHOUSE
+  }
+  enum TrangThaiCuTru <<dự kiến>> {
+    DANG_O
+    DA_CHUYEN_DI
+  }
+  enum GioiTinh <<dự kiến>> {
+    NAM
+    NU
+  }
+  enum QuanHe <<dự kiến>> {
+    CHU_HO
+    VO_CHONG
+    CON
+    KHAC
+  }
+  enum LoaiCuTru <<dự kiến>> {
+    THUONG_TRU
+    TAM_TRU
+  }
+  enum LoaiTamTruTamVang <<dự kiến>> {
+    TAM_TRU
+    TAM_VANG
+  }
+  enum LoaiBienDong <<dự kiến>> {
+    CHUYEN_DEN
+    CHUYEN_DI
+    TAM_TRU
+    TAM_VANG
+    DOI_CHU_HO
+  }
+}
+
+package "Khoản thu, thu phí" {
+  class KhoanPhi <<dự kiến>> {
+    id : int
+    ten : String
+    loai : LoaiKhoanPhi
+    cachTinh : CachTinh
+    donGia : BigDecimal
+    tuNgay : LocalDate
+    denNgay : LocalDate
+    trangThai : TrangThaiKhoanPhi
+    ghiChu : String
+  }
+  class DotThu <<dự kiến>> {
+    id : int
+    thang : LocalDate
+    ngayChot : LocalDateTime
+  }
+  class PhaiNop <<dự kiến>> {
+    id : int
+    dienTich : BigDecimal
+    donGia : BigDecimal
+    soTienGoc : BigDecimal
+    soTien : BigDecimal
+    ngaySua : LocalDateTime
+    ghiChu : String
+  }
+  class PhieuThu <<dự kiến>> {
+    id : int
+    nam : int
+    so : int
+    tongTien : BigDecimal
+    hinhThuc : HinhThuc
+    nguoiNop : String
+    thoiDiem : LocalDateTime
+    soLanIn : int
+    daHuy : boolean
+    thoiDiemHuy : LocalDateTime
+    lyDoHuy : String
+    ghiChu : String
+  }
+  class PhieuThuChiTiet <<dự kiến>> {
+    id : int
+    soTien : BigDecimal
+    conHieuLuc : boolean
+  }
+  enum LoaiKhoanPhi <<dự kiến>> {
+    BAT_BUOC
+    TU_NGUYEN
+  }
+  enum CachTinh <<dự kiến>> {
+    THEO_DIEN_TICH
+    CO_DINH_THEO_HO
+    KHONG_CO_DINH
+  }
+  enum TrangThaiKhoanPhi <<dự kiến>> {
+    DANG_THU
+    DA_DONG
+  }
+  enum HinhThuc <<dự kiến>> {
+    TIEN_MAT
+    CHUYEN_KHOAN
+  }
+}
+
+' Quan hệ theo khóa ngoại (bản số phía lớp chứa khóa ngoại: 0..*)
+HoGiaDinh "1" -- "1..*" NhanKhau : gồm >
+NhanKhau "1" -- "0..*" TamTruTamVang : đăng ký >
+HoGiaDinh "1" -- "0..*" BienDongNhanKhau
+NhanKhau "1" -- "0..*" BienDongNhanKhau
+TaiKhoan "1" -- "0..*" BienDongNhanKhau : ghi >
+TaiKhoan "1" -- "0..*" DotThu : chốt >
+DotThu "1" -- "0..*" PhaiNop : gồm >
+HoGiaDinh "1" -- "0..*" PhaiNop : phải nộp >
+KhoanPhi "1" -- "0..*" PhaiNop : áp dụng >
+TaiKhoan "0..1" -- "0..*" PhaiNop : sửa >
+HoGiaDinh "1" -- "0..*" PhieuThu : nộp >
+TaiKhoan "1" -- "0..*" PhieuThu : lập >
+TaiKhoan "0..1" -- "0..*" PhieuThu : hủy >
+PhieuThu "1" *-- "1..*" PhieuThuChiTiet
+KhoanPhi "1" -- "0..*" PhieuThuChiTiet
+PhaiNop "0..1" -- "0..*" PhieuThuChiTiet : thu >
+TaiKhoan "1" -- "0..*" NhatKy : thực hiện >
+
+' Dùng kiểu liệt kê
+TaiKhoan ..> VaiTro
+NguoiDung ..> TaiKhoan : tạo từ
+TaiKhoanMoi ..> VaiTro
+
+legend right
+  <b>Chú giải</b>
+  Không gắn nhãn: lớp đã có trên main (SoLieuCuDan, TS-003).
+  «dự kiến»: lớp chưa có trên main.
+  TaiKhoan, NguoiDung, TaiKhoanMoi, VaiTro đã viết ở
+  PR #81, #82 (US-020, US-021), chưa merge.
+endlegend
+@enduml

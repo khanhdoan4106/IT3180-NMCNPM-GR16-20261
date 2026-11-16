@@ -1,0 +1,207 @@
+@startuml
+' Lược đồ CSDL BlueMoon (ký pháp IE, chân quạ) để xuất ảnh; nguồn chính là
+' luoc-do-csdl.dbml (sinh từ database/schema.sql). PK: khóa chính, FK: khóa
+' ngoại, UQ: duy nhất, «sinh»: cột sinh STORED. CHECK, trigger xem DBML.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam linetype ortho
+hide circle
+hide methods
+hide stereotypes
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+  HeaderBackgroundColor #E2E8F0
+}
+
+title Lược đồ CSDL BlueMoon (12 bảng, MySQL 8)
+
+entity tai_khoan {
+  id : int  PK
+  --
+  * ten_dang_nhap : varchar(50)  UQ
+  * mat_khau_bam : varchar(100)
+  * ho_ten : varchar(100)
+  * vai_tro : vai_tro
+  * hoat_dong : boolean
+  so_dien_thoai : varchar(15)
+  email : varchar(100)
+  * ngay_tao : datetime
+}
+
+entity ho_gia_dinh {
+  id : int  PK
+  --
+  * ma_can_ho : varchar(20)
+  * loai_can_ho : loai_can_ho
+  * tang : tinyint
+  * dien_tich : decimal(6,2)
+  so_dien_thoai : varchar(15)
+  * ngay_chuyen_den : date
+  * trang_thai : trang_thai_cu_tru
+  * ngay_tao : datetime
+  ma_dang_o : varchar(20)  UQ «sinh»
+}
+
+entity nhan_khau {
+  id : int  PK
+  --
+  * ho_id : int  FK
+  * ho_ten : varchar(100)
+  * ngay_sinh : date
+  * gioi_tinh : gioi_tinh
+  bi_danh : varchar(100)
+  noi_sinh : varchar(150)
+  que_quan : varchar(150)
+  dan_toc : varchar(50)
+  ton_giao : varchar(50)
+  nghe_nghiep : varchar(100)
+  noi_lam_viec : varchar(150)
+  so_cccd : char(12)
+  ngay_cap_cccd : date
+  noi_cap_cccd : varchar(150)
+  * quan_he : quan_he
+  * trang_thai : trang_thai_cu_tru
+  * loai_cu_tru : loai_cu_tru
+  noi_thuong_tru : varchar(200)
+  ghi_chu : varchar(500)
+  * ngay_tao : datetime
+  chu_ho_cua : int  UQ «sinh»
+  cccd_dang_o : char(12)  UQ «sinh»
+}
+
+entity tam_tru_tam_vang {
+  id : int  PK
+  --
+  * nhan_khau_id : int  FK
+  * loai : loai_tam_tru_tam_vang
+  so_giay : varchar(30)  UQ
+  * tu_ngay : date
+  * den_ngay : date
+  ly_do : varchar(200)
+  dia_chi_tam_vang : varchar(200)
+  * ngay_tao : datetime
+}
+
+entity bien_dong_nhan_khau {
+  id : int  PK
+  --
+  * ho_id : int  FK
+  * nhan_khau_id : int  FK
+  * loai : loai_bien_dong
+  * ngay : date
+  ghi_chu : varchar(200)
+  * nguoi_ghi : int  FK
+  * thoi_diem : datetime
+}
+
+entity khoan_phi {
+  id : int  PK
+  --
+  * ten : varchar(100)
+  * loai : loai_khoan_phi
+  * cach_tinh : cach_tinh
+  don_gia : decimal(12,2)
+  * tu_ngay : date
+  den_ngay : date
+  * trang_thai : trang_thai_khoan_phi
+  ghi_chu : varchar(255)
+  * ngay_tao : datetime
+}
+
+entity dot_thu {
+  id : int  PK
+  --
+  * thang : date  UQ
+  * nguoi_chot : int  FK
+  * ngay_chot : datetime
+}
+
+entity phai_nop {
+  id : int  PK
+  --
+  * dot_thu_id : int  FK
+  * ho_id : int  FK
+  * khoan_phi_id : int  FK
+  * dien_tich : decimal(6,2)
+  * don_gia : decimal(12,2)
+  * so_tien_goc : decimal(14,2)
+  * so_tien : decimal(14,2)
+  nguoi_sua : int  FK
+  ngay_sua : datetime
+  ghi_chu : varchar(200)
+}
+
+entity bo_dem_bien_lai {
+  nam : smallint  PK
+  --
+  * so_cuoi : int
+}
+
+entity phieu_thu {
+  id : int  PK
+  --
+  * nam : smallint
+  * so : int
+  * ho_id : int  FK
+  * tong_tien : decimal(14,2)
+  hinh_thuc : hinh_thuc
+  * nguoi_thu : int  FK
+  nguoi_nop : varchar(100)
+  * thoi_diem : datetime
+  * so_lan_in : int
+  * da_huy : boolean
+  nguoi_huy : int  FK
+  thoi_diem_huy : datetime
+  ly_do_huy : varchar(200)
+  ghi_chu : varchar(255)
+}
+
+entity phieu_thu_chi_tiet {
+  id : int  PK
+  --
+  * phieu_thu_id : int  FK
+  * khoan_phi_id : int  FK
+  phai_nop_id : int  FK
+  * so_tien : decimal(14,2)
+  * con_hieu_luc : boolean
+  phai_nop_da_thu : int  UQ «sinh»
+}
+
+entity nhat_ky {
+  id : int  PK
+  --
+  * thoi_diem : datetime
+  * tai_khoan_id : int  FK
+  * thao_tac : varchar(30)
+  * doi_tuong : varchar(150)
+  noi_dung : varchar(1000)
+}
+
+ho_gia_dinh ||--o{ nhan_khau : ho_id
+nhan_khau ||--o{ tam_tru_tam_vang : nhan_khau_id
+ho_gia_dinh ||--o{ bien_dong_nhan_khau : ho_id
+nhan_khau ||--o{ bien_dong_nhan_khau : nhan_khau_id
+tai_khoan ||--o{ bien_dong_nhan_khau : nguoi_ghi
+tai_khoan ||--o{ dot_thu : nguoi_chot
+dot_thu ||--o{ phai_nop : dot_thu_id
+ho_gia_dinh ||--o{ phai_nop : ho_id
+khoan_phi ||--o{ phai_nop : khoan_phi_id
+tai_khoan |o--o{ phai_nop : nguoi_sua
+ho_gia_dinh ||--o{ phieu_thu : ho_id
+tai_khoan ||--o{ phieu_thu : nguoi_thu
+tai_khoan |o--o{ phieu_thu : nguoi_huy
+phieu_thu ||--o{ phieu_thu_chi_tiet : phieu_thu_id
+khoan_phi ||--o{ phieu_thu_chi_tiet : khoan_phi_id
+phai_nop |o--o{ phieu_thu_chi_tiet : phai_nop_id
+tai_khoan ||--o{ nhat_ky : tai_khoan_id
+legend right
+  <b>Chú giải</b>
+  ● cột NOT NULL; PK khóa chính; FK khóa ngoại
+  UQ duy nhất; «sinh» cột sinh (AS ... STORED)
+  Chân quạ: một – nhiều; vòng tròn: có thể không có
+  Khóa duy nhất nhiều cột, CHECK, trigger: xem
+  luoc-do-csdl.dbml
+endlegend
+@enduml

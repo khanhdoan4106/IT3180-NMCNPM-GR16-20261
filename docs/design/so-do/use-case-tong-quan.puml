@@ -1,0 +1,95 @@
+@startuml
+' Biểu đồ use case tổng quan BlueMoon v1.0: mỗi UC ứng một user story
+' (riêng UC017 Thu phí gồm US-011 và US-012),
+' mã UC theo bảng UC trong README.md. Không vẽ <<include>> Đăng nhập: mọi UC
+' trừ UC001 có tiền điều kiện "Người dùng đã đăng nhập".
+' Cột trái: UC chỉ Quản trị viên dùng; cột phải: UC cả hai vai trò dùng
+' (nối với tác nhân trừu tượng Người dùng).
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Biểu đồ use case tổng quan – BlueMoon v1.0
+
+actor "Quản trị viên" as QT
+actor "Người dùng" as ND
+note top of ND : {abstract}
+actor "Thủ quỹ" as TQ
+
+rectangle "Phần mềm quản lý thu phí BlueMoon" {
+  usecase "UC002 Tạo tài khoản" as UC002
+  usecase "UC003 Phân quyền tài khoản" as UC003
+  usecase "UC005 Thêm hộ gia đình" as UC005
+  usecase "UC006 Khai báo nhân khẩu" as UC006
+  usecase "UC007 Ghi nhận tạm trú, tạm vắng" as UC007
+  usecase "UC008 Xuất danh sách tạm vắng" as UC008
+  usecase "UC009 Đổi chủ hộ" as UC009
+  usecase "UC010 Xem lịch sử biến động nhân khẩu" as UC010
+  usecase "UC012 Tạo khoản thu tự nguyện" as UC012
+  usecase "UC015 In thông báo phí" as UC015
+  usecase "UC021 Xem tổng thu tháng" as UC021
+  usecase "UC022 Lọc hộ nợ đọng" as UC022
+  usecase "UC024 Thống kê theo khoản thu" as UC024
+  usecase "UC001 Đăng nhập" as UC001
+  usecase "UC004 Cập nhật tài khoản cá nhân" as UC004
+  usecase "UC011 Tính phí theo diện tích" as UC011
+  usecase "UC013 Sửa khoản phải nộp" as UC013
+  usecase "UC014 Chốt công nợ" as UC014
+  usecase "UC016 Tra cứu phí" as UC016
+  usecase "UC017 Thu phí" as UC017
+  usecase "UC018 Ghi nhận đóng góp tự nguyện" as UC018
+  usecase "UC019 In biên lai" as UC019
+  usecase "UC020 Hủy phiếu thu" as UC020
+  usecase "UC023 Xuất báo cáo thu" as UC023
+}
+
+' UC chỉ Quản trị viên dùng
+QT -- UC002
+QT -- UC003
+QT -- UC005
+QT -- UC006
+QT -- UC007
+QT -- UC008
+QT -- UC009
+QT -- UC010
+QT -- UC012
+QT -- UC015
+QT -- UC021
+QT -- UC022
+QT -- UC024
+
+' UC cả hai vai trò dùng: nối với Người dùng
+UC001 -- ND
+UC004 -- ND
+UC011 -- ND
+UC013 -- ND
+UC014 -- ND
+UC016 -- ND
+UC017 -- ND
+UC018 -- ND
+UC019 -- ND
+UC020 -- ND
+UC023 -- ND
+
+' Đường ẩn để xếp hai cột UC cạnh nhau (không phải quan hệ)
+UC002 -[hidden]- UC001
+UC003 -[hidden]- UC004
+UC005 -[hidden]- UC011
+UC006 -[hidden]- UC013
+UC007 -[hidden]- UC014
+UC008 -[hidden]- UC016
+UC009 -[hidden]- UC017
+UC010 -[hidden]- UC018
+UC012 -[hidden]- UC019
+UC015 -[hidden]- UC020
+UC021 -[hidden]- UC023
+
+' Kế thừa: Quản trị viên, Thủ quỹ là Người dùng
+QT --|> ND
+ND <|-- TQ
+@enduml
