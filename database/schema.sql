@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     -- buoc voi nguoi TAM_TRU (ung dung kiem tra).
     loai_cu_tru ENUM('THUONG_TRU', 'TAM_TRU') NOT NULL DEFAULT 'THUONG_TRU',
     noi_thuong_tru VARCHAR(200) NULL,
+    ghi_chu     VARCHAR(500) NULL,
     ngay_tao    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     chu_ho_cua  INT AS (IF(quan_he = 'CHU_HO', ho_id, NULL)) STORED,
     cccd_dang_o CHAR(12) AS
