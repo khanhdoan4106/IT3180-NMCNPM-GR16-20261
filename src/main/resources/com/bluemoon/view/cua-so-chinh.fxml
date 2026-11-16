@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+  Cửa sổ chính, bố cục trái – đầu – thân: menu trái dựng từ ManHinh, thanh
+  đầu ở trên vùng thân, vùng thân nạp màn hình được chọn.
+  Bố cục và màu sẽ chỉnh theo thiết kế Figma (#70).
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.bluemoon.controller.CuaSoChinhController">
+    <left>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    styleClass="menu-trai">
+            <VBox fx:id="menuTrai" styleClass="danh-sach-menu"/>
+        </ScrollPane>
+    </left>
+    <center>
+        <BorderPane>
+            <top>
+                <HBox styleClass="thanh-dau">
+                    <Label text="BlueMoon" styleClass="ten-ung-dung"
+                           onMouseClicked="#moTrangChinh"/>
+                    <Label text="Quản lý chung cư"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <!-- US-021: hiện họ tên và vai trò người đăng nhập. -->
+                    <Label fx:id="nguoiDangNhap"/>
+                </HBox>
+            </top>
+            <center>
+                <StackPane fx:id="vungThan" styleClass="vung-than"/>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

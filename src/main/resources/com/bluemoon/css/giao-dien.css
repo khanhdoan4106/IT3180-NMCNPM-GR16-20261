@@ -1,0 +1,270 @@
+/*
+ * Kiểu dùng chung cho mọi màn hình, theo docs/design/ui.md.
+ * Bảng màu: phương án A (xanh dương). Đổi phương án chỉ cần sửa các biến
+ * ở .root. Bố cục và màu sẽ chỉnh theo thiết kế Figma (#70).
+ * Viền vẽ bằng lớp nền (background-insets) để khi có tiêu điểm viền dày
+ * lên mà ô, nút không đổi kích thước.
+ */
+
+.root {
+    -mau-chinh: #2563EB;
+    -mau-chinh-dam: #1D4ED8;
+    -mau-nen: #F1F5F9;
+    -mau-be-mat: #FFFFFF;
+    -mau-chu: #0F172A;
+    -mau-chu-phu: #526077;
+    -mau-vien: #CBD5E1;
+    -mau-dong-xen-ke: #F8FAFC;
+    -mau-dong-chon: #DBEAFE;
+    -mau-loi: #B91C1C;
+    -mau-thanh-cong: #166534;
+
+    -fx-font-family: "Be Vietnam Pro";
+    -fx-font-size: 16px;
+    -fx-background-color: -mau-nen;
+    /* Bỏ quầng sáng mặc định của JavaFX, tiêu điểm vẽ riêng bên dưới. */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.label {
+    -fx-text-fill: -mau-chu;
+}
+
+.chu-phu {
+    -fx-text-fill: -mau-chu-phu;
+}
+
+.tieu-de-trang {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.tieu-de-khung {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Một trang trong vùng thân. */
+.trang {
+    -fx-spacing: 12;
+}
+
+/* Thông báo: đặt managed theo visible để chỉ chiếm chỗ khi có chữ. */
+.thong-bao-loi {
+    -fx-text-fill: -mau-loi;
+}
+
+.thong-bao-thanh-cong {
+    -fx-text-fill: -mau-thanh-cong;
+}
+
+/* ---- Cửa sổ chính ---- */
+
+.thanh-dau {
+    -fx-background-color: -mau-chinh;
+    -fx-alignment: center-left;
+    -fx-spacing: 12;
+    -fx-padding: 0 24;
+    -fx-min-height: 64;
+}
+
+.thanh-dau .label {
+    -fx-text-fill: white;
+}
+
+.ten-ung-dung {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.menu-trai,
+.menu-trai > .viewport {
+    -fx-background-color: -mau-be-mat;
+}
+
+.menu-trai {
+    -fx-pref-width: 248;
+    -fx-border-color: -mau-vien;
+    -fx-border-width: 0 1 0 0;
+}
+
+.danh-sach-menu {
+    -fx-spacing: 4;
+    -fx-padding: 16 12;
+}
+
+.nhom-menu {
+    -fx-text-fill: -mau-chu-phu;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 12 4 12;
+}
+
+.button.nut-menu {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-font-weight: normal;
+    -fx-padding: 0 12;
+}
+
+.button.nut-menu:hover {
+    -fx-background-color: -mau-nen;
+}
+
+.button.nut-menu:focused {
+    -fx-background-color: -mau-chinh, -mau-be-mat;
+    -fx-background-insets: 0, 2;
+}
+
+.button.nut-menu.dang-mo {
+    -fx-background-color: -mau-chinh-dam;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.vung-than {
+    -fx-padding: 24;
+    -fx-alignment: top-left;
+}
+
+/* ---- Thẻ số liệu (trang chính) ---- */
+
+.hang-the {
+    -fx-spacing: 16;
+}
+
+.the-so-lieu {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 20 24;
+    -fx-spacing: 4;
+    -fx-min-width: 240;
+}
+
+.so-lon {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+/* ---- Nút: nút không có kiểu riêng là nút phụ ---- */
+
+.button {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-text-fill: -mau-chu;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-min-height: 44;
+    -fx-padding: 0 20;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -mau-vien, -mau-nen;
+}
+
+.button:focused {
+    -fx-background-color: -mau-chinh, -mau-be-mat;
+    -fx-background-insets: 0, 2;
+}
+
+.button.nut-chinh {
+    -fx-background-color: -mau-chinh;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+}
+
+.button.nut-chinh:hover {
+    -fx-background-color: -mau-chinh-dam;
+}
+
+/* Tiêu điểm nút chính, nút nguy hiểm: vòng ngoài cách nút 2 px. */
+.button.nut-chinh:focused {
+    -fx-background-color: -mau-chinh, -mau-be-mat, -mau-chinh;
+    -fx-background-insets: -4, -2, 0;
+    -fx-background-radius: 12, 10, 8;
+}
+
+.button.nut-nguy-hiem {
+    -fx-background-color: -mau-loi, -mau-be-mat;
+    -fx-text-fill: -mau-loi;
+}
+
+.button.nut-nguy-hiem:focused {
+    -fx-background-color: -mau-loi, -mau-be-mat, -mau-loi, -mau-be-mat;
+    -fx-background-insets: -4, -2, 0, 1;
+    -fx-background-radius: 12, 10, 8, 7;
+}
+
+/* ---- Ô nhập, danh sách chọn, ô ngày ---- */
+
+.text-field,
+.combo-box,
+.date-picker {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-text-fill: -mau-chu;
+    -fx-prompt-text-fill: -mau-chu-phu;
+    -fx-font-size: 16px;
+    -fx-min-height: 40;
+}
+
+.text-field:focused,
+.combo-box:focused,
+.date-picker:focused {
+    -fx-background-color: -mau-chinh, -mau-be-mat;
+    -fx-background-insets: 0, 2;
+}
+
+/* ---- Bảng ---- */
+
+.table-view {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+}
+
+.table-view:focused {
+    -fx-background-color: -mau-chinh, -mau-be-mat;
+    -fx-background-insets: 0, 2;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: -mau-nen;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -mau-chu-phu;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-cell-size: 40;
+    -fx-background-color: -mau-be-mat;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -mau-dong-xen-ke;
+}
+
+/* Dòng chọn: vạch màu chính bên trái. */
+.table-row-cell:selected {
+    -fx-background-color: -mau-chinh, -mau-dong-chon;
+    -fx-background-insets: 0, 0 0 0 4;
+}
+
+.table-row-cell .table-cell {
+    -fx-text-fill: -mau-chu;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -mau-chu-phu;
+}

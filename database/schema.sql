@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tai_khoan (
     hoat_dong     BOOLEAN      NOT NULL DEFAULT TRUE,
     -- US-023: so dien thoai lien he, khong bat buoc
     so_dien_thoai VARCHAR(15)  NULL,
+    email         VARCHAR(100) NULL,
     ngay_tao      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -51,13 +52,24 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     ho_ten      VARCHAR(100) NOT NULL,
     ngay_sinh   DATE         NOT NULL,
     gioi_tinh   ENUM('NAM', 'NU') NOT NULL,
+    -- Ly lich bo sung, tuy chon (bao cao nhan khau, AC-014)
+    bi_danh      VARCHAR(100) NULL,
+    noi_sinh     VARCHAR(150) NULL,
+    que_quan     VARCHAR(150) NULL,
+    dan_toc      VARCHAR(50)  NULL,
+    ton_giao     VARCHAR(50)  NULL,
+    nghe_nghiep  VARCHAR(100) NULL,
+    noi_lam_viec VARCHAR(150) NULL,
     so_cccd     CHAR(12)     NULL,
+    ngay_cap_cccd DATE         NULL,
+    noi_cap_cccd  VARCHAR(150) NULL,
     quan_he     ENUM('CHU_HO', 'VO_CHONG', 'CON', 'KHAC') NOT NULL,
     trang_thai  ENUM('DANG_O', 'DA_CHUYEN_DI') NOT NULL DEFAULT 'DANG_O',
     -- US-003: loai dang ky cu tru, khong doi theo ngay. noi_thuong_tru bat
     -- buoc voi nguoi TAM_TRU (ung dung kiem tra).
     loai_cu_tru ENUM('THUONG_TRU', 'TAM_TRU') NOT NULL DEFAULT 'THUONG_TRU',
     noi_thuong_tru VARCHAR(200) NULL,
+    ghi_chu     VARCHAR(500) NULL,
     ngay_tao    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     chu_ho_cua  INT AS (IF(quan_he = 'CHU_HO', ho_id, NULL)) STORED,
     cccd_dang_o CHAR(12) AS
@@ -65,6 +77,10 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     CONSTRAINT fk_nk_ho FOREIGN KEY (ho_id) REFERENCES ho_gia_dinh (id),
     CONSTRAINT uq_nk_cccd_dang_o UNIQUE (cccd_dang_o),
     CONSTRAINT uq_nk_chu_ho UNIQUE (chu_ho_cua),
+    -- Chua co so CCCD thi khong co ngay cap, noi cap
+    CONSTRAINT chk_nk_cap_cccd CHECK (
+        so_cccd IS NOT NULL
+        OR (ngay_cap_cccd IS NULL AND noi_cap_cccd IS NULL)),
     INDEX idx_nk_so_cccd (so_cccd),
     INDEX idx_nk_ho_ten (ho_ten)
 );
@@ -77,13 +93,18 @@ CREATE TABLE IF NOT EXISTS tam_tru_tam_vang (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     nhan_khau_id INT          NOT NULL,
     loai         ENUM('TAM_TRU', 'TAM_VANG') NOT NULL,
+    so_giay      VARCHAR(30)  NULL UNIQUE,
     tu_ngay      DATE         NOT NULL,
     den_ngay     DATE         NOT NULL,
     ly_do        VARCHAR(200) NULL,
+    -- Noi den khi tam vang; de trong voi dot tam tru
+    dia_chi_tam_vang VARCHAR(200) NULL,
     ngay_tao     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ttv_nhan_khau FOREIGN KEY (nhan_khau_id)
         REFERENCES nhan_khau (id),
     CONSTRAINT chk_ttv_ngay CHECK (den_ngay >= tu_ngay),
+    CONSTRAINT chk_ttv_dia_chi CHECK (
+        loai = 'TAM_VANG' OR dia_chi_tam_vang IS NULL),
     INDEX idx_ttv_nhan_khau (nhan_khau_id, tu_ngay)
 );
 
@@ -126,6 +147,7 @@ CREATE TABLE IF NOT EXISTS khoan_phi (
     tu_ngay    DATE          NOT NULL,
     den_ngay   DATE          NULL,
     trang_thai ENUM('DANG_THU', 'DA_DONG') NOT NULL DEFAULT 'DANG_THU',
+    ghi_chu    VARCHAR(255)  NULL,
     ngay_tao   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_kp_ten_dot UNIQUE (ten, tu_ngay),
     CONSTRAINT chk_kp_don_gia CHECK (
@@ -198,12 +220,15 @@ CREATE TABLE IF NOT EXISTS phieu_thu (
     tong_tien     DECIMAL(14, 2) NOT NULL,
     hinh_thuc     ENUM('TIEN_MAT', 'CHUYEN_KHOAN') NULL,
     nguoi_thu     INT            NOT NULL,
+    -- Ho ten nguoi nop tien, co the khac chu ho
+    nguoi_nop     VARCHAR(100)   NULL,
     thoi_diem     DATETIME       NOT NULL,
     so_lan_in     INT            NOT NULL DEFAULT 0,
     da_huy        BOOLEAN        NOT NULL DEFAULT FALSE,
     nguoi_huy     INT            NULL,
     thoi_diem_huy DATETIME       NULL,
     ly_do_huy     VARCHAR(200)   NULL,
+    ghi_chu       VARCHAR(255)   NULL,
     CONSTRAINT fk_pt_ho FOREIGN KEY (ho_id) REFERENCES ho_gia_dinh (id),
     CONSTRAINT fk_pt_nguoi_thu FOREIGN KEY (nguoi_thu)
         REFERENCES tai_khoan (id),
