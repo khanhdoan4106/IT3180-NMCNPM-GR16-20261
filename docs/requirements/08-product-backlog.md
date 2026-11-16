@@ -76,7 +76,7 @@ Story Point là ước lượng ban đầu, chốt lại bằng Planning Poker (
 | US-023 | Đổi mật khẩu và cập nhật thông tin cá nhân | Should | | | Chưa bắt đầu | 3 |
 | TS-001 | Sao lưu dữ liệu MySQL định kỳ (hàng ngày/tuần) để tránh mất dữ liệu | Should | | | Chưa bắt đầu | 5 |
 | TS-002 | Ghi nhật ký mọi thao tác thay đổi dữ liệu quan trọng | Should | | | Chưa bắt đầu | 5 |
-| TS-003 | Thiết lập ứng dụng Java máy tính để bàn kết nối CSDL MySQL tập trung | Must | | | Chưa bắt đầu | 5 |
+| TS-003 | Thiết lập ứng dụng Java máy tính để bàn kết nối CSDL MySQL tập trung | Must | Sprint 1 | TV1 Khánh | Hoàn thành | 5 |
 | TS-004 | Rà soát giao diện dễ dùng cho người lớn tuổi (chữ rõ, ít bước thao tác) | Could | | | Chưa bắt đầu | 2 |
 
 ## EPIC-06: Phí gửi xe (v2.0, chưa làm ở v1.0)

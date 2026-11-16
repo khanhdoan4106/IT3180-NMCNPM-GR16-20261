@@ -130,6 +130,26 @@
     -fx-alignment: top-left;
 }
 
+/* ---- Thẻ số liệu (trang chính) ---- */
+
+.hang-the {
+    -fx-spacing: 16;
+}
+
+.the-so-lieu {
+    -fx-background-color: -mau-vien, -mau-be-mat;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-padding: 20 24;
+    -fx-spacing: 4;
+    -fx-min-width: 240;
+}
+
+.so-lon {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
 /* ---- Nút: nút không có kiểu riêng là nút phụ ---- */
 
 .button {

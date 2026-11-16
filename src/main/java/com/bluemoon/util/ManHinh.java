@@ -12,7 +12,7 @@ package com.bluemoon.util;
 public enum ManHinh {
 
     /** Trang chính, mở khi vào ứng dụng hoặc bấm tên ứng dụng. */
-    TRANG_CHINH("Trang chính", null, null),
+    TRANG_CHINH("Trang chính", null, "trang-chinh.fxml"),
 
     // US-001
     HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, null),
