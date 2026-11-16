@@ -36,6 +36,8 @@ IntelliJ → Open → chọn thư mục repo → Trust Project, chờ tải thư
    Plugins → javafx → `javafx:run` (dòng lệnh: `mvn javafx:run`). Thư mục
    chạy là thư mục gốc repo để ứng dụng tìm thấy `config/db.properties`.
    Không kết nối được CSDL thì ứng dụng báo nguyên nhân, cách sửa rồi thoát.
+   Kết nối được thì hiện màn đăng nhập: dùng tài khoản mẫu `admin` /
+   `Admin@123` trong `seed.sql` (Quản trị viên).
 
 ## 4. Chạy test
 

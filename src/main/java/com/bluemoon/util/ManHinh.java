@@ -41,7 +41,7 @@ public enum ManHinh {
     THONG_KE_KHOAN_THU("Thống kê theo khoản thu", NhomMenu.THONG_KE, null),
 
     // US-020, US-022, US-023
-    TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, null),
+    TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, "tai-khoan.fxml"),
     // TS-002
     NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, null);
 

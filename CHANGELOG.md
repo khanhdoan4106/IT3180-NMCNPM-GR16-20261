@@ -7,6 +7,17 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-021: ứng dụng mở lên là màn đăng nhập; đăng nhập đúng thì vào cửa
+  sổ chính, thanh đầu hiện họ tên, vai trò và nút Đăng xuất. Sai tên hay
+  sai mật khẩu đều báo chung "Tên đăng nhập hoặc mật khẩu không đúng.";
+  tài khoản bị khóa không đăng nhập được. Chưa đăng nhập thì không mở được
+  màn hình chức năng nào (AC-059). Người đang đăng nhập giữ ở
+  `PhienDangNhap` để US-022 phân quyền.
+- US-020: màn hình Tài khoản (menu Hệ thống) để Quản trị viên tạo tài
+  khoản, chọn vai trò Quản trị viên hoặc Thủ quỹ; báo trùng tên đăng nhập
+  (không phân biệt chữ hoa, chữ thường) và mật khẩu dưới 8 ký tự ngay dưới
+  ô sai. Mật khẩu băm BCrypt cost 12 (thư viện `at.favre.lib:bcrypt`),
+  cùng chuẩn với tài khoản admin trong `seed.sql`.
 - TS-003: lớp khởi động `Launcher` và `App`; khi mở, ứng dụng thử kết nối
   MySQL, lỗi thì báo nguyên nhân và cách sửa bằng tiếng Việt rồi thoát
   (AC-070). Lỗi CSDL dùng chung lớp `LoiCsdl`.
