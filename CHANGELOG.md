@@ -4,6 +4,8 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/).
 
 ## [Chưa phát hành]
+- Thêm màn hình quản lý hộ gia đình: xem danh sách, tìm kiếm và thêm hộ mới kèm chủ hộ (US-001, #7).
+
 
 ### Thêm
 
