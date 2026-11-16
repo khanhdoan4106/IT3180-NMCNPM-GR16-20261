@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Trang chính: mẫu View → Controller → Service → DAO → MySQL. -->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bluemoon.controller.TrangChinhController"
+      styleClass="trang">
+    <Label text="Trang chính" styleClass="tieu-de-trang"/>
+    <HBox styleClass="hang-the">
+        <VBox styleClass="the-so-lieu">
+            <Label fx:id="soHo" styleClass="so-lon"/>
+            <Label text="Hộ đang ở" styleClass="chu-phu"/>
+        </VBox>
+        <VBox styleClass="the-so-lieu">
+            <Label fx:id="soNhanKhau" styleClass="so-lon"/>
+            <Label text="Nhân khẩu đang ở" styleClass="chu-phu"/>
+        </VBox>
+    </HBox>
+    <Label fx:id="thongBaoLoi" styleClass="thong-bao-loi" wrapText="true"
+           visible="false"/>
+    <Button text="Tải lại" onAction="#taiLai"/>
+</VBox>

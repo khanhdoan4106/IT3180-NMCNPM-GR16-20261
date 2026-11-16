@@ -57,8 +57,15 @@ GRANT SELECT, INSERT, UPDATE ON bluemoon_test.* TO 'bluemoon'@'localhost';
 $env:BLUEMOON_DB_URL = "jdbc:mysql://localhost:3306/bluemoon_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8"
 $env:BLUEMOON_DB_USER = "bluemoon"
 $env:BLUEMOON_DB_PASSWORD = "mat_khau_cua_ban"
+# User được tạo bảng (thường là root): test xóa và tạo lại bảng
+$env:BLUEMOON_DB_ADMIN_USER = "root"
+$env:BLUEMOON_DB_ADMIN_PASSWORD = "mat_khau_root"
 mvn verify -Pmysql
 ```
+
+Trước mỗi test, bảng của `bluemoon_test` được xóa và tạo lại theo
+`database/schema.sql` bằng user quản trị; test đọc, ghi bằng user ứng
+dụng như khi chạy thật.
 
 `mvn verify` không có `-Pmysql` không chạy kiểm thử tích hợp. Trên GitHub,
 workflow `CI` có hai job chạy cho mọi Pull Request: `build` (`mvn -B

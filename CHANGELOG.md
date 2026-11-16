@@ -14,3 +14,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   mục chưa có màn hình mở trang "Chức năng đang được xây dựng". Danh sách
   màn hình đăng ký một chỗ ở `ManHinh`; kiểu dùng chung `giao-dien.css`
   theo `docs/design/ui.md`.
+- TS-003: trang chính hiện số hộ và số nhân khẩu đang ở, nút "Tải lại";
+  là mẫu View → Controller → Service → DAO → MySQL cho cả nhóm. Kiểm thử
+  tích hợp chứng minh dữ liệu một máy ghi thì máy khác thấy (AC-071).
+  Tài liệu `docs/design/kien-truc.md`.
