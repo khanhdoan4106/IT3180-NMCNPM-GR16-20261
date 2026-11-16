@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS khoan_phi (
     tu_ngay    DATE          NOT NULL,
     den_ngay   DATE          NULL,
     trang_thai ENUM('DANG_THU', 'DA_DONG') NOT NULL DEFAULT 'DANG_THU',
+    ghi_chu    VARCHAR(255)  NULL,
     ngay_tao   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_kp_ten_dot UNIQUE (ten, tu_ngay),
     CONSTRAINT chk_kp_don_gia CHECK (
