@@ -1,0 +1,68 @@
+@startuml
+' DFD mức ngữ cảnh (mức 0) BlueMoon v1.0, ký hiệu Gane-Sarson vẽ xấp xỉ.
+' Luồng vào, ra ở đây phải có đủ, cùng tên, ở dfd-muc-1.puml (cân bằng).
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam ArrowFontSize 12
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+skinparam rectangle<<ngoai>> {
+  BackgroundColor #E2E8F0
+  BorderThickness 2
+}
+skinparam rectangle<<tien_trinh>> {
+  BackgroundColor #F8FAFC
+  RoundCorner 25
+}
+hide stereotype
+
+title DFD mức ngữ cảnh – BlueMoon v1.0
+
+rectangle "Quản trị viên" <<ngoai>> as QT
+rectangle "0\n--\nQuản lý thu phí\nchung cư BlueMoon" <<tien_trinh>> as P0
+rectangle "Thủ quỹ" <<ngoai>> as TQ
+
+QT --> P0 : Thông tin đăng nhập
+QT --> P0 : Thông tin tài khoản, phân quyền
+QT --> P0 : Yêu cầu xem nhật ký
+QT --> P0 : Thông tin hộ, nhân khẩu
+QT --> P0 : Đợt tạm trú, tạm vắng
+QT --> P0 : Yêu cầu báo cáo cư trú
+QT --> P0 : Khoản thu tự nguyện
+QT --> P0 : Yêu cầu thông báo phí
+QT --> P0 : Yêu cầu thống kê
+P0 --> QT : Kết quả đăng nhập
+P0 --> QT : Nhật ký thao tác
+P0 --> QT : Danh sách tạm vắng, lịch sử biến động
+P0 --> QT : Thông báo phí
+P0 --> QT : Báo cáo thống kê
+
+P0 <-- TQ : Thông tin đăng nhập
+P0 <-- TQ : Thông tin cá nhân
+P0 <-- TQ : Đơn giá phí
+P0 <-- TQ : Yêu cầu chốt công nợ
+P0 <-- TQ : Số tiền phải nộp đã sửa
+P0 <-- TQ : Mã phòng
+P0 <-- TQ : Thông tin thu tiền
+P0 <-- TQ : Yêu cầu hủy phiếu
+P0 <-- TQ : Yêu cầu xuất báo cáo
+P0 --> TQ : Kết quả đăng nhập
+P0 --> TQ : Công nợ của hộ
+P0 --> TQ : Biên lai
+P0 --> TQ : Báo cáo thu Excel
+
+legend right
+  <b>Chú giải (Gane-Sarson, vẽ xấp xỉ)</b>
+  Hình chữ nhật nền xám: thực thể ngoài
+  Hình chữ nhật bo góc, có số: tiến trình
+  Mũi tên có nhãn: luồng dữ liệu
+  ----
+  Quản trị viên dùng được mọi chức năng
+  (AC-061); các luồng dùng chung với Thủ
+  quỹ chỉ vẽ ở Thủ quỹ cho dễ đọc.
+endlegend
+@enduml

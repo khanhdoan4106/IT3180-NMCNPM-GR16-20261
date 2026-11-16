@@ -1,0 +1,296 @@
+// Lược đồ CSDL BlueMoon (MySQL 8), sinh từ database/schema.sql: 12 bảng.
+// Mở trên https://dbdiagram.io (dán toàn bộ tệp). Ảnh: luoc-do-csdl.png
+// (xuất từ luoc-do-csdl.puml). Sửa schema.sql thì sửa tệp này cùng commit.
+// Cột sinh (AS ... STORED) và CHECK ghi ở note vì DBML không có cú
+// pháp riêng cho chúng.
+
+Project bluemoon {
+  database_type: 'MySQL'
+  Note: 'CSDL bluemoon, utf8mb4_unicode_ci. Không dùng ON DELETE CASCADE; hộ, nhân khẩu, tài khoản không xóa, chỉ đổi trạng thái.'
+}
+
+Enum vai_tro {
+  QUAN_TRI
+  THU_QUY
+}
+
+Enum loai_can_ho {
+  CAN_HO
+  KIOT
+  PENTHOUSE
+}
+
+Enum trang_thai_cu_tru {
+  DANG_O
+  DA_CHUYEN_DI
+}
+
+Enum gioi_tinh {
+  NAM
+  NU
+}
+
+Enum quan_he {
+  CHU_HO
+  VO_CHONG
+  CON
+  KHAC
+}
+
+Enum loai_cu_tru {
+  THUONG_TRU
+  TAM_TRU
+}
+
+Enum loai_tam_tru_tam_vang {
+  TAM_TRU
+  TAM_VANG
+}
+
+Enum loai_bien_dong {
+  CHUYEN_DEN
+  CHUYEN_DI
+  TAM_TRU
+  TAM_VANG
+  DOI_CHU_HO
+}
+
+Enum loai_khoan_phi {
+  BAT_BUOC
+  TU_NGUYEN
+}
+
+Enum cach_tinh {
+  THEO_DIEN_TICH
+  CO_DINH_THEO_HO
+  KHONG_CO_DINH
+}
+
+Enum trang_thai_khoan_phi {
+  DANG_THU
+  DA_DONG
+}
+
+Enum hinh_thuc {
+  TIEN_MAT
+  CHUYEN_KHOAN
+}
+
+Table tai_khoan {
+  id int [pk, increment]
+  ten_dang_nhap varchar(50) [not null, unique]
+  mat_khau_bam varchar(100) [not null]
+  ho_ten varchar(100) [not null]
+  vai_tro vai_tro [not null]
+  hoat_dong boolean [not null, default: true]
+  so_dien_thoai varchar(15) [null]
+  email varchar(100) [null]
+  ngay_tao datetime [not null, default: `CURRENT_TIMESTAMP`]
+  Note: 'US-020, US-021, US-023: đăng ký, đăng nhập, đổi mật khẩu.'
+}
+
+Table ho_gia_dinh {
+  id int [pk, increment]
+  ma_can_ho varchar(20) [not null]
+  loai_can_ho loai_can_ho [not null]
+  tang tinyint [not null, note: 'CHECK chk_ho_tang: tang BETWEEN 1 AND 30']
+  dien_tich decimal(6,2) [not null, note: 'CHECK chk_ho_dien_tich: dien_tich > 0']
+  so_dien_thoai varchar(15) [null]
+  ngay_chuyen_den date [not null]
+  trang_thai trang_thai_cu_tru [not null, default: 'DANG_O']
+  ngay_tao datetime [not null, default: `CURRENT_TIMESTAMP`]
+  ma_dang_o varchar(20) [unique, note: 'Cột sinh: IF(trang_thai = DANG_O, ma_can_ho, NULL) STORED; UNIQUE uq_ho_ma_dang_o']
+
+  indexes {
+    ma_can_ho [name: 'idx_ho_ma_can_ho']
+  }
+  Note: 'US-001. Hộ chuyển đi chỉ đổi trang_thai. Mã căn hộ chỉ duy nhất trong các hộ DANG_O.'
+}
+
+Table nhan_khau {
+  id int [pk, increment]
+  ho_id int [not null, ref: > ho_gia_dinh.id]
+  ho_ten varchar(100) [not null]
+  ngay_sinh date [not null]
+  gioi_tinh gioi_tinh [not null]
+  bi_danh varchar(100) [null]
+  noi_sinh varchar(150) [null]
+  que_quan varchar(150) [null]
+  dan_toc varchar(50) [null]
+  ton_giao varchar(50) [null]
+  nghe_nghiep varchar(100) [null]
+  noi_lam_viec varchar(150) [null]
+  so_cccd char(12) [null, note: 'NULL chỉ khi dưới 14 tuổi (ứng dụng kiểm tra)']
+  ngay_cap_cccd date [null]
+  noi_cap_cccd varchar(150) [null]
+  quan_he quan_he [not null]
+  trang_thai trang_thai_cu_tru [not null, default: 'DANG_O']
+  loai_cu_tru loai_cu_tru [not null, default: 'THUONG_TRU']
+  noi_thuong_tru varchar(200) [null, note: 'Bắt buộc với người TAM_TRU (ứng dụng kiểm tra)']
+  ghi_chu varchar(500) [null]
+  ngay_tao datetime [not null, default: `CURRENT_TIMESTAMP`]
+  chu_ho_cua int [unique, note: 'Cột sinh: IF(quan_he = CHU_HO, ho_id, NULL) STORED; UNIQUE uq_nk_chu_ho (mỗi hộ tối đa một chủ hộ)']
+  cccd_dang_o char(12) [unique, note: 'Cột sinh: IF(trang_thai = DANG_O, so_cccd, NULL) STORED; UNIQUE uq_nk_cccd_dang_o']
+
+  indexes {
+    so_cccd [name: 'idx_nk_so_cccd']
+    ho_ten [name: 'idx_nk_ho_ten']
+  }
+  Note: '''US-002, US-003. FK fk_nk_ho.
+CHECK chk_nk_cap_cccd: so_cccd IS NOT NULL OR (ngay_cap_cccd IS NULL AND noi_cap_cccd IS NULL).'''
+}
+
+Table tam_tru_tam_vang {
+  id int [pk, increment]
+  nhan_khau_id int [not null, ref: > nhan_khau.id]
+  loai loai_tam_tru_tam_vang [not null]
+  so_giay varchar(30) [null, unique]
+  tu_ngay date [not null]
+  den_ngay date [not null]
+  ly_do varchar(200) [null]
+  dia_chi_tam_vang varchar(200) [null, note: 'Nơi đến khi tạm vắng; trống với đợt tạm trú']
+  ngay_tao datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (nhan_khau_id, tu_ngay) [name: 'idx_ttv_nhan_khau']
+  }
+  Note: '''US-003. FK fk_ttv_nhan_khau.
+CHECK chk_ttv_ngay: den_ngay >= tu_ngay.
+CHECK chk_ttv_dia_chi: loai = TAM_VANG OR dia_chi_tam_vang IS NULL.
+Ứng dụng chặn các đợt của cùng một người chồng ngày nhau.'''
+}
+
+Table bien_dong_nhan_khau {
+  id int [pk, increment]
+  ho_id int [not null, ref: > ho_gia_dinh.id]
+  nhan_khau_id int [not null, ref: > nhan_khau.id]
+  loai loai_bien_dong [not null]
+  ngay date [not null]
+  ghi_chu varchar(200) [null]
+  nguoi_ghi int [not null, ref: > tai_khoan.id]
+  thoi_diem datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (ho_id, ngay) [name: 'idx_bd_ho']
+    ngay [name: 'idx_bd_ngay']
+  }
+  Note: 'US-027. FK fk_bd_ho, fk_bd_nhan_khau, fk_bd_nguoi_ghi. Chỉ thêm, không sửa, không xóa.'
+}
+
+Table khoan_phi {
+  id int [pk, increment]
+  ten varchar(100) [not null]
+  loai loai_khoan_phi [not null]
+  cach_tinh cach_tinh [not null]
+  don_gia decimal(12,2) [null]
+  tu_ngay date [not null]
+  den_ngay date [null]
+  trang_thai trang_thai_khoan_phi [not null, default: 'DANG_THU']
+  ghi_chu varchar(255) [null]
+  ngay_tao datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (ten, tu_ngay) [unique, name: 'uq_kp_ten_dot']
+  }
+  Note: '''US-005, US-006.
+CHECK chk_kp_don_gia: (cach_tinh = KHONG_CO_DINH AND don_gia IS NULL) OR (cach_tinh <> KHONG_CO_DINH AND don_gia IS NOT NULL AND don_gia > 0).
+CHECK chk_kp_bat_buoc: loai = TU_NGUYEN OR cach_tinh = THEO_DIEN_TICH.
+CHECK chk_kp_ngay: (loai = BAT_BUOC OR den_ngay IS NOT NULL) AND (den_ngay IS NULL OR den_ngay >= tu_ngay).'''
+}
+
+Table dot_thu {
+  id int [pk, increment]
+  thang date [not null, unique, note: 'UNIQUE uq_dt_thang; CHECK chk_dt_ngay_dau_thang: DAY(thang) = 1']
+  nguoi_chot int [not null, ref: > tai_khoan.id]
+  ngay_chot datetime [not null, default: `CURRENT_TIMESTAMP`]
+  Note: 'US-009: mỗi tháng một đợt chốt công nợ. FK fk_dt_nguoi_chot.'
+}
+
+Table phai_nop {
+  id int [pk, increment]
+  dot_thu_id int [not null, ref: > dot_thu.id]
+  ho_id int [not null, ref: > ho_gia_dinh.id]
+  khoan_phi_id int [not null, ref: > khoan_phi.id]
+  dien_tich decimal(6,2) [not null]
+  don_gia decimal(12,2) [not null]
+  so_tien_goc decimal(14,2) [not null]
+  so_tien decimal(14,2) [not null]
+  nguoi_sua int [null, ref: > tai_khoan.id]
+  ngay_sua datetime [null]
+  ghi_chu varchar(200) [null]
+
+  indexes {
+    (dot_thu_id, ho_id, khoan_phi_id) [unique, name: 'uq_pn_dot_ho_khoan']
+    (ho_id, dot_thu_id) [name: 'idx_pn_ho']
+  }
+  Note: '''US-009, US-008. FK fk_pn_dot_thu, fk_pn_ho, fk_pn_khoan_phi, fk_pn_nguoi_sua.
+CHECK chk_pn_so_tien: so_tien >= 0 AND so_tien_goc >= 0.'''
+}
+
+Table bo_dem_bien_lai {
+  nam smallint [pk]
+  so_cuoi int [not null, default: 0, note: 'CHECK chk_bdbl_so_cuoi: so_cuoi BETWEEN 0 AND 99999']
+  Note: 'AC-039: bộ đếm số biên lai theo năm, khóa dòng trong giao dịch lưu phiếu.'
+}
+
+Table phieu_thu {
+  id int [pk, increment]
+  nam smallint [not null]
+  so int [not null]
+  ho_id int [not null, ref: > ho_gia_dinh.id]
+  tong_tien decimal(14,2) [not null]
+  hinh_thuc hinh_thuc [null, note: 'Trống chỉ khi phiếu không thu tiền (tong_tien = 0)']
+  nguoi_thu int [not null, ref: > tai_khoan.id]
+  nguoi_nop varchar(100) [null]
+  thoi_diem datetime [not null]
+  so_lan_in int [not null, default: 0]
+  da_huy boolean [not null, default: false]
+  nguoi_huy int [null, ref: > tai_khoan.id]
+  thoi_diem_huy datetime [null]
+  ly_do_huy varchar(200) [null]
+  ghi_chu varchar(255) [null]
+
+  indexes {
+    (nam, so) [unique, name: 'uq_pt_so_bien_lai']
+    (ho_id, thoi_diem) [name: 'idx_pt_ho']
+    thoi_diem [name: 'idx_pt_thoi_diem']
+  }
+  Note: '''US-010 – US-014, US-007. Số biên lai PT-<nam>-<so 5 chữ số>. FK fk_pt_ho, fk_pt_nguoi_thu, fk_pt_nguoi_huy.
+CHECK chk_pt_so: so BETWEEN 1 AND 99999.
+CHECK chk_pt_nam: nam = YEAR(thoi_diem).
+CHECK chk_pt_tong_tien: tong_tien >= 0.
+CHECK chk_pt_hinh_thuc: tong_tien = 0 OR hinh_thuc IS NOT NULL.
+CHECK chk_pt_so_lan_in: so_lan_in >= 0.
+CHECK chk_pt_huy: chưa hủy thì nguoi_huy, thoi_diem_huy, ly_do_huy đều NULL; đã hủy thì cả ba có giá trị và ly_do_huy khác rỗng.'''
+}
+
+Table phieu_thu_chi_tiet {
+  id int [pk, increment]
+  phieu_thu_id int [not null, ref: > phieu_thu.id]
+  khoan_phi_id int [not null, ref: > khoan_phi.id]
+  phai_nop_id int [null, ref: > phai_nop.id, note: 'Trống với dòng đóng góp tự nguyện']
+  so_tien decimal(14,2) [not null, note: 'CHECK chk_ptct_so_tien: so_tien >= 0']
+  con_hieu_luc boolean [not null, default: true, note: 'Chép ngược da_huy của phiếu, đổi trong cùng giao dịch hủy']
+  phai_nop_da_thu int [unique, note: 'Cột sinh: IF(con_hieu_luc, phai_nop_id, NULL) STORED; UNIQUE uq_ptct_phai_nop_da_thu (chặn thu trùng)']
+
+  indexes {
+    khoan_phi_id [name: 'idx_ptct_khoan']
+  }
+  Note: 'Mỗi dòng là một khoản phải nộp được thu hoặc một lần đóng góp tự nguyện. FK fk_ptct_phieu, fk_ptct_khoan, fk_ptct_phai_nop.'
+}
+
+Table nhat_ky {
+  id int [pk, increment]
+  thoi_diem datetime [not null, default: `CURRENT_TIMESTAMP`]
+  tai_khoan_id int [not null, ref: > tai_khoan.id]
+  thao_tac varchar(30) [not null]
+  doi_tuong varchar(150) [not null]
+  noi_dung varchar(1000) [null]
+
+  indexes {
+    thoi_diem [name: 'idx_nky_thoi_diem']
+  }
+  Note: '''TS-002. FK fk_nky_tai_khoan.
+CHECK chk_nky_thao_tac: thao_tac IN (LAP_PHIEU_THU, HUY_PHIEU_THU, SUA_SO_TIEN_PHAI_NOP, TAO_KHOAN_TU_NGUYEN, SUA_DON_GIA, CHOT_CONG_NO, THEM_HO, SUA_HO, HO_CHUYEN_DI, THEM_NHAN_KHAU, SUA_NHAN_KHAU, NHAN_KHAU_CHUYEN_DI, DOI_CHU_HO, GHI_TAM_TRU_TAM_VANG, TAO_TAI_KHOAN, DOI_VAI_TRO, KHOA_TAI_KHOAN, MO_KHOA_TAI_KHOAN, DAT_LAI_MAT_KHAU).
+TRIGGER trg_nky_chan_sua (BEFORE UPDATE) và trg_nky_chan_xoa (BEFORE DELETE): SIGNAL SQLSTATE 45000 "Nhật ký không được sửa hoặc xóa". Bảng chỉ thêm.'''
+}

@@ -1,0 +1,164 @@
+@startchen
+' ERD khái niệm (ký hiệu Chen) BlueMoon v1.0. Thực thể: hình chữ nhật;
+' quan hệ: hình thoi; thuộc tính khóa gạch chân. Sơ đồ chỉ vẽ thuộc tính
+' khóa, thuộc tính chính và mọi thuộc tính của quan hệ; đủ thuộc tính ở
+' README.md, mục ERD khái niệm. Không vẽ giá trị tính được (tổng tiền phiếu, công nợ).
+!pragma layout smetana
+skinparam defaultFontName "Arial"
+
+entity "TÀI KHOẢN" as TK {
+  Tên đăng nhập <<key>>
+  Họ tên
+  Vai trò
+  Hoạt động
+}
+
+entity "HỘ GIA ĐÌNH" as HO {
+  Mã hộ <<key>>
+  Mã căn hộ
+  Diện tích
+  Ngày chuyển đến
+  Trạng thái
+}
+
+entity "NHÂN KHẨU" as NK {
+  Mã nhân khẩu <<key>>
+  Họ tên
+  Ngày sinh
+  Số CCCD
+  Loại cư trú
+  Trạng thái
+}
+
+entity "ĐỢT TẠM TRÚ, TẠM VẮNG" as DOT {
+  Mã đợt <<key>>
+  Loại
+  Từ ngày
+  Đến ngày
+}
+
+entity "BIẾN ĐỘNG NHÂN KHẨU" as BD {
+  Mã biến động <<key>>
+  Loại
+  Ngày
+}
+
+entity "KHOẢN THU" as KT {
+  Mã khoản <<key>>
+  Tên
+  Loại
+  Cách tính
+  Đơn giá
+}
+
+entity "ĐỢT THU" as DT {
+  Tháng <<key>>
+}
+
+entity "KHOẢN PHẢI NỘP" as KPN {
+  Mã khoản phải nộp <<key>>
+  Diện tích lúc chốt
+  Đơn giá lúc chốt
+  Số tiền gốc
+  Số tiền
+}
+
+entity "PHIẾU THU" as PT {
+  Số biên lai <<key>> {
+    Năm
+    Số
+  }
+  Hình thức
+  Thời điểm
+  Số lần in
+}
+
+entity "NHẬT KÝ THAO TÁC" as NKY {
+  Mã nhật ký <<key>>
+  Thời điểm
+  Thao tác
+  Đối tượng
+}
+
+relationship "Thuộc" as THUOC {
+  Quan hệ với chủ hộ
+}
+relationship "Đăng ký" as DANGKY {
+}
+relationship "Xảy ra với" as XAYRAVOI {
+}
+relationship "Xảy ra ở" as XAYRAO {
+}
+relationship "Ghi" as GHI {
+}
+relationship "Chốt" as CHOT {
+  Ngày chốt
+}
+relationship "Gồm" as GOM {
+}
+relationship "Phải nộp" as PHAINOP {
+}
+relationship "Áp dụng" as APDUNG {
+}
+relationship "Sửa" as SUA {
+  Ngày sửa
+  Lý do sửa
+}
+relationship "Nộp" as NOP {
+  Người nộp
+}
+relationship "Lập" as LAP {
+}
+relationship "Hủy" as HUY {
+  Thời điểm hủy
+  Lý do hủy
+}
+relationship "Thu" as THU {
+  Số tiền thu
+}
+relationship "Đóng góp" as DONGGOP {
+  Số tiền đóng
+}
+relationship "Thực hiện" as THUCHIEN {
+}
+
+' Cư trú
+NK -N- THUOC
+THUOC -1- HO
+NK -1- DANGKY
+DANGKY -N- DOT
+NK -1- XAYRAVOI
+XAYRAVOI -N- BD
+HO -1- XAYRAO
+XAYRAO -N- BD
+TK -1- GHI
+GHI -N- BD
+
+' Công nợ
+TK -1- CHOT
+CHOT -N- DT
+DT -1- GOM
+GOM -N- KPN
+HO -1- PHAINOP
+PHAINOP -N- KPN
+KT -1- APDUNG
+APDUNG -N- KPN
+TK -1- SUA
+SUA -N- KPN
+
+' Thu phí
+HO -1- NOP
+NOP -N- PT
+TK -1- LAP
+LAP -N- PT
+TK -1- HUY
+HUY -N- PT
+PT -M- THU
+THU -N- KPN
+PT -M- DONGGOP
+DONGGOP -N- KT
+
+' Nhật ký
+TK -1- THUCHIEN
+THUCHIEN -N- NKY
+@endchen

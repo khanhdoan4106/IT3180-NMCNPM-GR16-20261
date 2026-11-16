@@ -1,0 +1,132 @@
+@startuml
+' DFD mức 1 BlueMoon v1.0, ký hiệu Gane-Sarson vẽ xấp xỉ. Luồng với thực
+' thể ngoài cùng tên với dfd-ngu-canh.puml (cân bằng). Kho đặt tên theo
+' thực thể trong erd-khai-niem.puml. Luồng giữa tiến trình và kho không ghi
+' nhãn: dữ liệu là chính bản ghi của kho đó. Mũi tên hai đầu: tiến trình
+' vừa ghi vừa đọc kho.
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam ArrowFontSize 12
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+skinparam rectangle<<ngoai>> {
+  BackgroundColor #E2E8F0
+  BorderThickness 2
+}
+skinparam rectangle<<tien_trinh>> {
+  BackgroundColor #F8FAFC
+  RoundCorner 25
+}
+skinparam rectangle<<kho>> {
+  BackgroundColor #FEF9C3
+  BorderColor #854D0E
+}
+hide stereotype
+
+title DFD mức 1 – BlueMoon v1.0
+
+rectangle "Quản trị viên" <<ngoai>> as QT
+
+rectangle "1.0\n--\nQuản lý tài khoản" <<tien_trinh>> as P1
+rectangle "2.0\n--\nQuản lý cư trú" <<tien_trinh>> as P2
+rectangle "3.0\n--\nQuản lý khoản thu" <<tien_trinh>> as P3
+rectangle "4.0\n--\nLập công nợ" <<tien_trinh>> as P4
+rectangle "5.0\n--\nThu phí" <<tien_trinh>> as P5
+rectangle "6.0\n--\nLập báo cáo thống kê" <<tien_trinh>> as P6
+
+rectangle "Thủ quỹ" <<ngoai>> as TQ
+
+rectangle "D1 | TÀI KHOẢN" <<kho>> as D1
+rectangle "D2 | HỘ GIA ĐÌNH" <<kho>> as D2
+rectangle "D3 | NHÂN KHẨU" <<kho>> as D3
+rectangle "D4 | ĐỢT TẠM TRÚ, TẠM VẮNG" <<kho>> as D4
+rectangle "D5 | BIẾN ĐỘNG NHÂN KHẨU" <<kho>> as D5
+rectangle "D6 | KHOẢN THU" <<kho>> as D6
+rectangle "D7 | ĐỢT THU" <<kho>> as D7
+rectangle "D8 | KHOẢN PHẢI NỘP" <<kho>> as D8
+rectangle "D9 | PHIẾU THU (Thu, Đóng góp)" <<kho>> as D9
+rectangle "D10 | NHẬT KÝ THAO TÁC" <<kho>> as D10
+
+' 1.0 Quản lý tài khoản
+QT --> P1 : Thông tin đăng nhập
+QT --> P1 : Thông tin tài khoản, phân quyền
+QT --> P1 : Yêu cầu xem nhật ký
+P1 --> QT : Kết quả đăng nhập
+P1 --> QT : Nhật ký thao tác
+P1 <-- TQ : Thông tin đăng nhập
+P1 <-- TQ : Thông tin cá nhân
+P1 --> TQ : Kết quả đăng nhập
+P1 <--> D1
+P1 <--> D10
+
+' 2.0 Quản lý cư trú
+QT --> P2 : Thông tin hộ, nhân khẩu
+QT --> P2 : Đợt tạm trú, tạm vắng
+QT --> P2 : Yêu cầu báo cáo cư trú
+P2 --> QT : Danh sách tạm vắng, lịch sử biến động
+P2 <--> D2
+P2 <--> D3
+P2 <--> D4
+P2 <--> D5
+P2 --> D10
+
+' 3.0 Quản lý khoản thu
+QT --> P3 : Khoản thu tự nguyện
+P3 <-- TQ : Đơn giá phí
+P3 <--> D6
+P3 --> D10
+
+' 4.0 Lập công nợ
+QT --> P4 : Yêu cầu thông báo phí
+P4 --> QT : Thông báo phí
+P4 <-- TQ : Yêu cầu chốt công nợ
+P4 <-- TQ : Số tiền phải nộp đã sửa
+D2 --> P4
+D6 --> P4
+P4 <--> D7
+P4 <--> D8
+D9 --> P4
+P4 --> D10
+
+' 5.0 Thu phí
+P5 <-- TQ : Mã phòng
+P5 <-- TQ : Thông tin thu tiền
+P5 <-- TQ : Yêu cầu hủy phiếu
+P5 --> TQ : Công nợ của hộ
+P5 --> TQ : Biên lai
+D2 --> P5
+D3 --> P5
+D6 --> P5
+D8 --> P5
+P5 <--> D9
+P5 --> D10
+
+' 6.0 Lập báo cáo thống kê
+QT --> P6 : Yêu cầu thống kê
+P6 --> QT : Báo cáo thống kê
+P6 <-- TQ : Yêu cầu xuất báo cáo
+P6 --> TQ : Báo cáo thu Excel
+D2 --> P6
+D3 --> P6
+D6 --> P6
+D7 --> P6
+D8 --> P6
+D9 --> P6
+
+legend right
+  <b>Chú giải (Gane-Sarson, vẽ xấp xỉ)</b>
+  Hình chữ nhật nền xám: thực thể ngoài
+  Hình chữ nhật bo góc, có số: tiến trình
+  Hình chữ nhật nền vàng "Dn | tên": kho dữ liệu
+  Mũi tên có nhãn: luồng dữ liệu
+  Mũi tên hai đầu: tiến trình ghi và đọc kho
+  ----
+  Quản trị viên dùng được mọi chức năng
+  (AC-061); các luồng dùng chung với Thủ
+  quỹ chỉ vẽ ở Thủ quỹ cho dễ đọc.
+endlegend
+@enduml

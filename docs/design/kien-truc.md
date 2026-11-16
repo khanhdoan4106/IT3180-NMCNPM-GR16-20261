@@ -110,3 +110,5 @@ Lớp `*IT` chạy bằng `mvn verify -Pmysql` (job `build-mysql` của CI), tr�
 CSDL có chữ `test` trong tên. `CsdlKiemThu` xóa và tạo lại bảng theo
 `database/schema.sql` trước mỗi test, nên test không phụ thuộc dữ liệu cũ.
 Cách đặt biến môi trường: [setup.md](../setup.md), mục 4.
+
+Các sơ đồ tổng thể (use case, ERD, lược đồ CSDL, DFD, biểu đồ lớp): [so-do/README.md](so-do/README.md).
