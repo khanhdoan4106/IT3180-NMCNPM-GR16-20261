@@ -1,5 +1,6 @@
-# Thư mục biên dịch của Maven và Java
+# Maven
 target/
+# Thư mục biên dịch khác của IDE
 build/
 bin/
 out/
@@ -11,24 +12,32 @@ out/
 *.zip
 *.tar.gz
 *.rar
-
 # Nhật ký lỗi của máy ảo Java
 hs_err_pid*
 replay_pid*
-
-# Cấu hình cá nhân trên VS Code, IntelliJ IDEA, Eclipse, NetBeans
-.vscode/
+# IDE
 .idea/
 *.iml
 *.iws
 *.ipr
+.vscode/
 .classpath
 .project
 .settings/
 nbproject/
-
-# Tệp hệ thống Windows / macOS và biến môi trường
+# OS
+.DS_Store
 Thumbs.db
 Desktop.ini
-.DS_Store
+# Cấu hình cục bộ (chứa mật khẩu DB)
+config/db.properties
 .env
+*.log
+# Tệp log lỗi của ứng dụng (bluemoon.log, tệp xoay vòng và tệp khóa)
+bluemoon.log*
+# Sao lưu (TS-001): tệp sao lưu và tệp tùy chọn MySQL chứa mật khẩu nếu lỡ
+# đặt trong repo. Không chặn database/*.sql.
+bluemoon-[0-9]*-[0-9]*.sql
+*.sql.tmp
+sao-luu/
+*.cnf
