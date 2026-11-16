@@ -59,17 +59,19 @@ public class App extends Application {
         }
         Parent cuaSoChinh = FXMLLoader.load(
                 App.class.getResource("view/cua-so-chinh.fxml"));
-        // Theo ui.md: màn hình chính 1440×1024, nhỏ hơn nếu màn hình máy
-        // nhỏ hơn; mọi màn phải dùng được ở 1120×645.
-        Rectangle2D manHinhMay = Screen.getPrimary().getVisualBounds();
-        Scene canh = new Scene(cuaSoChinh,
-                Math.min(RONG_CUA_SO, manHinhMay.getWidth()),
-                Math.min(CAO_CUA_SO, manHinhMay.getHeight()));
+        Scene canh = new Scene(cuaSoChinh);
         canh.getStylesheets().add(KIEU_DUNG_CHUNG);
         cuaSo.setTitle(TEN_UNG_DUNG);
+        cuaSo.setScene(canh);
+        // Theo ui.md: màn hình chính 1440×1024, nhỏ lại cho vừa vùng dùng
+        // được của màn hình máy (kể cả khung cửa sổ, không đè thanh tác
+        // vụ); mọi màn phải dùng được ở 1120×645.
+        Rectangle2D manHinhMay = Screen.getPrimary().getVisualBounds();
+        cuaSo.setWidth(Math.min(RONG_CUA_SO, manHinhMay.getWidth()));
+        cuaSo.setHeight(Math.min(CAO_CUA_SO, manHinhMay.getHeight()));
         cuaSo.setMinWidth(RONG_TOI_THIEU);
         cuaSo.setMinHeight(CAO_TOI_THIEU);
-        cuaSo.setScene(canh);
+        cuaSo.centerOnScreen();
         cuaSo.show();
     }
 
