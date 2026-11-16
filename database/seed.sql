@@ -56,9 +56,9 @@ FROM (SELECT 'K01' AS ma, 'Vũ Văn Toàn' AS ho_ten,
              '034199008765', 'Phường Trần Lãm, TP Thái Bình, Thái Bình') AS d
 JOIN ho_gia_dinh h ON h.ma_dang_o = d.ma;
 
--- Du lieu mau bo sung tu TV2: hai can ho tang 10 va mot quy tu nguyen
--- co ngay co dinh. Chay lai khong sinh trung (INSERT IGNORE theo ma can ho
--- dang o, so CCCD, ten + ngay bat dau khoan thu).
+-- Du lieu mau bo sung tu TV2: hai can ho tang 10. Chay lai khong sinh trung
+-- (INSERT IGNORE theo ma can ho dang o, so CCCD). Quy vi nguoi ngheo da co
+-- o phan khoan thu tu nguyen ben duoi nen khong them lan nua.
 INSERT IGNORE INTO ho_gia_dinh
     (ma_can_ho, loai_can_ho, tang, dien_tich, ngay_chuyen_den)
 VALUES ('P1001', 'CAN_HO', 10, 75.50, '2023-06-01'),
@@ -72,10 +72,6 @@ FROM (SELECT 'P1001' AS ma, 'Phạm Tuấn Hiếu' AS ho_ten,
       UNION ALL SELECT 'P1002', 'Nguyễn Quang Văn', '1990-08-20',
              '001090054321') AS d
 JOIN ho_gia_dinh h ON h.ma_dang_o = d.ma;
-
-INSERT IGNORE INTO khoan_phi (ten, loai, cach_tinh, don_gia, tu_ngay, den_ngay)
-VALUES ('Quỹ vì người nghèo năm 2026', 'TU_NGUYEN', 'KHONG_CO_DINH', NULL,
-        '2026-11-01', '2026-12-31');
 
 -- Dot tam tru/tam vang mau (US-003), tinh theo ngay chay seed de luc nao
 -- cung thay du ba truong hop: Vu Van Toan tam tru con han, Do Thi Hoa tam
