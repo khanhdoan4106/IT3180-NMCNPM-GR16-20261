@@ -1,6 +1,7 @@
 @startuml
 ' Biểu đồ lớp tầng model (gói com.bluemoon.model) theo database/schema.sql
-' và mã nguồn trong src/main/java. Lớp chưa có trên main gắn «dự kiến».
+' và mã nguồn trong src/main/java. Lớp chưa có trên main gắn «dự kiến»;
+' lớp đã có ghi thuộc tính theo đúng mã nguồn.
 ' Tên lớp, thuộc tính theo quy ước đặt tên ở docs/design/kien-truc.md mục 3
 ' (tiếng Việt không dấu, camelCase). Kiểu tiền: BigDecimal; ngày: LocalDate;
 ' ngày giờ: LocalDateTime. Bản số theo khóa ngoại trong schema.sql.
@@ -16,29 +17,30 @@ hide empty methods
 
 title Biểu đồ lớp tầng model – com.bluemoon.model
 
-package "Tài khoản" {
-  class TaiKhoan <<dự kiến>> {
+' Lớp tài khoản (TaiKhoan, NguoiDung, TaiKhoanMoi, VaiTro, NhatKy) không đặt
+' trong gói riêng: khi có gói, các cạnh từ TaiKhoan sang gói Khoản thu chung
+' một điểm nối và nhãn bản số đè lên nhau.
+
+  class TaiKhoan {
     id : int
     tenDangNhap : String
-    matKhauBam : String
     hoTen : String
     vaiTro : VaiTro
+    matKhauBam : String
     hoatDong : boolean
-    soDienThoai : String
-    email : String
-    ngayTao : LocalDateTime
   }
-  enum VaiTro <<dự kiến>> {
+  enum VaiTro {
     QUAN_TRI
     THU_QUY
+    ten : String
   }
-  class NguoiDung <<dự kiến>> {
+  class NguoiDung {
     id : int
     tenDangNhap : String
     hoTen : String
     vaiTro : VaiTro
   }
-  class TaiKhoanMoi <<dự kiến>> {
+  class TaiKhoanMoi {
     tenDangNhap : String
     hoTen : String
     vaiTro : VaiTro
@@ -51,7 +53,6 @@ package "Tài khoản" {
     doiTuong : String
     noiDung : String
   }
-}
 
 package "Cư trú" {
   class HoGiaDinh <<dự kiến>> {
@@ -227,9 +228,11 @@ TaiKhoanMoi ..> VaiTro
 
 legend right
   <b>Chú giải</b>
-  Không gắn nhãn: lớp đã có trên main (SoLieuCuDan, TS-003).
+  Không gắn nhãn: lớp đã có trên main, thuộc tính theo mã nguồn:
+  SoLieuCuDan (TS-003); TaiKhoanMoi, VaiTro (US-020);
+  TaiKhoan, NguoiDung (US-021).
   «dự kiến»: lớp chưa có trên main.
-  TaiKhoan, NguoiDung, TaiKhoanMoi, VaiTro đã viết ở
-  PR #81, #82 (US-020, US-021), chưa merge.
+  TaiKhoan chưa có soDienThoai, email, ngayTao (đã có cột
+  trong schema.sql); thêm khi làm US-023.
 endlegend
 @enduml
