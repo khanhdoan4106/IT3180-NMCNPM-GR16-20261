@@ -141,6 +141,10 @@ Chỉ có ở mức cài đặt, không có trong ERD khái niệm: bảng `bo_d
 | 5.0 Thu phí | UC016 – UC020 | đọc D2, D3, D6, D8; D9; ghi D10 |
 | 6.0 Lập báo cáo thống kê | UC021 – UC024 | đọc D2, D3, D6 – D9 |
 
+Mọi luồng giữa tiến trình và kho đều có tên. Đọc và ghi khác nội dung thì vẽ
+hai mũi tên một chiều (vd 5.0 → D9 "Phiếu thu mới, phiếu hủy", D9 → 5.0
+"Phiếu đã thu"); giống nhau thì một mũi tên hai đầu với một tên.
+
 | Kho | Thực thể / quan hệ ERD |
 |---|---|
 | D1 | TÀI KHOẢN |
@@ -160,7 +164,8 @@ Chỉ có ở mức cài đặt, không có trong ERD khái niệm: bảng `bo_d
 
 ![Biểu đồ lớp tầng model](bieu-do-lop-model.png)
 
-Biểu đồ lớp: lớp đã có trên `main` không gắn nhãn (`SoLieuCuDan`); lớp chưa
+Biểu đồ lớp: lớp đã có trên `main` không gắn nhãn (`SoLieuCuDan`, `TaiKhoan`,
+`NguoiDung`, `TaiKhoanMoi`, `VaiTro`), thuộc tính theo mã nguồn; lớp chưa
 có gắn «dự kiến». Tên lớp, thuộc tính theo bảng trong `schema.sql` và quy ước
 đặt tên ở [kien-truc.md](../kien-truc.md) mục 3.
 
@@ -226,6 +231,8 @@ Sơ đồ giữ nguyên theo story cho tới khi nhóm chốt.
    hộ dùng lại khi hộ cũ chuyển đi, số CCCD có thể trống).
 9. **Email tài khoản** có trong `schema.sql` nhưng không story hay giả định
    nào nhắc tới; vẫn ghi trong bảng thuộc tính.
-10. **Lớp model** chưa có trên `main` trừ `SoLieuCuDan`; `TaiKhoan`,
-    `NguoiDung`, `TaiKhoanMoi`, `VaiTro` đã viết ở PR #81, #82 (chưa merge).
+10. **Lớp model** đã có trên `main`: `SoLieuCuDan`, `TaiKhoan`, `NguoiDung`,
+    `TaiKhoanMoi`, `VaiTro` (US-020, US-021). `TaiKhoan` chưa có
+    `soDienThoai`, `email`, `ngayTao` dù `schema.sql` đã có cột; thêm khi làm
+    US-023.
     Các lớp khác đặt tên theo bảng và quy ước đặt tên, có thể đổi khi cài.

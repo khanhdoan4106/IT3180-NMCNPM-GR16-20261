@@ -160,7 +160,7 @@ Request → thành viên khác review → merge vào `main` → cuối Sprint c�
 |---|---|
 | Yêu cầu | [Wish list](docs/requirements/01-wish-list.md), [As-is](docs/requirements/02-as-is-scenario.md), [Visionary](docs/requirements/03-visionary-scenario.md), [NFR](docs/requirements/04-nfr.md), [Raw log](docs/requirements/05-raw-log.md), [Epic/Feature](docs/requirements/06-epic-feature-list.md), [User Story](docs/requirements/07-user-stories.md), [Product Backlog](docs/requirements/08-product-backlog.md), [Traceability](docs/requirements/09-traceability-matrix.md), [Definition of Done](docs/requirements/10-definition-of-done.md), [Chốt và giả định](docs/requirements/11-chot-va-gia-dinh.md), [Thuật ngữ](docs/thuat-ngu.md) |
 | Thiết kế | [Quy ước mã](docs/design/coding-convention.md), [Giao diện](docs/design/ui.md), [Kiến trúc](docs/design/kien-truc.md) |
-| Vận hành | [Cài đặt](docs/setup.md), [Quy trình làm việc](docs/workflow.md), [Nhật ký thay đổi](CHANGELOG.md), [Ghi chú phát hành](docs/releases/README.md), [Báo cáo rà soát](docs/review/README.md) |
+| Vận hành | [Cài đặt](docs/setup.md), [Kiểm thử](docs/testing.md), [Quy trình làm việc](docs/workflow.md), [Nhật ký thay đổi](CHANGELOG.md), [Ghi chú phát hành](docs/releases/README.md), [Báo cáo rà soát](docs/review/README.md) |
 | Họp nhóm | [Biên bản họp](docs/meeting-notes/README.md) |
 
 ## Thành viên
