@@ -4,6 +4,7 @@ import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TaiKhoanDaoJdbc;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.LoiNhapLieu;
 import com.bluemoon.service.TaiKhoanService;
 import com.bluemoon.service.TaiKhoanService.O;
@@ -20,8 +21,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 
 /**
- * Màn hình Tài khoản ({@code tai-khoan.fxml}), phần tạo tài khoản
- * (US-020). Lỗi của ô nào hiện ngay dưới ô đó; lỗi CSDL và kết quả hiện
+ * Tab "Tạo tài khoản" của màn Tài khoản ({@code tao-tai-khoan.fxml},
+ * US-020). Lỗi của ô nào hiện ngay dưới ô đó; lỗi CSDL và kết quả hiện
  * ở nhãn thông báo trên hàng nút.
  */
 public class TaiKhoanController {
@@ -103,7 +104,7 @@ public class TaiKhoanController {
             tenDangNhap.requestFocus();
         } catch (LoiNhapLieu loi) {
             hienLoiTheoO(loi);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienThongBao(loi.getMessage(), "thong-bao-loi");
         }
     }

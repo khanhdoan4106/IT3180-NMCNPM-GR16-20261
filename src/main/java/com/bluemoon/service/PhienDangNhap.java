@@ -2,6 +2,7 @@ package com.bluemoon.service;
 
 import com.bluemoon.model.NguoiDung;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Người đang đăng nhập, dùng chung cho cả ứng dụng (US-021). Màn hình và
@@ -13,6 +14,7 @@ import java.util.Optional;
 public final class PhienDangNhap {
 
     private static NguoiDung hienTai;
+    private static Consumer<NguoiDung> khiDoi = nguoiDung -> { };
 
     private PhienDangNhap() {
     }
@@ -24,6 +26,27 @@ public final class PhienDangNhap {
      */
     static void batDau(NguoiDung nguoiDung) {
         hienTai = nguoiDung;
+    }
+
+    /**
+     * Cập nhật thông tin người đang đăng nhập (US-023: vừa sửa họ tên) và
+     * báo cho nơi đang theo dõi, vd thanh đầu cửa sổ chính.
+     *
+     * @param nguoiDung thông tin mới, cùng mã tài khoản
+     */
+    static void capNhat(NguoiDung nguoiDung) {
+        hienTai = nguoiDung;
+        khiDoi.accept(nguoiDung);
+    }
+
+    /**
+     * Đặt việc làm khi thông tin người đang đăng nhập thay đổi. Chỉ giữ một
+     * nơi theo dõi (cửa sổ chính); gọi lại thì thay nơi cũ.
+     *
+     * @param xuLy việc làm, nhận thông tin mới
+     */
+    public static void khiDoiNguoiDung(Consumer<NguoiDung> xuLy) {
+        khiDoi = xuLy == null ? nguoiDung -> { } : xuLy;
     }
 
     /** Kết thúc phiên (Đăng xuất). */

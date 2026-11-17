@@ -323,6 +323,57 @@
     -fx-spacing: 8;
 }
 
+/* Các khung đứng cạnh nhau, cửa sổ hẹp thì xuống hàng. */
+.hang-khung {
+    -fx-hgap: 24;
+    -fx-vgap: 24;
+}
+
+/* Giá trị chỉ xem, không sửa được (vd tên đăng nhập). */
+.gia-tri-chi-xem {
+    -fx-font-weight: bold;
+}
+
+/* ---- Tab (ui.md): tab đang chọn chữ màu chính đậm, gạch dưới 3 px ---- */
+
+.tab-pane > .tab-header-area {
+    -fx-padding: 0 0 16 0;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -mau-vien, -mau-nen;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 8 16 8 16;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
+    -fx-text-fill: -mau-chu-phu;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -mau-chinh, -mau-nen;
+    -fx-background-insets: 0, 0 0 3 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label {
+    -fx-text-fill: -mau-chinh;
+    -fx-font-weight: bold;
+}
+
+.tab:focused .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
 /* ---- Bảng ---- */
 
 .table-view {
