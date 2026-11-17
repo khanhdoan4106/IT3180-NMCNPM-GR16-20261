@@ -5,9 +5,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Màn Tài khoản: tab "Tài khoản của tôi" (US-023) cho mọi người dùng,
-     tab "Tạo tài khoản" (US-020) chỉ Quản trị viên thấy. US-022 sẽ thêm
-     danh sách tài khoản (docs/design/phan-quyen.md). -->
+<!-- Màn Tài khoản: tab "Tài khoản của tôi" (US-023) cho mọi người dùng;
+     tab "Quản lý tài khoản" (US-022) và "Tạo tài khoản" (US-020) chỉ Quản
+     trị viên thấy (docs/design/phan-quyen.md). -->
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.bluemoon.controller.ManTaiKhoanController"
@@ -17,6 +17,9 @@
              VBox.vgrow="ALWAYS">
         <Tab text="Tài khoản của tôi">
             <fx:include source="tai-khoan-cua-toi.fxml"/>
+        </Tab>
+        <Tab fx:id="tabQuanLy" text="Quản lý tài khoản">
+            <fx:include fx:id="quanLy" source="quan-ly-tai-khoan.fxml"/>
         </Tab>
         <Tab fx:id="tabTaoTaiKhoan" text="Tạo tài khoản">
             <fx:include source="tao-tai-khoan.fxml"/>

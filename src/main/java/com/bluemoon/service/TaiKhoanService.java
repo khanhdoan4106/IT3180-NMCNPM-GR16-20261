@@ -5,8 +5,13 @@ import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
+import com.bluemoon.util.ManHinh;
 import com.bluemoon.util.MatKhau;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
@@ -15,7 +20,9 @@ import java.util.regex.Pattern;
 /**
  * Nghiệp vụ tài khoản. US-020: Quản trị viên tạo tài khoản cho người khác
  * (giả định 2), không có màn tự đăng ký. US-023: người đang đăng nhập sửa
- * họ tên, số điện thoại và đổi mật khẩu của mình (giả định 19).
+ * họ tên, số điện thoại và đổi mật khẩu của mình (giả định 19). US-022:
+ * Quản trị viên đổi vai trò, khóa/mở khóa, đặt lại mật khẩu tạm cho tài
+ * khoản khác (giả định 18). Mọi hàm kiểm quyền bằng {@link PhanQuyen}.
  */
 public class TaiKhoanService {
 
@@ -57,6 +64,19 @@ public class TaiKhoanService {
 
     /** Dấu cách, chấm, gạch người dùng hay gõ giữa các nhóm số. */
     private static final Pattern NGAN_CACH_SO = Pattern.compile("[\\s.-]");
+
+    /** Mật khẩu tạm 12 ký tự, dài hơn mức tối thiểu (giả định 50). */
+    static final int DO_DAI_MAT_KHAU_TAM = 12;
+
+    private static final SecureRandom NGAU_NHIEN = new SecureRandom();
+
+    private static final String QUAN_LY_CHI_QUAN_TRI =
+            "Chỉ Quản trị viên được quản lý tài khoản.";
+    private static final String CON_MOT_QUAN_TRI = "Phải còn ít nhất một "
+            + "Quản trị viên đang hoạt động. Thêm hoặc mở khóa một Quản "
+            + "trị viên khác trước.";
+    private static final String KHONG_CON_TAI_KHOAN = "Không tìm thấy tài "
+            + "khoản này. Tải lại danh sách rồi thử lại.";
 
     private final TaiKhoanDao taiKhoanDao;
     private final UnaryOperator<String> bamMatKhau;
@@ -104,7 +124,7 @@ public class TaiKhoanService {
      */
     public TaiKhoanMoi taoTaiKhoan(String tenDangNhap, String hoTen,
             VaiTro vaiTro, String matKhau, String nhapLai) {
-        chiQuanTriVien("Chỉ Quản trị viên được tạo tài khoản.");
+        PhanQuyen.chiQuanTriVien("Chỉ Quản trị viên được tạo tài khoản.");
         String ten = gon(tenDangNhap);
         String hoTenGon = gon(hoTen);
         String mk = matKhau == null ? "" : matKhau;
@@ -141,8 +161,8 @@ public class TaiKhoanService {
      * Tài khoản của người đang đăng nhập, đọc mới từ CSDL (US-023).
      *
      * @return tài khoản, kèm số điện thoại
-     * @throws IllegalStateException khi chưa đăng nhập hoặc tài khoản không
-     *         còn trong CSDL
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập
+     * @throws IllegalStateException khi tài khoản không còn trong CSDL
      * @throws com.bluemoon.dao.LoiCsdl khi không đọc được CSDL
      */
     public TaiKhoan taiKhoanCuaToi() {
@@ -160,8 +180,8 @@ public class TaiKhoanService {
      *        cách, chấm, gạch giữa các số được bỏ đi
      * @return người dùng sau khi sửa
      * @throws LoiNhapLieu khi có ô sai
-     * @throws IllegalStateException khi chưa đăng nhập hoặc tài khoản không
-     *         còn trong CSDL
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập
+     * @throws IllegalStateException khi tài khoản không còn trong CSDL
      * @throws com.bluemoon.dao.LoiCsdl khi không ghi được CSDL
      */
     public NguoiDung capNhatThongTin(String hoTen, String soDienThoai) {
@@ -200,8 +220,8 @@ public class TaiKhoanService {
      * @param matKhauMoi mật khẩu mới
      * @param nhapLai mật khẩu mới nhập lại
      * @throws LoiNhapLieu khi có ô sai hoặc mật khẩu hiện tại không đúng
-     * @throws IllegalStateException khi chưa đăng nhập hoặc tài khoản không
-     *         còn trong CSDL
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập
+     * @throws IllegalStateException khi tài khoản không còn trong CSDL
      * @throws com.bluemoon.dao.LoiCsdl khi không đọc, ghi được CSDL
      */
     public void doiMatKhau(String matKhauCu, String matKhauMoi,
@@ -235,21 +255,139 @@ public class TaiKhoanService {
         }
     }
 
+    // ---- US-022: Quản trị viên quản lý tài khoản (giả định 18) ----
+
     /**
-     * Kiểm người đang đăng nhập là Quản trị viên (giả định 17: kiểm lại ở
-     * Service, không chỉ ẩn trên màn hình).
+     * Mọi tài khoản, xếp theo tên đăng nhập. Chỉ Quản trị viên xem.
+     *
+     * @return danh sách tài khoản
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập hoặc không phải Quản trị
+     *         viên; không đọc CSDL
+     * @throws com.bluemoon.dao.LoiCsdl khi không đọc được CSDL
      */
-    private static void chiQuanTriVien(String cauBao) {
-        NguoiDung nguoiDung = PhienDangNhap.nguoiDung().orElseThrow(
-                () -> new LoiKhongCoQuyen("Cần đăng nhập để làm việc này."));
-        if (nguoiDung.vaiTro() != VaiTro.QUAN_TRI) {
-            throw new LoiKhongCoQuyen(cauBao);
-        }
+    public List<TaiKhoan> danhSachTaiKhoan() {
+        chiQuanTriVien(QUAN_LY_CHI_QUAN_TRI);
+        return taiKhoanDao.danhSach();
     }
 
+    /**
+     * Đổi vai trò tài khoản khác. Không tự đổi vai trò của mình; luôn còn
+     * ít nhất một Quản trị viên đang hoạt động (giả định 18).
+     *
+     * @param id mã tài khoản cần đổi
+     * @param vaiTro vai trò mới
+     * @return tài khoản sau khi đổi
+     * @throws LoiKhongCoQuyen khi không phải Quản trị viên
+     * @throws LoiNghiepVu khi tự đổi vai trò mình, tài khoản không còn,
+     *         hoặc đây là Quản trị viên đang hoạt động cuối cùng
+     * @throws com.bluemoon.dao.LoiCsdl khi không ghi được CSDL
+     */
+    public TaiKhoan doiVaiTro(int id, VaiTro vaiTro) {
+        NguoiDung toi = chiQuanTriVien(QUAN_LY_CHI_QUAN_TRI);
+        if (vaiTro == null) {
+            throw new LoiNghiepVu("Chọn vai trò mới.");
+        }
+        if (id == toi.id()) {
+            throw new LoiNghiepVu("Không tự đổi vai trò của chính mình. "
+                    + "Nhờ một Quản trị viên khác đổi giúp.");
+        }
+        TaiKhoan taiKhoan = timTaiKhoan(id);
+        if (taiKhoan.vaiTro() == vaiTro) {
+            return taiKhoan;
+        }
+        if (!taiKhoanDao.doiVaiTro(id, vaiTro)) {
+            throw new LoiNghiepVu(CON_MOT_QUAN_TRI);
+        }
+        return timTaiKhoan(id);
+    }
+
+    /**
+     * Khóa hoặc mở khóa tài khoản khác. Không tự khóa mình; không khóa
+     * Quản trị viên đang hoạt động cuối cùng (giả định 18). Tài khoản bị
+     * khóa bị đăng xuất ở lần mở màn hình kế tiếp (giả định 17).
+     *
+     * @param id mã tài khoản
+     * @param khoa {@code true} để khóa, {@code false} để mở khóa
+     * @return tài khoản sau khi đổi
+     * @throws LoiKhongCoQuyen khi không phải Quản trị viên
+     * @throws LoiNghiepVu khi tự khóa mình, tài khoản không còn, hoặc đây
+     *         là Quản trị viên đang hoạt động cuối cùng
+     * @throws com.bluemoon.dao.LoiCsdl khi không ghi được CSDL
+     */
+    public TaiKhoan khoaTaiKhoan(int id, boolean khoa) {
+        NguoiDung toi = chiQuanTriVien(QUAN_LY_CHI_QUAN_TRI);
+        if (khoa && id == toi.id()) {
+            throw new LoiNghiepVu("Không tự khóa tài khoản đang dùng.");
+        }
+        TaiKhoan taiKhoan = timTaiKhoan(id);
+        if (taiKhoan.hoatDong() != khoa) {
+            return taiKhoan;
+        }
+        if (!taiKhoanDao.datHoatDong(id, !khoa)) {
+            throw new LoiNghiepVu(CON_MOT_QUAN_TRI);
+        }
+        return timTaiKhoan(id);
+    }
+
+    /**
+     * Đặt lại mật khẩu tạm cho tài khoản khác (giả định 18). Mật khẩu tạm
+     * sinh ngẫu nhiên, đủ độ dài (giả định 50), chỉ trả về một lần để Quản
+     * trị viên báo lại; CSDL chỉ lưu bản băm, không ghi ra log.
+     *
+     * @param id mã tài khoản
+     * @return mật khẩu tạm (chữ rõ)
+     * @throws LoiKhongCoQuyen khi không phải Quản trị viên
+     * @throws LoiNghiepVu khi đặt lại cho chính mình hoặc tài khoản không
+     *         còn
+     * @throws com.bluemoon.dao.LoiCsdl khi không ghi được CSDL
+     */
+    public String datLaiMatKhau(int id) {
+        NguoiDung toi = chiQuanTriVien(QUAN_LY_CHI_QUAN_TRI);
+        if (id == toi.id()) {
+            throw new LoiNghiepVu("Đổi mật khẩu của mình ở tab “Tài khoản "
+                    + "của tôi”.");
+        }
+        timTaiKhoan(id);
+        String matKhauTam = sinhMatKhauTam();
+        if (!taiKhoanDao.doiMatKhau(id, bamMatKhau.apply(matKhauTam))) {
+            throw new LoiNghiepVu(KHONG_CON_TAI_KHOAN);
+        }
+        return matKhauTam;
+    }
+
+    /**
+     * Sinh mật khẩu tạm: {@link #DO_DAI_MAT_KHAU_TAM} ký tự, có chữ hoa,
+     * chữ thường và chữ số; bỏ các ký tự dễ nhầm (0/O, 1/l/I).
+     */
+    static String sinhMatKhauTam() {
+        String[] nhom = {"ABCDEFGHJKLMNPQRSTUVWXYZ",
+                "abcdefghijkmnopqrstuvwxyz", "23456789"};
+        String tatCa = String.join("", nhom);
+        List<Character> kyTu = new ArrayList<>();
+        for (String n : nhom) {
+            kyTu.add(n.charAt(NGAU_NHIEN.nextInt(n.length())));
+        }
+        while (kyTu.size() < DO_DAI_MAT_KHAU_TAM) {
+            kyTu.add(tatCa.charAt(NGAU_NHIEN.nextInt(tatCa.length())));
+        }
+        Collections.shuffle(kyTu, NGAU_NHIEN);
+        StringBuilder sb = new StringBuilder();
+        kyTu.forEach(sb::append);
+        return sb.toString();
+    }
+
+    private TaiKhoan timTaiKhoan(int id) {
+        return taiKhoanDao.timTheoId(id).orElseThrow(
+                () -> new LoiNghiepVu(KHONG_CON_TAI_KHOAN));
+    }
+
+    private static NguoiDung chiQuanTriVien(String cauBao) {
+        return PhanQuyen.chiQuanTriVien(cauBao);
+    }
+
+    /** Người đang đăng nhập; mọi vai trò được mở màn Tài khoản. */
     private static NguoiDung nguoiDangNhap() {
-        return PhienDangNhap.nguoiDung().orElseThrow(
-                () -> new IllegalStateException("Chưa đăng nhập"));
+        return PhanQuyen.yeuCau(ManHinh.TAI_KHOAN);
     }
 
     private static void kiemHoTen(String hoTen, Map<O, String> loi) {

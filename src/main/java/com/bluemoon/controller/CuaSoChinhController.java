@@ -1,7 +1,9 @@
 package com.bluemoon.controller;
 
+import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TaiKhoanDaoJdbc;
 import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.VaiTro;
 import com.bluemoon.service.DangNhapService;
 import com.bluemoon.service.PhienDangNhap;
 import com.bluemoon.util.CuaSoUngDung;
@@ -21,6 +23,8 @@ import javafx.scene.layout.VBox;
  * Cửa sổ chính ({@code cua-so-chinh.fxml}): dựng menu trái từ
  * {@link ManHinh}, mở màn hình được chọn vào vùng thân và tô đậm mục
  * đang mở. Thanh đầu hiện người đang đăng nhập và nút Đăng xuất (US-021).
+ * Menu chỉ hiện màn vai trò được mở; trước mỗi lần mở màn hình đọc lại
+ * tài khoản từ CSDL (US-022, giả định 17).
  */
 public class CuaSoChinhController {
 
@@ -44,8 +48,12 @@ public class CuaSoChinhController {
     private void initialize() {
         dieuHuong = new DieuHuong(vungThan, CuaSoUngDung::hienDangNhap);
         PhienDangNhap.nguoiDung().ifPresent(this::hienNguoiDung);
-        // US-023: người dùng sửa họ tên thì thanh đầu đổi theo ngay.
-        PhienDangNhap.khiDoiNguoiDung(this::hienNguoiDung);
+        // US-023: sửa họ tên thì thanh đầu đổi theo ngay; US-022: đổi vai
+        // trò thì menu đổi theo ngay.
+        PhienDangNhap.khiDoiNguoiDung(nguoiDung -> {
+            hienNguoiDung(nguoiDung);
+            taoMenu();
+        });
         taoMenu();
         mo(ManHinh.TRANG_CHINH);
         // Tiêu điểm đầu tiên ở menu, không rơi vào nút Đăng xuất.
@@ -68,9 +76,17 @@ public class CuaSoChinhController {
         CuaSoUngDung.hienDangNhap();
     }
 
+    /** Dựng menu trái: chỉ các màn vai trò hiện tại được mở (US-022). */
     private void taoMenu() {
+        menuTrai.getChildren().clear();
+        nutMenu.clear();
+        VaiTro vaiTro = PhienDangNhap.nguoiDung().map(NguoiDung::vaiTro)
+                .orElse(null);
         NhomMenu nhomTruoc = null;
         for (ManHinh manHinh : ManHinh.values()) {
+            if (!manHinh.duocMo(vaiTro)) {
+                continue;
+            }
             NhomMenu nhom = manHinh.getNhom();
             if (nhom != null && nhom != nhomTruoc) {
                 Label tenNhom = new Label(nhom.getTen());
@@ -88,11 +104,27 @@ public class CuaSoChinhController {
     }
 
     private void mo(ManHinh manHinh) {
-        dieuHuong.mo(manHinh);
-        if (!PhienDangNhap.daDangNhap()) {
+        // Giả định 17: đọc lại tài khoản trước khi mở. Bị khóa thì đăng
+        // xuất; đổi vai trò thì menu, thanh đầu đã đổi qua khiDoiNguoiDung.
+        try {
+            if (dangNhapService.lamMoiPhien()
+                    == DangNhapService.KetQuaPhien.DA_KET_THUC) {
+                CuaSoUngDung.hienDangNhap(
+                        DangNhapService.BI_KHOA_KHI_DANG_DUNG);
+                return;
+            }
+        } catch (LoiCsdl loi) {
+            // Không đọc được CSDL: giữ phiên, màn hình tự báo lỗi CSDL;
+            // Service vẫn kiểm quyền theo phiên hiện tại.
+        }
+        ManHinh daMo = dieuHuong.mo(manHinh);
+        if (daMo == null) {
             return;
         }
         nutMenu.values().forEach(n -> n.getStyleClass().remove("dang-mo"));
-        nutMenu.get(manHinh).getStyleClass().add("dang-mo");
+        Button nut = nutMenu.get(daMo);
+        if (nut != null) {
+            nut.getStyleClass().add("dang-mo");
+        }
     }
 }

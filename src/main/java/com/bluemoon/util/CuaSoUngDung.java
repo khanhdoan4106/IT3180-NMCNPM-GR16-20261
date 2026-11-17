@@ -25,6 +25,8 @@ public final class CuaSoUngDung {
 
     private static Stage cuaSo;
     private static String kieuDungChung;
+    /** Câu báo chờ hiện trên màn đăng nhập (giả định 17: bị khóa). */
+    private static String cauBaoDangNhap;
 
     private CuaSoUngDung() {
     }
@@ -45,6 +47,28 @@ public final class CuaSoUngDung {
     /** Hiện màn đăng nhập (khi mở ứng dụng, khi đăng xuất). */
     public static void hienDangNhap() {
         hien("dang-nhap.fxml", RONG_DANG_NHAP, CAO_DANG_NHAP);
+    }
+
+    /**
+     * Hiện màn đăng nhập kèm một câu báo, vd tài khoản vừa bị khóa nên bị
+     * đăng xuất (giả định 17).
+     *
+     * @param cauBao câu báo tiếng Việt
+     */
+    public static void hienDangNhap(String cauBao) {
+        cauBaoDangNhap = cauBao;
+        hienDangNhap();
+    }
+
+    /**
+     * Lấy câu báo chờ cho màn đăng nhập rồi xóa đi (chỉ hiện một lần).
+     *
+     * @return câu báo, {@code null} nếu không có
+     */
+    public static String layCauBaoDangNhap() {
+        String cau = cauBaoDangNhap;
+        cauBaoDangNhap = null;
+        return cau;
     }
 
     /** Hiện cửa sổ chính sau khi đăng nhập đúng (AC-057, AC-059). */

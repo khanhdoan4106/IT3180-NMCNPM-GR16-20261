@@ -2,6 +2,7 @@ package com.bluemoon.service;
 
 import com.bluemoon.dao.CuDanDao;
 import com.bluemoon.model.SoLieuCuDan;
+import com.bluemoon.util.ManHinh;
 
 /**
  * Nghiệp vụ về cư dân dùng cho trang chính. Mẫu cho mọi Service: nhận DAO
@@ -22,12 +23,15 @@ public class CuDanService {
     }
 
     /**
-     * Số hộ và số nhân khẩu đang ở.
+     * Số hộ và số nhân khẩu đang ở, hiện trên Trang chính (mọi vai trò;
+     * chỉ là con số tổng, không có thông tin của hộ nào, AC-062).
      *
      * @return số liệu cư dân
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập; không đọc CSDL
      * @throws com.bluemoon.dao.LoiCsdl khi không đọc được CSDL
      */
     public SoLieuCuDan laySoLieu() {
+        PhanQuyen.yeuCau(ManHinh.TRANG_CHINH);
         return cuDanDao.demDangO();
     }
 }

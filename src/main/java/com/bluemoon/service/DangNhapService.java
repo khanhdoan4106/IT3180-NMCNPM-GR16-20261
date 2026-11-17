@@ -10,8 +10,26 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 
-/** Đăng nhập, đăng xuất (US-021). */
+/**
+ * Đăng nhập, đăng xuất (US-021) và đọc lại phiên trước mỗi lần mở màn hình
+ * (US-022, giả định 17).
+ */
 public class DangNhapService {
+
+    /** Kết quả đọc lại phiên đăng nhập từ CSDL (giả định 17). */
+    public enum KetQuaPhien {
+        /** Tài khoản không đổi gì. */
+        KHONG_DOI,
+        /** Họ tên hoặc vai trò vừa đổi; phiên đã cập nhật. */
+        DA_DOI,
+        /** Tài khoản vừa bị khóa hoặc không còn; phiên đã kết thúc. */
+        DA_KET_THUC
+    }
+
+    /** Câu báo trên màn đăng nhập khi đang dùng thì tài khoản bị khóa. */
+    public static final String BI_KHOA_KHI_DANG_DUNG = "Tài khoản của bạn "
+            + "vừa bị khóa nên đã được đăng xuất. Liên hệ Quản trị viên để "
+            + "được mở lại.";
 
     /** Các ô của màn đăng nhập. */
     public enum O {
@@ -110,5 +128,34 @@ public class DangNhapService {
     /** Đăng xuất: kết thúc phiên. */
     public void dangXuat() {
         PhienDangNhap.ketThuc();
+    }
+
+    /**
+     * Đọc lại tài khoản đang đăng nhập từ CSDL (giả định 17), gọi trước
+     * mỗi lần mở màn hình. Bị khóa hoặc không còn thì kết thúc phiên; đổi
+     * họ tên, vai trò thì cập nhật phiên (thanh đầu, menu đổi theo).
+     *
+     * @return kết quả; {@link KetQuaPhien#DA_KET_THUC} cả khi chưa đăng
+     *         nhập
+     * @throws com.bluemoon.dao.LoiCsdl khi không đọc được CSDL; phiên giữ
+     *         nguyên
+     */
+    public KetQuaPhien lamMoiPhien() {
+        Optional<NguoiDung> hienTai = PhienDangNhap.nguoiDung();
+        if (hienTai.isEmpty()) {
+            return KetQuaPhien.DA_KET_THUC;
+        }
+        Optional<TaiKhoan> taiKhoan =
+                taiKhoanDao.timTheoId(hienTai.get().id());
+        if (taiKhoan.isEmpty() || !taiKhoan.get().hoatDong()) {
+            PhienDangNhap.ketThuc();
+            return KetQuaPhien.DA_KET_THUC;
+        }
+        NguoiDung moi = taiKhoan.get().nguoiDung();
+        if (moi.equals(hienTai.get())) {
+            return KetQuaPhien.KHONG_DOI;
+        }
+        PhienDangNhap.capNhat(moi);
+        return KetQuaPhien.DA_DOI;
     }
 }
