@@ -26,4 +26,34 @@ public interface TaiKhoanDao {
      * @throws LoiCsdl khi không đọc được CSDL
      */
     Optional<TaiKhoan> timTheoTenDangNhap(String tenDangNhap);
+
+    /**
+     * Tìm tài khoản theo mã (US-023: người đang đăng nhập).
+     *
+     * @param id mã tài khoản
+     * @return tài khoản, rỗng nếu không có
+     * @throws LoiCsdl khi không đọc được CSDL
+     */
+    Optional<TaiKhoan> timTheoId(int id);
+
+    /**
+     * Sửa họ tên và số điện thoại của một tài khoản (US-023, AC-065).
+     *
+     * @param id mã tài khoản
+     * @param hoTen họ tên mới
+     * @param soDienThoai số điện thoại mới, {@code null} để xóa
+     * @return {@code false} nếu không có tài khoản mã đó
+     * @throws LoiCsdl khi không ghi được CSDL
+     */
+    boolean capNhatThongTin(int id, String hoTen, String soDienThoai);
+
+    /**
+     * Ghi mật khẩu mới đã băm (US-023, AC-063).
+     *
+     * @param id mã tài khoản
+     * @param matKhauBam mật khẩu mới đã băm BCrypt
+     * @return {@code false} nếu không có tài khoản mã đó
+     * @throws LoiCsdl khi không ghi được CSDL
+     */
+    boolean doiMatKhau(int id, String matKhauBam);
 }

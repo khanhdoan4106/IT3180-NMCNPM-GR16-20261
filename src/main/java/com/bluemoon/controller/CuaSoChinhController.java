@@ -44,6 +44,8 @@ public class CuaSoChinhController {
     private void initialize() {
         dieuHuong = new DieuHuong(vungThan, CuaSoUngDung::hienDangNhap);
         PhienDangNhap.nguoiDung().ifPresent(this::hienNguoiDung);
+        // US-023: người dùng sửa họ tên thì thanh đầu đổi theo ngay.
+        PhienDangNhap.khiDoiNguoiDung(this::hienNguoiDung);
         taoMenu();
         mo(ManHinh.TRANG_CHINH);
         // Tiêu điểm đầu tiên ở menu, không rơi vào nút Đăng xuất.

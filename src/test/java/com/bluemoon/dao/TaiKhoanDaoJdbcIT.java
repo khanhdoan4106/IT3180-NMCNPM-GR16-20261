@@ -2,6 +2,7 @@ package com.bluemoon.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
@@ -94,5 +95,59 @@ class TaiKhoanDaoJdbcIT {
         }
         assertFalse(dao.timTheoTenDangNhap("thuquy02").orElseThrow()
                 .hoatDong());
+    }
+
+    /** US-023: đọc theo mã, có số điện thoại (mặc định trống). */
+    @Test
+    void timTheoId() throws SQLException {
+        dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai", VaiTro.THU_QUY,
+                MatKhau.bam("MatKhau@1")));
+        int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
+        TaiKhoan tk = dao.timTheoId(id).orElseThrow();
+        assertEquals("thuquy01", tk.tenDangNhap());
+        assertNull(tk.soDienThoai());
+        assertTrue(dao.timTheoId(id + 1000).isEmpty());
+    }
+
+    /** AC-065: sửa họ tên, số điện thoại; tên đăng nhập, vai trò giữ. */
+    @Test
+    void ac065CapNhatThongTin() throws SQLException {
+        String bam = MatKhau.bam("MatKhau@1");
+        dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai", VaiTro.THU_QUY,
+                bam));
+        int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
+
+        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh",
+                "0912345678"));
+        TaiKhoan tk = dao.timTheoId(id).orElseThrow();
+        assertEquals("Trần Thị Mai Anh", tk.hoTen());
+        assertEquals("0912345678", tk.soDienThoai());
+        assertEquals("thuquy01", tk.tenDangNhap());
+        assertEquals(VaiTro.THU_QUY, tk.vaiTro());
+        assertEquals(bam, tk.matKhauBam());
+
+        // Lưu lại đúng giá trị cũ vẫn tính là có tài khoản.
+        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", null));
+        assertNull(dao.timTheoId(id).orElseThrow().soDienThoai());
+        assertFalse(dao.capNhatThongTin(id + 1000, "Ai đó", null));
+    }
+
+    /** AC-063: ghi mật khẩu mới đã băm, chỉ đổi tài khoản đó. */
+    @Test
+    void ac063DoiMatKhau() throws SQLException {
+        dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai", VaiTro.THU_QUY,
+                MatKhau.bam("MatKhau@1")));
+        String bamKhac = MatKhau.bam("MatKhau@1");
+        dao.them(new TaiKhoanMoi("thuquy02", "Lê Thị Lan", VaiTro.THU_QUY,
+                bamKhac));
+        int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
+
+        assertTrue(dao.doiMatKhau(id, MatKhau.bam("MatKhauMoi@2")));
+        String bamMoi = dao.timTheoId(id).orElseThrow().matKhauBam();
+        assertTrue(MatKhau.khop("MatKhauMoi@2", bamMoi));
+        assertFalse(MatKhau.khop("MatKhau@1", bamMoi));
+        assertEquals(bamKhac,
+                dao.timTheoTenDangNhap("thuquy02").orElseThrow().matKhauBam());
+        assertFalse(dao.doiMatKhau(id + 1000, bamMoi));
     }
 }

@@ -44,6 +44,21 @@ class DangNhapServiceTest {
                     .toLowerCase(Locale.ROOT)
                     .equals(ten.toLowerCase(Locale.ROOT))).findFirst();
         }
+
+        @Override
+        public Optional<TaiKhoan> timTheoId(int id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean capNhatThongTin(int id, String hoTen, String sdt) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean doiMatKhau(int id, String matKhauBam) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private final TaiKhoanDaoGia dao = new TaiKhoanDaoGia();
@@ -59,11 +74,11 @@ class DangNhapServiceTest {
     void taoTaiKhoan() {
         PhienDangNhap.ketThuc();
         dao.taiKhoan.add(new TaiKhoan(1, "admin", "Nguyễn Thị Thu Hương",
-                VaiTro.QUAN_TRI, "bam:Admin@123", true));
+                VaiTro.QUAN_TRI, "bam:Admin@123", true, null));
         dao.taiKhoan.add(new TaiKhoan(2, "thuquy01", "Nguyễn Văn Hùng",
-                VaiTro.THU_QUY, "bam:ThuQuy@2026", true));
+                VaiTro.THU_QUY, "bam:ThuQuy@2026", true, null));
         dao.taiKhoan.add(new TaiKhoan(3, "thuquy09", "Lê Văn Bình",
-                VaiTro.THU_QUY, "bam:ThuQuy@2026", false));
+                VaiTro.THU_QUY, "bam:ThuQuy@2026", false, null));
     }
 
     @AfterEach

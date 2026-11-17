@@ -21,9 +21,20 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
             + "(ten_dang_nhap, mat_khau_bam, ho_ten, vai_tro) "
             + "VALUES (?, ?, ?, ?)";
 
-    private static final String SQL_TIM_THEO_TEN = "SELECT id, "
-            + "ten_dang_nhap, ho_ten, vai_tro, mat_khau_bam, hoat_dong "
-            + "FROM tai_khoan WHERE ten_dang_nhap = ?";
+    private static final String SQL_CHON = "SELECT id, ten_dang_nhap, "
+            + "ho_ten, vai_tro, mat_khau_bam, hoat_dong, so_dien_thoai "
+            + "FROM tai_khoan ";
+
+    private static final String SQL_TIM_THEO_TEN = SQL_CHON
+            + "WHERE ten_dang_nhap = ?";
+
+    private static final String SQL_TIM_THEO_ID = SQL_CHON + "WHERE id = ?";
+
+    private static final String SQL_CAP_NHAT_THONG_TIN = "UPDATE tai_khoan "
+            + "SET ho_ten = ?, so_dien_thoai = ? WHERE id = ?";
+
+    private static final String SQL_DOI_MAT_KHAU = "UPDATE tai_khoan "
+            + "SET mat_khau_bam = ? WHERE id = ?";
 
     private final NguonKetNoi nguonKetNoi;
 
@@ -67,19 +78,65 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                 PreparedStatement lenh =
                         ketNoi.prepareStatement(SQL_TIM_THEO_TEN)) {
             lenh.setString(1, tenDangNhap);
-            try (ResultSet kq = lenh.executeQuery()) {
-                if (!kq.next()) {
-                    return Optional.empty();
-                }
-                return Optional.of(new TaiKhoan(kq.getInt("id"),
-                        kq.getString("ten_dang_nhap"),
-                        kq.getString("ho_ten"),
-                        VaiTro.valueOf(kq.getString("vai_tro")),
-                        kq.getString("mat_khau_bam"),
-                        kq.getBoolean("hoat_dong")));
-            }
+            return docMotDong(lenh);
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public Optional<TaiKhoan> timTheoId(int id) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi();
+                PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_TIM_THEO_ID)) {
+            lenh.setInt(1, id);
+            return docMotDong(lenh);
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public boolean capNhatThongTin(int id, String hoTen,
+            String soDienThoai) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi();
+                PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_CAP_NHAT_THONG_TIN)) {
+            lenh.setString(1, hoTen);
+            lenh.setString(2, soDienThoai);
+            lenh.setInt(3, id);
+            return lenh.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public boolean doiMatKhau(int id, String matKhauBam) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi();
+                PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_DOI_MAT_KHAU)) {
+            lenh.setString(1, matKhauBam);
+            lenh.setInt(2, id);
+            return lenh.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    private static Optional<TaiKhoan> docMotDong(PreparedStatement lenh)
+            throws SQLException {
+        try (ResultSet kq = lenh.executeQuery()) {
+            if (!kq.next()) {
+                return Optional.empty();
+            }
+            return Optional.of(new TaiKhoan(kq.getInt("id"),
+                    kq.getString("ten_dang_nhap"),
+                    kq.getString("ho_ten"),
+                    VaiTro.valueOf(kq.getString("vai_tro")),
+                    kq.getString("mat_khau_bam"),
+                    kq.getBoolean("hoat_dong"),
+                    kq.getString("so_dien_thoai")));
         }
     }
 }
