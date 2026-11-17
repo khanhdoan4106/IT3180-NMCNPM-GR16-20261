@@ -3,6 +3,7 @@ package com.bluemoon.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.bluemoon.model.VaiTro;
 import com.bluemoon.service.PhienDangNhap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.scene.layout.Pane;
@@ -23,5 +24,13 @@ class DieuHuongTest {
         }
         assertEquals(ManHinh.values().length, soLanVeDangNhap.get());
         assertTrue(vungThan.getChildren().isEmpty());
+    }
+
+    /** US-022: câu báo khi vai trò không được mở màn hình. */
+    @Test
+    void cauBaoKhiKhongCoQuyenMoMan() {
+        assertEquals("Tài khoản Thủ quỹ không được mở “Hộ gia đình”. "
+                + "Đã về Trang chính.", DieuHuong.cauKhongCoQuyen(
+                        ManHinh.HO_GIA_DINH, VaiTro.THU_QUY));
     }
 }

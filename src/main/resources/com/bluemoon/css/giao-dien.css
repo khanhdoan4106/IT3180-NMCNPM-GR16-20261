@@ -329,6 +329,12 @@
     -fx-vgap: 24;
 }
 
+/* Hàng nút thao tác dưới bảng, cửa sổ hẹp thì xuống hàng. */
+.hang-thao-tac {
+    -fx-hgap: 16;
+    -fx-vgap: 12;
+}
+
 /* Giá trị chỉ xem, không sửa được (vd tên đăng nhập). */
 .gia-tri-chi-xem {
     -fx-font-weight: bold;

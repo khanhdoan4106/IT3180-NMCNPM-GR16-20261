@@ -38,6 +38,7 @@ class TaiKhoanServiceTest {
         private final List<TaiKhoanMoi> daThem = new ArrayList<>();
         private final Map<Integer, TaiKhoan> theoId = new HashMap<>();
         private int soLanGhi;
+        private int soLanDoc;
         private LoiCsdl loi;
 
         @Override
@@ -94,6 +95,47 @@ class TaiKhoanServiceTest {
                     tk.vaiTro(), matKhauBam, tk.hoatDong(),
                     tk.soDienThoai()));
             return true;
+        }
+
+        @Override
+        public List<TaiKhoan> danhSach() {
+            soLanDoc++;
+            return List.copyOf(theoId.values());
+        }
+
+        @Override
+        public boolean doiVaiTro(int id, VaiTro vaiTro) {
+            TaiKhoan tk = theoId.get(id);
+            if (tk == null || (vaiTro != VaiTro.QUAN_TRI
+                    && laQuanTriCuoiCung(tk))) {
+                return false;
+            }
+            soLanGhi++;
+            theoId.put(id, new TaiKhoan(id, tk.tenDangNhap(), tk.hoTen(),
+                    vaiTro, tk.matKhauBam(), tk.hoatDong(),
+                    tk.soDienThoai()));
+            return true;
+        }
+
+        @Override
+        public boolean datHoatDong(int id, boolean hoatDong) {
+            TaiKhoan tk = theoId.get(id);
+            if (tk == null || (!hoatDong && laQuanTriCuoiCung(tk))) {
+                return false;
+            }
+            soLanGhi++;
+            theoId.put(id, new TaiKhoan(id, tk.tenDangNhap(), tk.hoTen(),
+                    tk.vaiTro(), tk.matKhauBam(), hoatDong,
+                    tk.soDienThoai()));
+            return true;
+        }
+
+        /** Như bản JDBC: đây là Quản trị viên hoạt động duy nhất. */
+        private boolean laQuanTriCuoiCung(TaiKhoan tk) {
+            long soQuanTri = theoId.values().stream().filter(t ->
+                    t.vaiTro() == VaiTro.QUAN_TRI && t.hoatDong()).count();
+            return tk.vaiTro() == VaiTro.QUAN_TRI && tk.hoatDong()
+                    && soQuanTri == 1;
         }
     }
 
@@ -249,11 +291,11 @@ class TaiKhoanServiceTest {
     @Test
     void chuaDangNhapThiKhongDungDuoc() {
         PhienDangNhap.ketThuc();
-        assertThrows(IllegalStateException.class,
+        assertThrows(LoiKhongCoQuyen.class,
                 () -> service.taiKhoanCuaToi());
-        assertThrows(IllegalStateException.class,
+        assertThrows(LoiKhongCoQuyen.class,
                 () -> service.capNhatThongTin("Trần Thị Mai", ""));
-        assertThrows(IllegalStateException.class,
+        assertThrows(LoiKhongCoQuyen.class,
                 () -> service.doiMatKhau("MatKhau@1", "MatKhau@2",
                         "MatKhau@2"));
         assertEquals(0, dao.soLanGhi);
@@ -388,5 +430,152 @@ class TaiKhoanServiceTest {
                 () -> service.capNhatThongTin("Trần Thị Mai", "")));
         assertEquals("Trần Thị Mai",
                 PhienDangNhap.nguoiDung().orElseThrow().hoTen());
+    }
+
+    // US-022: Quản trị viên quản lý tài khoản (giả định 18)
+
+    /** admin (1, Quản trị viên) đang đăng nhập; có thêm thuquy01 (2). */
+    private void coSanTaiKhoan() {
+        dao.theoId.put(1, new TaiKhoan(1, "admin", "Nguyễn Thị Hương",
+                VaiTro.QUAN_TRI, "bam:Admin@123", true, null));
+        dao.theoId.put(2, new TaiKhoan(2, "thuquy01", "Trần Thị Mai",
+                VaiTro.THU_QUY, "bam:MatKhau@1", true, null));
+    }
+
+    @Test
+    void ac061QuanTriVienXemDanhSachTaiKhoan() {
+        coSanTaiKhoan();
+        assertEquals(2, service.danhSachTaiKhoan().size());
+    }
+
+    @Test
+    void ac060ThuQuyKhongDuocQuanLyTaiKhoan() {
+        coSanTaiKhoan();
+        PhienDangNhap.batDau(dao.theoId.get(2).nguoiDung());
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.danhSachTaiKhoan());
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.doiVaiTro(1, VaiTro.THU_QUY));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.khoaTaiKhoan(1, true));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.datLaiMatKhau(1));
+        // Không đọc, không ghi gì: không lộ dữ liệu (AC-062).
+        assertEquals(0, dao.soLanDoc);
+        assertEquals(0, dao.soLanGhi);
+        assertTrue(dao.theoId.get(1).hoatDong());
+    }
+
+    @Test
+    void chuaDangNhapKhongXemDuocDanhSach() {
+        PhienDangNhap.ketThuc();
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.danhSachTaiKhoan());
+        assertEquals(0, dao.soLanDoc);
+    }
+
+    @Test
+    void doiVaiTroTaiKhoanKhac() {
+        coSanTaiKhoan();
+        TaiKhoan sau = service.doiVaiTro(2, VaiTro.QUAN_TRI);
+        assertEquals(VaiTro.QUAN_TRI, sau.vaiTro());
+        assertEquals(VaiTro.QUAN_TRI, dao.theoId.get(2).vaiTro());
+    }
+
+    @Test
+    void khongTuDoiVaiTroCuaMinh() {
+        coSanTaiKhoan();
+        dao.theoId.put(3, new TaiKhoan(3, "quantri02", "Đỗ Minh Quân",
+                VaiTro.QUAN_TRI, "bam:x", true, null));
+        LoiNghiepVu loi = assertThrows(LoiNghiepVu.class,
+                () -> service.doiVaiTro(1, VaiTro.THU_QUY));
+        assertTrue(loi.getMessage().startsWith("Không tự đổi vai trò"));
+        assertEquals(VaiTro.QUAN_TRI, dao.theoId.get(1).vaiTro());
+        assertEquals(0, dao.soLanGhi);
+    }
+
+    @Test
+    void doiVaiTroKhongChonVaiTro() {
+        coSanTaiKhoan();
+        assertThrows(LoiNghiepVu.class, () -> service.doiVaiTro(2, null));
+        assertEquals(0, dao.soLanGhi);
+    }
+
+    @Test
+    void luonConMotQuanTriVienHoatDong() {
+        // admin đang đăng nhập; quantri02 là Quản trị viên khác nhưng đã
+        // bị khóa. Phiên cũ của quantri02 (vd máy khác) cố hạ quyền admin:
+        // DAO từ chối vì admin là Quản trị viên hoạt động cuối cùng.
+        coSanTaiKhoan();
+        dao.theoId.put(3, new TaiKhoan(3, "quantri02", "Đỗ Minh Quân",
+                VaiTro.QUAN_TRI, "bam:x", false, null));
+        PhienDangNhap.batDau(dao.theoId.get(3).nguoiDung());
+        LoiNghiepVu doi = assertThrows(LoiNghiepVu.class,
+                () -> service.doiVaiTro(1, VaiTro.THU_QUY));
+        assertTrue(doi.getMessage().startsWith("Phải còn ít nhất một"));
+        LoiNghiepVu khoa = assertThrows(LoiNghiepVu.class,
+                () -> service.khoaTaiKhoan(1, true));
+        assertTrue(khoa.getMessage().startsWith("Phải còn ít nhất một"));
+        assertEquals(VaiTro.QUAN_TRI, dao.theoId.get(1).vaiTro());
+        assertTrue(dao.theoId.get(1).hoatDong());
+    }
+
+    @Test
+    void khoaVaMoKhoaTaiKhoanKhac() {
+        coSanTaiKhoan();
+        assertFalse(service.khoaTaiKhoan(2, true).hoatDong());
+        assertFalse(dao.theoId.get(2).hoatDong());
+        assertTrue(service.khoaTaiKhoan(2, false).hoatDong());
+        assertTrue(dao.theoId.get(2).hoatDong());
+    }
+
+    @Test
+    void khongTuKhoaTaiKhoanDangDung() {
+        coSanTaiKhoan();
+        LoiNghiepVu loi = assertThrows(LoiNghiepVu.class,
+                () -> service.khoaTaiKhoan(1, true));
+        assertEquals("Không tự khóa tài khoản đang dùng.", loi.getMessage());
+        assertTrue(dao.theoId.get(1).hoatDong());
+    }
+
+    @Test
+    void taiKhoanKhongConThiBao() {
+        coSanTaiKhoan();
+        assertThrows(LoiNghiepVu.class,
+                () -> service.doiVaiTro(99, VaiTro.THU_QUY));
+        assertThrows(LoiNghiepVu.class,
+                () -> service.khoaTaiKhoan(99, true));
+        assertThrows(LoiNghiepVu.class, () -> service.datLaiMatKhau(99));
+        assertEquals(0, dao.soLanGhi);
+    }
+
+    @Test
+    void datLaiMatKhauTam() {
+        coSanTaiKhoan();
+        String tam = service.datLaiMatKhau(2);
+        assertTrue(tam.length() >= TaiKhoanService.MAT_KHAU_TOI_THIEU, tam);
+        assertEquals(TaiKhoanService.DO_DAI_MAT_KHAU_TAM, tam.length());
+        assertTrue(tam.chars().anyMatch(Character::isUpperCase), tam);
+        assertTrue(tam.chars().anyMatch(Character::isLowerCase), tam);
+        assertTrue(tam.chars().anyMatch(Character::isDigit), tam);
+        // Chỉ lưu bản băm, không lưu chữ rõ.
+        assertEquals("bam:" + tam, dao.theoId.get(2).matKhauBam());
+        assertFalse(service.datLaiMatKhau(2).equals(tam));
+    }
+
+    @Test
+    void khongTuDatLaiMatKhauCuaMinh() {
+        coSanTaiKhoan();
+        assertThrows(LoiNghiepVu.class, () -> service.datLaiMatKhau(1));
+        assertEquals("bam:Admin@123", dao.theoId.get(1).matKhauBam());
+    }
+
+    @Test
+    void matKhauTamKhongCoKyTuDeNham() {
+        for (int i = 0; i < 200; i++) {
+            String tam = TaiKhoanService.sinhMatKhauTam();
+            assertTrue(tam.chars().noneMatch(c -> "0O1lI".indexOf(c) >= 0),
+                    tam);
+        }
     }
 }

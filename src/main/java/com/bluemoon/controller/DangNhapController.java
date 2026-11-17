@@ -43,6 +43,11 @@ public class DangNhapController {
                 thongBao}) {
             nhan.managedProperty().bind(nhan.visibleProperty());
         }
+        // Giả định 17: vừa bị đăng xuất vì tài khoản bị khóa.
+        String cauBao = CuaSoUngDung.layCauBaoDangNhap();
+        if (cauBao != null) {
+            hienThongBao(cauBao);
+        }
         Platform.runLater(tenDangNhap::requestFocus);
     }
 

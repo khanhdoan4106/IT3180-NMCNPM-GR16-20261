@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -149,5 +150,54 @@ class TaiKhoanDaoJdbcIT {
         assertEquals(bamKhac,
                 dao.timTheoTenDangNhap("thuquy02").orElseThrow().matKhauBam());
         assertFalse(dao.doiMatKhau(id + 1000, bamMoi));
+    }
+
+    // US-022: quản lý tài khoản (giả định 18)
+
+    private int them(String ten, VaiTro vaiTro) {
+        dao.them(new TaiKhoanMoi(ten, "Người thử " + ten, vaiTro, "bam"));
+        return dao.timTheoTenDangNhap(ten).orElseThrow().id();
+    }
+
+    /** Danh sách đủ cột, xếp theo tên đăng nhập. */
+    @Test
+    void danhSachXepTheoTen() {
+        them("thuquy02", VaiTro.THU_QUY);
+        them("admin", VaiTro.QUAN_TRI);
+        them("thuquy01", VaiTro.THU_QUY);
+        assertEquals(List.of("admin", "thuquy01", "thuquy02"),
+                dao.danhSach().stream().map(TaiKhoan::tenDangNhap).toList());
+    }
+
+    @Test
+    void doiVaiTroGiuMotQuanTriHoatDong() {
+        int a = them("admin", VaiTro.QUAN_TRI);
+        int b = them("quantri02", VaiTro.QUAN_TRI);
+        int c = them("thuquy01", VaiTro.THU_QUY);
+
+        assertTrue(dao.doiVaiTro(c, VaiTro.QUAN_TRI));
+        assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(c).orElseThrow().vaiTro());
+        assertTrue(dao.doiVaiTro(b, VaiTro.THU_QUY));
+        assertTrue(dao.doiVaiTro(c, VaiTro.THU_QUY));
+        // admin là Quản trị viên hoạt động cuối cùng.
+        assertFalse(dao.doiVaiTro(a, VaiTro.THU_QUY));
+        assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(a).orElseThrow().vaiTro());
+        assertFalse(dao.doiVaiTro(a + 1000, VaiTro.THU_QUY));
+    }
+
+    @Test
+    void khoaMoKhoaGiuMotQuanTriHoatDong() {
+        int a = them("admin", VaiTro.QUAN_TRI);
+        int b = them("quantri02", VaiTro.QUAN_TRI);
+
+        assertTrue(dao.datHoatDong(b, false));
+        assertFalse(dao.timTheoId(b).orElseThrow().hoatDong());
+        // Quản trị viên bị khóa không tính: không khóa được admin.
+        assertFalse(dao.datHoatDong(a, false));
+        assertFalse(dao.doiVaiTro(a, VaiTro.THU_QUY));
+        assertTrue(dao.timTheoId(a).orElseThrow().hoatDong());
+        assertTrue(dao.datHoatDong(b, true));
+        assertTrue(dao.datHoatDong(a, false));
+        assertFalse(dao.datHoatDong(a + 1000, true));
     }
 }

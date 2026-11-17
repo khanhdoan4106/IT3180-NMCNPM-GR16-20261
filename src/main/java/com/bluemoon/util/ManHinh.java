@@ -1,8 +1,19 @@
 package com.bluemoon.util;
 
+import com.bluemoon.model.VaiTro;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * Danh sách màn hình của ứng dụng, cũng là danh sách mục trên menu trái
  * (theo đúng thứ tự khai báo, các mục cùng nhóm đứng liền nhau).
+ *
+ * <p>Mỗi màn hình ghi luôn vai trò được mở (US-022, bảng mục 1.1 của
+ * docs/design/phan-quyen.md). Đây là chỗ duy nhất ghi quyền mở màn hình:
+ * menu chỉ hiện mục vai trò được mở, {@link DieuHuong} từ chối mở màn
+ * không có quyền, và Service kiểm lại bằng
+ * {@code PhanQuyen.yeuCau(ManHinh)}.
  *
  * <p>Thêm màn hình mới: tạo tệp FXML trong
  * {@code src/main/resources/com/bluemoon/view/} rồi ghi tên tệp vào dòng
@@ -11,48 +22,68 @@ package com.bluemoon.util;
  */
 public enum ManHinh {
 
-    /** Trang chính, mở khi vào ứng dụng hoặc bấm tên ứng dụng. */
-    TRANG_CHINH("Trang chính", null, "trang-chinh.fxml"),
+    /**
+     * Trang chính, mở khi vào ứng dụng hoặc bấm tên ứng dụng. Thẻ tổng thu
+     * tháng (US-016) trên trang này: chờ chốt họp 22/11, tạm chỉ Quản trị
+     * viên, xem {@code PhanQuyen.XEM_TONG_THU_THANG}.
+     */
+    TRANG_CHINH("Trang chính", null, "trang-chinh.fxml",
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
 
     // US-001
-    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, null),
+    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, null, VaiTro.QUAN_TRI),
     // US-002
-    NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, null),
+    NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, null, VaiTro.QUAN_TRI),
     // US-003
-    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH, null),
+    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH, null,
+            VaiTro.QUAN_TRI),
     // US-004
-    BAO_CAO_NHAN_KHAU("Báo cáo nhân khẩu", NhomMenu.HO_GIA_DINH, null),
+    BAO_CAO_NHAN_KHAU("Báo cáo nhân khẩu", NhomMenu.HO_GIA_DINH, null,
+            VaiTro.QUAN_TRI),
 
-    // US-005, US-006, US-008
-    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU, null),
-    // US-009
-    CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null),
+    // US-005, US-006, US-008. Thủ quỹ với US-005, US-008: chờ chốt họp
+    // 22/11, tạm không cho theo AC-060.
+    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU, null,
+            VaiTro.QUAN_TRI),
+    // US-009. Thủ quỹ: chờ chốt họp 22/11, tạm không cho theo AC-060.
+    CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null, VaiTro.QUAN_TRI),
     // US-015
-    THONG_BAO_PHI("Thông báo phí", NhomMenu.KHOAN_THU, null),
+    THONG_BAO_PHI("Thông báo phí", NhomMenu.KHOAN_THU, null,
+            VaiTro.QUAN_TRI),
 
-    // US-007, US-010, US-011, US-012
-    THU_PHI("Thu phí", NhomMenu.THU_PHI, null),
-    // US-013, US-014
-    PHIEU_THU("Phiếu thu", NhomMenu.THU_PHI, null),
+    // US-007, US-010, US-011, US-012 (AC-060: thu phí và tra cứu)
+    THU_PHI("Thu phí", NhomMenu.THU_PHI, null,
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
+    // US-013, US-014 (Thủ quỹ chỉ hủy phiếu mình lập, giả định 28)
+    PHIEU_THU("Phiếu thu", NhomMenu.THU_PHI, null,
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
 
     // US-017
-    NO_DONG("Hộ nợ đọng", NhomMenu.THONG_KE, null),
-    // US-018, US-019
-    THONG_KE_KHOAN_THU("Thống kê theo khoản thu", NhomMenu.THONG_KE, null),
+    NO_DONG("Hộ nợ đọng", NhomMenu.THONG_KE, null, VaiTro.QUAN_TRI),
+    // US-018, US-019. Thủ quỹ với US-018: chờ chốt họp 22/11, tạm không
+    // cho theo AC-060.
+    THONG_KE_KHOAN_THU("Thống kê theo khoản thu", NhomMenu.THONG_KE, null,
+            VaiTro.QUAN_TRI),
 
-    // US-020, US-022, US-023
-    TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, "tai-khoan.fxml"),
+    // US-020, US-022, US-023. Thủ quỹ chỉ thấy tab "Tài khoản của tôi".
+    TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, "tai-khoan.fxml",
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
     // TS-002
-    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, null);
+    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, null, VaiTro.QUAN_TRI);
 
     private final String ten;
     private final NhomMenu nhom;
     private final String tepFxml;
+    private final Set<VaiTro> vaiTro;
 
-    ManHinh(String ten, NhomMenu nhom, String tepFxml) {
+    ManHinh(String ten, NhomMenu nhom, String tepFxml,
+            VaiTro... vaiTro) {
         this.ten = ten;
         this.nhom = nhom;
         this.tepFxml = tepFxml;
+        EnumSet<VaiTro> tap = EnumSet.noneOf(VaiTro.class);
+        Collections.addAll(tap, vaiTro);
+        this.vaiTro = Collections.unmodifiableSet(tap);
     }
 
     /**
@@ -80,5 +111,24 @@ public enum ManHinh {
      */
     public String getTepFxml() {
         return tepFxml;
+    }
+
+    /**
+     * Các vai trò được mở màn hình này.
+     *
+     * @return tập chỉ đọc
+     */
+    public Set<VaiTro> getVaiTro() {
+        return vaiTro;
+    }
+
+    /**
+     * Vai trò này có được mở màn hình không.
+     *
+     * @param vt vai trò người đang đăng nhập, có thể {@code null}
+     * @return {@code true} nếu được mở
+     */
+    public boolean duocMo(VaiTro vt) {
+        return vt != null && vaiTro.contains(vt);
     }
 }

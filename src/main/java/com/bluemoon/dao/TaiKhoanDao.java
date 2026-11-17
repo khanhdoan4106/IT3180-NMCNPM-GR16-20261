@@ -2,6 +2,8 @@ package com.bluemoon.dao;
 
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
+import com.bluemoon.model.VaiTro;
+import java.util.List;
 import java.util.Optional;
 
 /** Ghi và đọc bảng {@code tai_khoan}. */
@@ -56,4 +58,38 @@ public interface TaiKhoanDao {
      * @throws LoiCsdl khi không ghi được CSDL
      */
     boolean doiMatKhau(int id, String matKhauBam);
+
+    /**
+     * Mọi tài khoản, xếp theo tên đăng nhập (US-022, giả định 18).
+     *
+     * @return danh sách, rỗng nếu chưa có tài khoản nào
+     * @throws LoiCsdl khi không đọc được CSDL
+     */
+    List<TaiKhoan> danhSach();
+
+    /**
+     * Đổi vai trò một tài khoản (US-022, giả định 18). Không đổi nếu việc
+     * này làm không còn Quản trị viên nào đang hoạt động; kiểm và ghi trong
+     * cùng một giao dịch để hai máy đổi cùng lúc cũng không vượt được.
+     *
+     * @param id mã tài khoản
+     * @param vaiTro vai trò mới
+     * @return {@code false} nếu không có tài khoản mã đó hoặc đây là Quản
+     *         trị viên đang hoạt động cuối cùng
+     * @throws LoiCsdl khi không ghi được CSDL
+     */
+    boolean doiVaiTro(int id, VaiTro vaiTro);
+
+    /**
+     * Khóa hoặc mở khóa một tài khoản (US-022, giả định 18). Không khóa
+     * Quản trị viên đang hoạt động cuối cùng; kiểm và ghi trong cùng một
+     * giao dịch.
+     *
+     * @param id mã tài khoản
+     * @param hoatDong {@code false} để khóa, {@code true} để mở khóa
+     * @return {@code false} nếu không có tài khoản mã đó hoặc đây là Quản
+     *         trị viên đang hoạt động cuối cùng
+     * @throws LoiCsdl khi không ghi được CSDL
+     */
+    boolean datHoatDong(int id, boolean hoatDong);
 }

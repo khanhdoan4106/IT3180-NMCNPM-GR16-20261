@@ -47,7 +47,10 @@ class DangNhapServiceTest {
 
         @Override
         public Optional<TaiKhoan> timTheoId(int id) {
-            throw new UnsupportedOperationException();
+            if (loi != null) {
+                throw loi;
+            }
+            return taiKhoan.stream().filter(t -> t.id() == id).findFirst();
         }
 
         @Override
@@ -58,6 +61,26 @@ class DangNhapServiceTest {
         @Override
         public boolean doiMatKhau(int id, String matKhauBam) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<TaiKhoan> danhSach() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean doiVaiTro(int id, VaiTro vaiTro) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean datHoatDong(int id, boolean hoatDong) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** Thay một tài khoản (giả lập máy khác vừa sửa CSDL). */
+        void thay(TaiKhoan moi) {
+            taiKhoan.replaceAll(t -> t.id() == moi.id() ? moi : t);
         }
     }
 
@@ -83,6 +106,7 @@ class DangNhapServiceTest {
 
     @AfterEach
     void dangXuat() {
+        PhienDangNhap.khiDoiNguoiDung(null);
         PhienDangNhap.ketThuc();
     }
 
@@ -163,5 +187,54 @@ class DangNhapServiceTest {
         dao.loi = new LoiCsdl(LoaiLoiCsdl.KHONG_TOI_MAY_CHU, null);
         assertSame(dao.loi, assertThrows(LoiCsdl.class,
                 () -> service.dangNhap("admin", "Admin@123")));
+    }
+
+    // US-022, giả định 17: đọc lại tài khoản trước mỗi lần mở màn hình
+
+    @Test
+    void lamMoiPhienKhongDoiGi() {
+        service.dangNhap("thuquy01", "ThuQuy@2026");
+        assertEquals(DangNhapService.KetQuaPhien.KHONG_DOI,
+                service.lamMoiPhien());
+        assertTrue(PhienDangNhap.daDangNhap());
+    }
+
+    @Test
+    void biKhoaKhiDangDungThiKetThucPhien() {
+        service.dangNhap("thuquy01", "ThuQuy@2026");
+        dao.thay(new TaiKhoan(2, "thuquy01", "Nguyễn Văn Hùng",
+                VaiTro.THU_QUY, "bam:ThuQuy@2026", false, null));
+        assertEquals(DangNhapService.KetQuaPhien.DA_KET_THUC,
+                service.lamMoiPhien());
+        assertFalse(PhienDangNhap.daDangNhap());
+    }
+
+    @Test
+    void doiVaiTroThiPhienVaThanhDauDoiNgay() {
+        service.dangNhap("thuquy01", "ThuQuy@2026");
+        List<NguoiDung> daBao = new ArrayList<>();
+        PhienDangNhap.khiDoiNguoiDung(daBao::add);
+        dao.thay(new TaiKhoan(2, "thuquy01", "Nguyễn Văn Hùng",
+                VaiTro.QUAN_TRI, "bam:ThuQuy@2026", true, null));
+
+        assertEquals(DangNhapService.KetQuaPhien.DA_DOI,
+                service.lamMoiPhien());
+        NguoiDung moi = PhienDangNhap.nguoiDung().orElseThrow();
+        assertEquals(VaiTro.QUAN_TRI, moi.vaiTro());
+        assertEquals(List.of(moi), daBao);
+    }
+
+    @Test
+    void chuaDangNhapThiLamMoiPhienBaoKetThuc() {
+        assertEquals(DangNhapService.KetQuaPhien.DA_KET_THUC,
+                service.lamMoiPhien());
+    }
+
+    @Test
+    void loiCsdlKhiLamMoiThiGiuPhien() {
+        service.dangNhap("thuquy01", "ThuQuy@2026");
+        dao.loi = new LoiCsdl(LoaiLoiCsdl.KHONG_TOI_MAY_CHU, null);
+        assertThrows(LoiCsdl.class, service::lamMoiPhien);
+        assertTrue(PhienDangNhap.daDangNhap());
     }
 }

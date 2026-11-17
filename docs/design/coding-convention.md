@@ -45,3 +45,35 @@ dạng mới thì thêm vào lớp tiện ích kèm test.
 Dạng hiển thị theo [ui.md](ui.md), mục "Cách viết chữ hiển thị". Lỗi nhập
 liệu trong form vẫn báo ngay dưới ô (như màn Tài khoản); `HopThoai` dùng
 cho lỗi không gắn với ô nào hoặc khi cần người dùng bấm "Đóng" mới đi tiếp.
+
+## Kiểm quyền
+
+Phân quyền hai lớp (US-022, giả định 17): menu ẩn màn hình vai trò không
+được dùng, và **mỗi hàm Service đọc hoặc ghi dữ liệu nghiệp vụ gọi
+`PhanQuyen` trước khi gọi DAO**, theo bảng
+[phan-quyen.md](phan-quyen.md). Không dựa vào việc menu đã ẩn.
+
+| Trường hợp | Gọi |
+|---|---|
+| Chức năng nằm trong một màn hình | `PhanQuyen.yeuCau(ManHinh.X)`: vai trò lấy từ `ManHinh` |
+| Thao tác chỉ Quản trị viên (quản lý tài khoản, xem nhật ký) | `PhanQuyen.chiQuanTriVien("Chỉ Quản trị viên được ...")` |
+| Một phần của màn hình có quyền riêng | `PhanQuyen.yeuCau(tậpVaiTrò, câuBáo)`, tập vai trò ghi thành hằng trong `PhanQuyen` (vd `XEM_TONG_THU_THANG`) |
+
+Ví dụ trong `CuDanService`:
+
+```java
+public SoLieuCuDan laySoLieu() {
+    PhanQuyen.yeuCau(ManHinh.TRANG_CHINH);
+    return cuDanDao.demDangO();
+}
+```
+
+Không đủ quyền thì `PhanQuyen` ném `LoiKhongCoQuyen` (câu báo tiếng Việt),
+Service không đọc, không ghi gì. Controller bắt lỗi này và hiện câu báo như
+lỗi CSDL.
+
+**Màn hình mới** phải khai báo vai trò được mở ngay trên dòng của nó trong
+`ManHinh` (vd `HO_GIA_DINH(..., VaiTro.QUAN_TRI)`), đúng bảng
+`phan-quyen.md`; `ManHinhTest.bangQuyenKhopPhanQuyenMd` kiểm bảng này.
+Test Service đặt người đăng nhập bằng `PhienDangNhap.batDau(...)` và có ít
+nhất một test vai trò không được phép bị từ chối.
