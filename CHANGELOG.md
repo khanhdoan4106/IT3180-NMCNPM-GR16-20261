@@ -7,6 +7,17 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-022: phân quyền hai lớp. Menu chỉ hiện màn hình vai trò được dùng;
+  mở màn không có quyền thì về Trang chính kèm câu báo. Mỗi Service kiểm
+  lại vai trò qua `PhanQuyen` (bảng `docs/design/phan-quyen.md`). Trước
+  mỗi lần mở màn hình, ứng dụng đọc lại tài khoản: vừa bị khóa thì đăng
+  xuất kèm câu báo, vừa đổi vai trò thì menu và thanh đầu đổi theo.
+  Thủ quỹ tạm không dùng các chức năng chờ chốt họp 22/11 (US-005,
+  US-008, US-009, US-018, thẻ tổng thu tháng).
+- US-022: tab "Quản lý tài khoản" (chỉ Quản trị viên): danh sách tài
+  khoản, đổi vai trò, khóa/mở khóa, đặt lại mật khẩu tạm hiện một lần.
+  Không tự khóa, không tự đổi vai trò của mình; luôn còn ít nhất một
+  Quản trị viên đang hoạt động, kể cả khi hai máy thao tác cùng lúc.
 - US-023: màn Tài khoản chia hai tab. Tab "Tài khoản của tôi" cho mọi
   người dùng xem tên đăng nhập, vai trò; sửa họ tên và số điện thoại
   (10 chữ số, bắt đầu bằng 0, để trống được); đổi mật khẩu khi nhập đúng
