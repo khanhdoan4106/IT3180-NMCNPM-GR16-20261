@@ -28,3 +28,20 @@ Dòng dài thì ngắt trước toán tử `+` hoặc sau dấu `(`, thụt thê
 Các mục còn lại của bảng trên (đặt tên, Javadoc, SQL) vẫn kiểm khi review.
 
 Quy trình nhánh, commit và review: [workflow.md](../workflow.md).
+
+## Tiện ích dùng chung
+
+Các lớp trong `com.bluemoon.util` dùng cho mọi màn hình. **Không tự viết lại
+định dạng ngày, diện tích hay bỏ dấu trong Controller, Service**; cần thêm
+dạng mới thì thêm vào lớp tiện ích kèm test.
+
+| Lớp | Dùng khi | Hàm chính |
+|---|---|---|
+| `Ngay` | Hiện ngày, đọc ngày người dùng gõ, gắn dạng cho ô ngày (`DatePicker`) | `dinhDang(LocalDate)` → "05/09/2026"; `doc(String)`; `ganDinhDang(DatePicker)` |
+| `DienTich` | Hiện diện tích căn hộ trong bảng, form, thông báo phí | `dinhDang(BigDecimal)` → "1.234,50 m²" |
+| `TimKiem` | Lọc danh sách theo ô tìm kiếm, không phân biệt hoa thường và dấu (giả định 40) | `boDau(String)`; `khop(giaTri, tuKhoa)` |
+| `HopThoai` | Mở hộp thoại, `Alert` cùng giao diện với cửa sổ chính | `ganKieu(Dialog<?>)`; `baoLoi(tieuDe, noiDung)`; `baoThanhCong(tieuDe, noiDung)` |
+
+Dạng hiển thị theo [ui.md](ui.md), mục "Cách viết chữ hiển thị". Lỗi nhập
+liệu trong form vẫn báo ngay dưới ô (như màn Tài khoản); `HopThoai` dùng
+cho lỗi không gắn với ô nào hoặc khi cần người dùng bấm "Đóng" mới đi tiếp.
