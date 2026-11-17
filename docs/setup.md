@@ -84,3 +84,36 @@ verify`) và `build-mysql` (MySQL 8.0, `mvn -B verify -Pmysql`).
 | `mvn verify` báo lỗi Checkstyle | Dòng quá 80 cột hoặc có tab: [quy ước mã](design/coding-convention.md) |
 | `CREATE USER` báo user đã tồn tại | Bỏ qua, chạy tiếp `GRANT` |
 | `command denied to user 'bluemoon'@'localhost'` khi chạy `schema.sql` | Đang chạy bằng user ứng dụng; các script trong `database/` chạy bằng root |
+
+## 6. Cài đặt IDE
+
+Để Pull Request chỉ gồm phần mình sửa (không đổi định dạng cả tệp), mọi
+người dùng chung tệp [`.editorconfig`](../.editorconfig) ở gốc repo: UTF-8,
+xuống dòng LF, thụt 4 dấu cách (YAML, PlantUML, Markdown thụt 2), Java tối
+đa 80 cột, bỏ khoảng trắng cuối dòng, có dòng trống cuối tệp.
+
+**IntelliJ IDEA**
+
+1. Settings → Editor → Code Style: đánh dấu **Enable EditorConfig
+   support** (thường đã bật sẵn).
+2. Settings → Tools → **Actions on Save**: bỏ chọn **Reformat code** và
+   **Optimize imports**; nếu muốn giữ Reformat code thì chọn phạm vi
+   **Changed lines** (chỉ dòng mình sửa), không chọn Whole file.
+3. Tự định dạng khi cần: chọn đoạn mình vừa viết rồi Ctrl+Alt+L, không bấm
+   trên cả tệp.
+
+**VS Code**
+
+1. Cài tiện ích **EditorConfig for VS Code** (`EditorConfig.EditorConfig`).
+2. Trong Settings (JSON) đặt:
+
+   ```json
+   "editor.formatOnSave": true,
+   "editor.formatOnSaveMode": "modifications"
+   ```
+
+   hoặc tắt hẳn `"editor.formatOnSave": false`. Chế độ `modifications` chỉ
+   định dạng phần đã sửa so với Git.
+
+Trước khi commit, xem lại `git diff`: nếu thấy cả tệp đổi (thường do đổi
+xuống dòng hoặc thụt lề) thì hoàn tác phần thừa rồi mới commit.

@@ -1,8 +1,8 @@
 name: CI
 
 on:
+  # Mọi Pull Request, kể cả PR nối tiếp có base là nhánh của PR khác.
   pull_request:
-    branches: [main]
   push:
     branches: [main]
 

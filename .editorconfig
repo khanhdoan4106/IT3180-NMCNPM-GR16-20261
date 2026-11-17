@@ -1,0 +1,35 @@
+# Định dạng chung cho mọi IDE (https://editorconfig.org), khớp
+# config/checkstyle.xml và cách các tệp đang viết trong repo.
+# Xem docs/setup.md, mục "Cài đặt IDE".
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Checkstyle: dòng tối đa 80 ký tự, không tab (coding-convention.md).
+[*.java]
+max_line_length = 80
+
+[*.{fxml,xml,css,sql}]
+indent_size = 4
+
+[*.{yml,yaml,puml,dbml}]
+indent_size = 2
+
+# Markdown: danh sách lồng thụt 2; không xuống dòng bằng hai dấu cách cuối.
+[*.md]
+indent_size = 2
+
+# Tệp nhị phân: không đụng tới.
+[*.{png,jpg,ttf,jar}]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+indent_style = unset
+indent_size = unset
