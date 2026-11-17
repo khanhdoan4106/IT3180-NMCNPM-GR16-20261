@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Test {@link TaiKhoanService} bằng DAO giả, không cần MySQL. */
@@ -100,6 +101,13 @@ class TaiKhoanServiceTest {
     /** Băm giả "bam:" + mật khẩu cho nhanh; BCrypt thật ở MatKhauTest. */
     private final TaiKhoanService service = new TaiKhoanService(dao,
             mk -> "bam:" + mk, (mk, bam) -> bam.equals("bam:" + mk));
+
+    /** Mặc định Quản trị viên đang đăng nhập (chỉ người này tạo tài khoản). */
+    @BeforeEach
+    void dangNhapQuanTri() {
+        PhienDangNhap.batDau(new NguoiDung(1, "admin", "Nguyễn Thị Hương",
+                VaiTro.QUAN_TRI));
+    }
 
     @AfterEach
     void dangXuat() {
@@ -199,6 +207,37 @@ class TaiKhoanServiceTest {
                         VaiTro.THU_QUY, "MatKhau@1", "MatKhau@1")));
     }
 
+    // Chặn Thủ quỹ tạo tài khoản (giả định 2, AC-061)
+
+    @Test
+    void thuQuyKhongTaoDuocTaiKhoan() {
+        dangNhapThuQuy();
+        LoiKhongCoQuyen loi = assertThrows(LoiKhongCoQuyen.class,
+                () -> service.taoTaiKhoan("thuquy05", "Lê Văn Bình",
+                        VaiTro.QUAN_TRI, "MatKhau@1", "MatKhau@1"));
+        assertEquals("Chỉ Quản trị viên được tạo tài khoản.",
+                loi.getMessage());
+        assertTrue(dao.daThem.isEmpty());
+    }
+
+    @Test
+    void chuaDangNhapKhongTaoDuocTaiKhoan() {
+        PhienDangNhap.ketThuc();
+        LoiKhongCoQuyen loi = assertThrows(LoiKhongCoQuyen.class,
+                () -> service.taoTaiKhoan("thuquy05", "Lê Văn Bình",
+                        VaiTro.THU_QUY, "MatKhau@1", "MatKhau@1"));
+        assertEquals("Cần đăng nhập để làm việc này.", loi.getMessage());
+        assertTrue(dao.daThem.isEmpty());
+    }
+
+    @Test
+    void quanTriVienVanTaoDuocTaiKhoan() {
+        TaiKhoanMoi tk = service.taoTaiKhoan("quantri02", "Đỗ Minh Quân",
+                VaiTro.QUAN_TRI, "MatKhau@1", "MatKhau@1");
+        assertEquals(List.of(tk), dao.daThem);
+        assertEquals(VaiTro.QUAN_TRI, dao.daThem.get(0).vaiTro());
+    }
+
     // US-023: tài khoản của người đang đăng nhập
 
     @Test
@@ -209,6 +248,7 @@ class TaiKhoanServiceTest {
 
     @Test
     void chuaDangNhapThiKhongDungDuoc() {
+        PhienDangNhap.ketThuc();
         assertThrows(IllegalStateException.class,
                 () -> service.taiKhoanCuaToi());
         assertThrows(IllegalStateException.class,

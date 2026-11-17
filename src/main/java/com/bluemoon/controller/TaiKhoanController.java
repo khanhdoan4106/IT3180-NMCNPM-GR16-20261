@@ -4,6 +4,7 @@ import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TaiKhoanDaoJdbc;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.LoiNhapLieu;
 import com.bluemoon.service.TaiKhoanService;
 import com.bluemoon.service.TaiKhoanService.O;
@@ -103,7 +104,7 @@ public class TaiKhoanController {
             tenDangNhap.requestFocus();
         } catch (LoiNhapLieu loi) {
             hienLoiTheoO(loi);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienThongBao(loi.getMessage(), "thong-bao-loi");
         }
     }

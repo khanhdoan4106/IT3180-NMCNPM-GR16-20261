@@ -87,8 +87,9 @@ public class TaiKhoanService {
     }
 
     /**
-     * Tạo tài khoản (AC-054). Báo mọi ô sai cùng lúc; tên đăng nhập trùng
-     * (AC-055) và mật khẩu quá ngắn (AC-056) báo ở ô tương ứng.
+     * Tạo tài khoản (AC-054). Chỉ Quản trị viên được tạo (giả định 2,
+     * AC-061). Báo mọi ô sai cùng lúc; tên đăng nhập trùng (AC-055) và mật
+     * khẩu quá ngắn (AC-056) báo ở ô tương ứng.
      *
      * @param tenDangNhap tên đăng nhập, bỏ khoảng trắng hai đầu
      * @param hoTen họ tên, bỏ khoảng trắng hai đầu
@@ -96,11 +97,14 @@ public class TaiKhoanService {
      * @param matKhau mật khẩu, giữ nguyên như đã gõ
      * @param nhapLai mật khẩu nhập lại
      * @return tài khoản đã ghi (mật khẩu đã băm)
+     * @throws LoiKhongCoQuyen khi chưa đăng nhập hoặc không phải Quản trị
+     *         viên; không ghi gì
      * @throws LoiNhapLieu khi có ô sai hoặc tên đăng nhập đã có
      * @throws com.bluemoon.dao.LoiCsdl khi không ghi được CSDL
      */
     public TaiKhoanMoi taoTaiKhoan(String tenDangNhap, String hoTen,
             VaiTro vaiTro, String matKhau, String nhapLai) {
+        chiQuanTriVien("Chỉ Quản trị viên được tạo tài khoản.");
         String ten = gon(tenDangNhap);
         String hoTenGon = gon(hoTen);
         String mk = matKhau == null ? "" : matKhau;
@@ -228,6 +232,18 @@ public class TaiKhoanService {
         }
         if (!taiKhoanDao.doiMatKhau(id, bamMatKhau.apply(moi))) {
             throw new IllegalStateException("Không có tài khoản " + id);
+        }
+    }
+
+    /**
+     * Kiểm người đang đăng nhập là Quản trị viên (giả định 17: kiểm lại ở
+     * Service, không chỉ ẩn trên màn hình).
+     */
+    private static void chiQuanTriVien(String cauBao) {
+        NguoiDung nguoiDung = PhienDangNhap.nguoiDung().orElseThrow(
+                () -> new LoiKhongCoQuyen("Cần đăng nhập để làm việc này."));
+        if (nguoiDung.vaiTro() != VaiTro.QUAN_TRI) {
+            throw new LoiKhongCoQuyen(cauBao);
         }
     }
 

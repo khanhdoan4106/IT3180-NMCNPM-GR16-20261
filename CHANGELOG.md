@@ -12,7 +12,9 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   (10 chữ số, bắt đầu bằng 0, để trống được); đổi mật khẩu khi nhập đúng
   mật khẩu hiện tại, mật khẩu mới ít nhất 8 ký tự, nhập lại khớp và khác
   mật khẩu cũ. Lỗi báo ngay dưới ô; đổi họ tên thì thanh đầu cửa sổ đổi
-  theo. Tab "Tạo tài khoản" giữ chức năng của US-020.
+  theo. Tab "Tạo tài khoản" giữ chức năng của US-020 và chỉ Quản trị viên
+  thấy; Service cũng từ chối tạo tài khoản khi người đăng nhập không phải
+  Quản trị viên (giả định 2, AC-061).
 - US-021: ứng dụng mở lên là màn đăng nhập; đăng nhập đúng thì vào cửa
   sổ chính, thanh đầu hiện họ tên, vai trò và nút Đăng xuất. Sai tên hay
   sai mật khẩu đều báo chung "Tên đăng nhập hoặc mật khẩu không đúng.";

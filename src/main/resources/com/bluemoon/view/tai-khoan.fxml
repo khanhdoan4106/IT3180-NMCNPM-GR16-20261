@@ -6,18 +6,19 @@
 <?import javafx.scene.layout.VBox?>
 
 <!-- Màn Tài khoản: tab "Tài khoản của tôi" (US-023) cho mọi người dùng,
-     tab "Tạo tài khoản" (US-020). US-022 sẽ ẩn tab "Tạo tài khoản" với
-     Thủ quỹ và thêm danh sách tài khoản (docs/design/phan-quyen.md). -->
+     tab "Tạo tài khoản" (US-020) chỉ Quản trị viên thấy. US-022 sẽ thêm
+     danh sách tài khoản (docs/design/phan-quyen.md). -->
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.bluemoon.controller.ManTaiKhoanController"
       styleClass="trang">
     <Label text="Tài khoản" styleClass="tieu-de-trang"/>
-    <TabPane tabClosingPolicy="UNAVAILABLE"
+    <TabPane fx:id="cacTab" tabClosingPolicy="UNAVAILABLE"
              VBox.vgrow="ALWAYS">
         <Tab text="Tài khoản của tôi">
             <fx:include source="tai-khoan-cua-toi.fxml"/>
         </Tab>
-        <Tab text="Tạo tài khoản">
+        <Tab fx:id="tabTaoTaiKhoan" text="Tạo tài khoản">
             <fx:include source="tao-tai-khoan.fxml"/>
         </Tab>
     </TabPane>
