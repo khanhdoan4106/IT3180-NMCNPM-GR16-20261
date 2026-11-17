@@ -147,4 +147,6 @@ nghiệp vụ, vd `demDangO()`, và không thấy câu SQL nào.
 | `services` / lớp điều khiển | Service | Lớp điều khiển trong biểu đồ phân tích ứng với Service, không phải Controller của JavaFX |
 | `models` / lớp thực thể | Model (dữ liệu) và DAO (đọc, ghi CSDL) | Lớp thực thể tách làm hai: Model chỉ mang dữ liệu, DAO lưu và lấy dữ liệu đó từ MySQL |
 
+Bảng chức năng – vai trò và cách kiểm tra quyền trong mã (US-022): [phan-quyen.md](phan-quyen.md).
+
 Các sơ đồ tổng thể (use case, ERD, lược đồ CSDL, DFD, biểu đồ lớp): [so-do/README.md](so-do/README.md).
