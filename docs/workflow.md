@@ -112,3 +112,15 @@ Lịch sử của `main` giữ nguyên sau khi đã có Release, để mỗi tag
 - Mật khẩu CSDL để trong `config/db.properties` trên máy mình; file này đã
   có trong `.gitignore`.
 - Quy ước viết mã: [coding-convention.md](design/coding-convention.md).
+
+## 7. Bảng giao việc
+
+[Bảng giao việc (Google Sheet)](https://docs.google.com/spreadsheets/d/13APZsjZj4Dh5jlbh4GALKAoKI_hEWVHzbrsvdXAR60U/edit) để cả nhóm theo dõi
+nhanh việc theo Sprint, hạn, người review và trạng thái.
+
+- Nhận việc ở trang của **Sprint hiện tại**.
+- Tự cập nhật cột **Trạng thái**: Chưa bắt đầu → Đang làm → Chờ review
+  (khi mở Pull Request) → Xong (khi Pull Request được merge).
+- Dòng **đỏ** là quá hạn, dòng **vàng** là còn 2 ngày trở xuống.
+- Issue và Pull Request trên GitHub vẫn là nơi ghi chính (mô tả, thảo luận,
+  review); bảng chỉ để theo dõi nhanh. Hai nơi lệch nhau thì theo GitHub.

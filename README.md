@@ -162,6 +162,7 @@ Request → thành viên khác review → merge vào `main` → cuối Sprint c�
 | Thiết kế | [Quy ước mã](docs/design/coding-convention.md), [Giao diện](docs/design/ui.md), [Kiến trúc](docs/design/kien-truc.md) |
 | Vận hành | [Cài đặt](docs/setup.md), [Kiểm thử](docs/testing.md), [Quy trình làm việc](docs/workflow.md), [Nhật ký thay đổi](CHANGELOG.md), [Ghi chú phát hành](docs/releases/README.md), [Báo cáo rà soát](docs/review/README.md) |
 | Họp nhóm | [Biên bản họp](docs/meeting-notes/README.md) |
+| Quản lý dự án | [Bảng giao việc (Google Sheet)](https://docs.google.com/spreadsheets/d/13APZsjZj4Dh5jlbh4GALKAoKI_hEWVHzbrsvdXAR60U/edit): việc theo Sprint, hạn, người review, trạng thái |
 
 ## Thành viên
 
