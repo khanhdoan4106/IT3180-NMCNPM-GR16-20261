@@ -8,6 +8,13 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-006: màn hình Danh mục khoản thu và chức năng tạo khoản thu tự nguyện
+  theo từng đợt (chỉ Quản trị viên). Cho phép tạo quỹ với hình thức tùy tâm
+  đóng góp (để trống số tiền, AC-021) hoặc mức đóng cố định theo từng hộ
+  (AC-019). Chặn trùng tên khoản thu trong cùng đợt thu (cùng ngày bắt đầu,
+  AC-020). Ngày kết thúc bắt buộc và không trước ngày bắt đầu. Bảng danh mục
+  khoản thu hỗ trợ tìm kiếm không phân biệt hoa thường và dấu.
+
 - US-022: phân quyền hai lớp. Menu chỉ hiện màn hình vai trò được dùng;
   mở màn không có quyền thì về Trang chính kèm câu báo. Mỗi Service kiểm
   lại vai trò qua `PhanQuyen` (bảng `docs/design/phan-quyen.md`). Trước

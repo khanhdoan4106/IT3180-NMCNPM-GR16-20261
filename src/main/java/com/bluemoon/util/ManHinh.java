@@ -43,8 +43,8 @@ public enum ManHinh {
 
     // US-005, US-006, US-008. Thủ quỹ với US-005, US-008: chờ chốt họp
     // 22/11, tạm không cho theo AC-060.
-    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU, null,
-            VaiTro.QUAN_TRI),
+    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU,
+            "danh-muc-khoan-thu.fxml", VaiTro.QUAN_TRI),
     // US-009. Thủ quỹ: chờ chốt họp 22/11, tạm không cho theo AC-060.
     CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null, VaiTro.QUAN_TRI),
     // US-015
