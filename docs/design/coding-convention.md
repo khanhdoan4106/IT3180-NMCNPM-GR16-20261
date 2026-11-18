@@ -4,6 +4,7 @@
 |---|---|
 | Định dạng | Thụt lề 4 dấu cách, không dùng tab; mỗi dòng tối đa 80 cột; luôn dùng `{}` cho `if/for/while` |
 | Đặt tên | Lớp `PascalCase`, phương thức và biến `camelCase`, hằng `UPPER_SNAKE` |
+| Tên lớp theo tầng | Thêm hậu tố theo tầng: `Controller`, `Service`, `Dao` (interface), `DaoJdbc` (bản JDBC), `DaoGia` (DAO giả trong test), `IT` (kiểm thử tích hợp); xem [kien-truc.md, mục 3](kien-truc.md#3-đặt-tên) |
 | Ngôn ngữ trong mã | Tên lớp, biến, phương thức nghiệp vụ bằng tiếng Việt không dấu (`HoGiaDinh`, `tinhTongTien`), nhất quán toàn dự án |
 | Chữ hiển thị cho người dùng | Tiếng Việt có dấu (nhãn, nút, thông báo lỗi) |
 | Javadoc | Bắt buộc cho lớp và phương thức public; không bắt buộc cho getter và phương thức `@Override` đã có Javadoc ở interface |
@@ -27,3 +28,52 @@ Dòng dài thì ngắt trước toán tử `+` hoặc sau dấu `(`, thụt thê
 Các mục còn lại của bảng trên (đặt tên, Javadoc, SQL) vẫn kiểm khi review.
 
 Quy trình nhánh, commit và review: [workflow.md](../workflow.md).
+
+## Tiện ích dùng chung
+
+Các lớp trong `com.bluemoon.util` dùng cho mọi màn hình. **Không tự viết lại
+định dạng ngày, diện tích hay bỏ dấu trong Controller, Service**; cần thêm
+dạng mới thì thêm vào lớp tiện ích kèm test.
+
+| Lớp | Dùng khi | Hàm chính |
+|---|---|---|
+| `Ngay` | Hiện ngày, đọc ngày người dùng gõ, gắn dạng cho ô ngày (`DatePicker`) | `dinhDang(LocalDate)` → "05/09/2026"; `doc(String)`; `ganDinhDang(DatePicker)` |
+| `DienTich` | Hiện diện tích căn hộ trong bảng, form, thông báo phí | `dinhDang(BigDecimal)` → "1.234,50 m²" |
+| `TimKiem` | Lọc danh sách theo ô tìm kiếm, không phân biệt hoa thường và dấu (giả định 40) | `boDau(String)`; `khop(giaTri, tuKhoa)` |
+| `HopThoai` | Mở hộp thoại, `Alert` cùng giao diện với cửa sổ chính | `ganKieu(Dialog<?>)`; `baoLoi(tieuDe, noiDung)`; `baoThanhCong(tieuDe, noiDung)` |
+
+Dạng hiển thị theo [ui.md](ui.md), mục "Cách viết chữ hiển thị". Lỗi nhập
+liệu trong form vẫn báo ngay dưới ô (như màn Tài khoản); `HopThoai` dùng
+cho lỗi không gắn với ô nào hoặc khi cần người dùng bấm "Đóng" mới đi tiếp.
+
+## Kiểm quyền
+
+Phân quyền hai lớp (US-022, giả định 17): menu ẩn màn hình vai trò không
+được dùng, và **mỗi hàm Service đọc hoặc ghi dữ liệu nghiệp vụ gọi
+`PhanQuyen` trước khi gọi DAO**, theo bảng
+[phan-quyen.md](phan-quyen.md). Không dựa vào việc menu đã ẩn.
+
+| Trường hợp | Gọi |
+|---|---|
+| Chức năng nằm trong một màn hình | `PhanQuyen.yeuCau(ManHinh.X)`: vai trò lấy từ `ManHinh` |
+| Thao tác chỉ Quản trị viên (quản lý tài khoản, xem nhật ký) | `PhanQuyen.chiQuanTriVien("Chỉ Quản trị viên được ...")` |
+| Một phần của màn hình có quyền riêng | `PhanQuyen.yeuCau(tậpVaiTrò, câuBáo)`, tập vai trò ghi thành hằng trong `PhanQuyen` (vd `XEM_TONG_THU_THANG`) |
+
+Ví dụ trong `CuDanService`:
+
+```java
+public SoLieuCuDan laySoLieu() {
+    PhanQuyen.yeuCau(ManHinh.TRANG_CHINH);
+    return cuDanDao.demDangO();
+}
+```
+
+Không đủ quyền thì `PhanQuyen` ném `LoiKhongCoQuyen` (câu báo tiếng Việt),
+Service không đọc, không ghi gì. Controller bắt lỗi này và hiện câu báo như
+lỗi CSDL.
+
+**Màn hình mới** phải khai báo vai trò được mở ngay trên dòng của nó trong
+`ManHinh` (vd `HO_GIA_DINH(..., VaiTro.QUAN_TRI)`), đúng bảng
+`phan-quyen.md`; `ManHinhTest.bangQuyenKhopPhanQuyenMd` kiểm bảng này.
+Test Service đặt người đăng nhập bằng `PhienDangNhap.batDau(...)` và có ít
+nhất một test vai trò không được phép bị từ chối.

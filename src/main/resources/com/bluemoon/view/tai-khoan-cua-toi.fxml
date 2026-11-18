@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Tab "Tài khoản của tôi" (US-023): người đang đăng nhập sửa họ tên, số
+     điện thoại và đổi mật khẩu của mình. Tên đăng nhập, vai trò chỉ xem
+     (giả định 19). Hai khung đứng cạnh nhau, cửa sổ hẹp thì xuống hàng. -->
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.bluemoon.controller.TaiKhoanCuaToiController"
+            styleClass="cuon-form" fitToWidth="true" hbarPolicy="NEVER">
+    <FlowPane styleClass="hang-khung">
+        <VBox styleClass="khung" prefWidth="460">
+            <Label text="Thông tin cá nhân" styleClass="tieu-de-khung"/>
+            <VBox styleClass="o-form">
+                <Label text="Tên đăng nhập" styleClass="chu-phu"/>
+                <Label fx:id="tenDangNhap" styleClass="gia-tri-chi-xem"/>
+            </VBox>
+            <VBox styleClass="o-form">
+                <Label text="Vai trò" styleClass="chu-phu"/>
+                <Label fx:id="vaiTro" styleClass="gia-tri-chi-xem"/>
+            </VBox>
+            <VBox styleClass="o-form">
+                <Label text="Họ tên"/>
+                <TextField fx:id="hoTen" onAction="#luuThongTin"/>
+                <Label fx:id="loiHoTen" styleClass="thong-bao-loi"
+                       wrapText="true" visible="false"/>
+            </VBox>
+            <VBox styleClass="o-form">
+                <Label text="Số điện thoại"/>
+                <TextField fx:id="soDienThoai" promptText="vd: 0912345678"
+                           onAction="#luuThongTin"/>
+                <Label text="Không bắt buộc." styleClass="chu-goi-y"/>
+                <Label fx:id="loiSoDienThoai" styleClass="thong-bao-loi"
+                       wrapText="true" visible="false"/>
+            </VBox>
+            <Label fx:id="thongBaoThongTin" wrapText="true" visible="false"/>
+            <HBox styleClass="hang-nut">
+                <Button text="Lưu thông tin" styleClass="nut-chinh"
+                        onAction="#luuThongTin"/>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="khung" prefWidth="460">
+            <Label text="Đổi mật khẩu" styleClass="tieu-de-khung"/>
+            <VBox styleClass="o-form">
+                <Label text="Mật khẩu hiện tại"/>
+                <PasswordField fx:id="matKhauCu" onAction="#doiMatKhau"/>
+                <Label fx:id="loiMatKhauCu" styleClass="thong-bao-loi"
+                       wrapText="true" visible="false"/>
+            </VBox>
+            <VBox styleClass="o-form">
+                <Label text="Mật khẩu mới"/>
+                <PasswordField fx:id="matKhauMoi" onAction="#doiMatKhau"/>
+                <Label fx:id="goiYMatKhau" styleClass="chu-goi-y"
+                       wrapText="true"/>
+                <Label fx:id="loiMatKhauMoi" styleClass="thong-bao-loi"
+                       wrapText="true" visible="false"/>
+            </VBox>
+            <VBox styleClass="o-form">
+                <Label text="Nhập lại mật khẩu mới"/>
+                <PasswordField fx:id="nhapLai" onAction="#doiMatKhau"/>
+                <Label fx:id="loiNhapLai" styleClass="thong-bao-loi"
+                       wrapText="true" visible="false"/>
+            </VBox>
+            <Label fx:id="thongBaoMatKhau" wrapText="true" visible="false"/>
+            <HBox styleClass="hang-nut">
+                <Button text="Đổi mật khẩu" styleClass="nut-chinh"
+                        onAction="#doiMatKhau"/>
+            </HBox>
+        </VBox>
+    </FlowPane>
+</ScrollPane>

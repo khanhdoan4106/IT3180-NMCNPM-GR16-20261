@@ -8,6 +8,36 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-022: phân quyền hai lớp. Menu chỉ hiện màn hình vai trò được dùng;
+  mở màn không có quyền thì về Trang chính kèm câu báo. Mỗi Service kiểm
+  lại vai trò qua `PhanQuyen` (bảng `docs/design/phan-quyen.md`). Trước
+  mỗi lần mở màn hình, ứng dụng đọc lại tài khoản: vừa bị khóa thì đăng
+  xuất kèm câu báo, vừa đổi vai trò thì menu và thanh đầu đổi theo.
+  Thủ quỹ tạm không dùng các chức năng chờ chốt họp 22/11 (US-005,
+  US-008, US-009, US-018, thẻ tổng thu tháng).
+- US-022: tab "Quản lý tài khoản" (chỉ Quản trị viên): danh sách tài
+  khoản, đổi vai trò, khóa/mở khóa, đặt lại mật khẩu tạm hiện một lần.
+  Không tự khóa, không tự đổi vai trò của mình; luôn còn ít nhất một
+  Quản trị viên đang hoạt động, kể cả khi hai máy thao tác cùng lúc.
+- US-023: màn Tài khoản chia hai tab. Tab "Tài khoản của tôi" cho mọi
+  người dùng xem tên đăng nhập, vai trò; sửa họ tên và số điện thoại
+  (10 chữ số, bắt đầu bằng 0, để trống được); đổi mật khẩu khi nhập đúng
+  mật khẩu hiện tại, mật khẩu mới ít nhất 8 ký tự, nhập lại khớp và khác
+  mật khẩu cũ. Lỗi báo ngay dưới ô; đổi họ tên thì thanh đầu cửa sổ đổi
+  theo. Tab "Tạo tài khoản" giữ chức năng của US-020 và chỉ Quản trị viên
+  thấy; Service cũng từ chối tạo tài khoản khi người đăng nhập không phải
+  Quản trị viên (giả định 2, AC-061).
+- US-021: ứng dụng mở lên là màn đăng nhập; đăng nhập đúng thì vào cửa
+  sổ chính, thanh đầu hiện họ tên, vai trò và nút Đăng xuất. Sai tên hay
+  sai mật khẩu đều báo chung "Tên đăng nhập hoặc mật khẩu không đúng.";
+  tài khoản bị khóa không đăng nhập được. Chưa đăng nhập thì không mở được
+  màn hình chức năng nào (AC-059). Người đang đăng nhập giữ ở
+  `PhienDangNhap` để US-022 phân quyền.
+- US-020: màn hình Tài khoản (menu Hệ thống) để Quản trị viên tạo tài
+  khoản, chọn vai trò Quản trị viên hoặc Thủ quỹ; báo trùng tên đăng nhập
+  (không phân biệt chữ hoa, chữ thường) và mật khẩu dưới 8 ký tự ngay dưới
+  ô sai. Mật khẩu băm BCrypt cost 12 (thư viện `at.favre.lib:bcrypt`),
+  cùng chuẩn với tài khoản admin trong `seed.sql`.
 - TS-003: lớp khởi động `Launcher` và `App`; khi mở, ứng dụng thử kết nối
   MySQL, lỗi thì báo nguyên nhân và cách sửa bằng tiếng Việt rồi thoát
   (AC-070). Lỗi CSDL dùng chung lớp `LoiCsdl`.
