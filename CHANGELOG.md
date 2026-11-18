@@ -4,7 +4,6 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/).
 
 ## [Chưa phát hành]
-- Thêm màn hình quản lý hộ gia đình: xem danh sách, tìm kiếm và thêm hộ mới kèm chủ hộ (US-001, #7).
 
 
 ### Thêm
@@ -20,3 +19,4 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   là mẫu View → Controller → Service → DAO → MySQL cho cả nhóm. Kiểm thử
   tích hợp chứng minh dữ liệu một máy ghi thì máy khác thấy (AC-071).
   Tài liệu `docs/design/kien-truc.md`.
+- Thêm màn hình quản lý hộ gia đình: xem danh sách, tìm kiếm và thêm hộ mới kèm chủ hộ (US-001, #7).

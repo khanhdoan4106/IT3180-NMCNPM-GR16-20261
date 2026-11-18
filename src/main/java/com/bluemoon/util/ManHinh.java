@@ -4,8 +4,7 @@ package com.bluemoon.util;
  * Danh sách màn hình của ứng dụng, cũng là danh sách mục trên menu trái
  * (theo đúng thứ tự khai báo, các mục cùng nhóm đứng liền nhau).
  *
- * <p>
- * Thêm màn hình mới: tạo tệp FXML trong
+ * <p>Thêm màn hình mới: tạo tệp FXML trong
  * {@code src/main/resources/com/bluemoon/view/} rồi ghi tên tệp vào dòng
  * của màn hình đó. Mục còn {@code null} mở trang "Chức năng đang được xây
  * dựng". Xem docs/design/kien-truc.md.
@@ -16,7 +15,7 @@ public enum ManHinh {
     TRANG_CHINH("Trang chính", null, "trang-chinh.fxml"),
 
     // US-001
-    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, "ho-gia-dinh.fxml"),
+    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH,"ho-gia-dinh.fxml"),
     // US-002
     NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, null),
     // US-003
