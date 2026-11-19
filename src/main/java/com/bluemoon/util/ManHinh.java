@@ -37,7 +37,8 @@ public enum ManHinh {
     NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, 
     "nhan-khau.fxml", VaiTro.QUAN_TRI),
     // US-003
-    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH, null,
+    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH,
+     "tam-tru-tam-vang.fxml",
             VaiTro.QUAN_TRI),
     // US-004
     BAO_CAO_NHAN_KHAU("Báo cáo nhân khẩu", NhomMenu.HO_GIA_DINH, null,
