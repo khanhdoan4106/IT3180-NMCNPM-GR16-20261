@@ -70,6 +70,13 @@ icacls C:\ProgramData\BlueMoon\backup.cnf
 
 ## 3. Run at Windows sign-in
 
+Copy `scripts/start-backup.vbs.example` to
+`C:\ProgramData\BlueMoon\start-backup.vbs`. Edit the copied VBS file so
+the path inside it points to the local `scripts\backup-mysql.ps1`. The
+example currently uses the development path
+`C:\Users\Thinkpad\IdeaProjects\IT3180-NMCNPM-GR16-20261`; change it
+if the repository is in another location.
+
 Create a shortcut in the current user's Startup folder:
 
 1. Press `Win + R`, enter `shell:startup`.
@@ -80,8 +87,7 @@ Create a shortcut in the current user's Startup folder:
 C:\Windows\System32\wscript.exe "C:\ProgramData\BlueMoon\start-backup.vbs"
 ```
 
-The VBS file starts PowerShell and runs the script from the repository.
-Update the path in the VBS file if the repository is moved.
+The VBS file starts PowerShell hidden and runs the script from the repository.
 
 **Scheduling limitation:** Startup runs only when this Windows user signs in.
 It is not a fixed-time daily schedule. If the user does not sign in for
