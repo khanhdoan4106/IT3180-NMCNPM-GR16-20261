@@ -5,6 +5,16 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ## [Chưa phát hành]
 
+### Thêm
+
+- TS-001: script PowerShell sao lưu CSDL MySQL `bluemoon` bằng
+  `mysqldump`, lưu file có dấu thời gian, log kết quả, khóa chống chạy
+  đồng thời, bỏ qua lần chạy tiếp theo trong ngày sau khi đã sao lưu thành
+  công và giữ tối đa 7 bản gần nhất. Thông tin đăng nhập lấy từ file
+  `backup.cnf` bên ngoài repository; hướng dẫn cài đặt, chạy và khôi phục
+  tại `docs/backup-restore.md`. Cơ chế Startup hiện kích hoạt khi đăng nhập
+  Windows, chưa bảo đảm chạy đúng giờ khi người dùng chưa đăng nhập.
+
 
 ### Thêm
 
