@@ -14,10 +14,6 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   `backup.cnf` bên ngoài repository; hướng dẫn cài đặt, chạy và khôi phục
   tại `docs/backup-restore.md`. Cơ chế Startup hiện kích hoạt khi đăng nhập
   Windows, chưa bảo đảm chạy đúng giờ khi người dùng chưa đăng nhập.
-
-
-### Thêm
-
 - US-022: phân quyền hai lớp. Menu chỉ hiện màn hình vai trò được dùng;
   mở màn không có quyền thì về Trang chính kèm câu báo. Mỗi Service kiểm
   lại vai trò qua `PhanQuyen` (bảng `docs/design/phan-quyen.md`). Trước
