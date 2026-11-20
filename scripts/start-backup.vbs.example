@@ -1,0 +1,3 @@
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ""C:\Users\Thinkpad\IdeaProjects\IT3180-NMCNPM-GR16-20261\scripts\backup-mysql.ps1""", 0, False
+Set WshShell = Nothing

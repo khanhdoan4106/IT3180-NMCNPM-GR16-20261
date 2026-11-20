@@ -62,7 +62,7 @@ có test.
 | US-006 | AC-019 | | |
 | US-006 | AC-020 | | |
 | US-006 | AC-021 | | |
-| TS-001 | AC-066 | | |
-| TS-001 | AC-067 | | |
+| TS-001 | AC-066 | Chưa có test tự động | Chạy script; xác nhận file SQL không rỗng, log ghi thành công và marker lưu ngày; chạy lại trong cùng ngày phải được bỏ qua. Startup chỉ chạy khi đăng nhập Windows, không bảo đảm chạy đúng giờ nếu chưa đăng nhập. |
+| TS-001 | AC-067 | Chưa có test tự động | Khôi phục file SQL vào `bluemoon_restore_test`; xác nhận 12 bảng được tạo và đối chiếu số bản ghi `ho_gia_dinh`, `nhan_khau`, `phieu_thu` với CSDL gốc. Hướng dẫn tại [backup-restore.md](backup-restore.md). |
 
 Các Sprint sau thêm bảng cùng dạng khi bắt đầu Sprint.
