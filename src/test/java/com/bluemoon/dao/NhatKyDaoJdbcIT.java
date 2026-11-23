@@ -62,7 +62,8 @@ class NhatKyDaoJdbcIT {
         }
         try (Connection ketNoi = nguon.moKetNoi();
                 PreparedStatement sua = ketNoi.prepareStatement(
-                        "UPDATE nhat_ky SET noi_dung = 'đã sửa' WHERE id = 1")) {
+                        "UPDATE nhat_ky SET noi_dung = 'đã sửa' "
+                                + "WHERE id = 1")) {
             assertThrows(SQLException.class, sua::executeUpdate);
         }
         try (Connection ketNoi = nguon.moKetNoi();
