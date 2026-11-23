@@ -150,8 +150,12 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
                                 + yeuCau.tenChuHo());
                 ketNoi.commit();
                 return hoId;
-            } catch (SQLException e) {
-                ketNoi.rollback();
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    ketNoi.rollback();
+                } catch (SQLException loiRollback) {
+                    e.addSuppressed(loiRollback);
+                }
                 throw e;
             }
         } catch (SQLException e) {

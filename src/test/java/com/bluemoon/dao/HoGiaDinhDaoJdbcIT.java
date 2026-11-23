@@ -2,8 +2,8 @@ package com.bluemoon.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Kiểm thử tích hợp {@link HoGiaDinhDaoJdbc} trên MySQL thật (-Pmysql). */
-class HoGiaDinhDaoJdbcIT {  
+class HoGiaDinhDaoJdbcIT {
 
     private final NguonKetNoi nguon = CsdlKiemThu.nguonUngDung();
 
@@ -95,6 +95,7 @@ class HoGiaDinhDaoJdbcIT {
         dao.themHoGiaDinh(taoYeuCauMau("D-404", "001090123459"), quanTri);
         assertTrue(dao.tonTaiCccdDangO("001090123459"));
     }
+
     @Test
     void ghiNhatKyThatBaiRollbackCaHoVaChuHo() throws SQLException {
         NhatKyDao daoLoi = new NhatKyDao() {
@@ -134,5 +135,4 @@ class HoGiaDinhDaoJdbcIT {
             return kq.getInt(1);
         }
     }
-
 }
