@@ -12,7 +12,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   trong một giao dịch (giả định 8, 9). Danh sách có cột Loại cư trú và
   Nơi thường trú; cột Quan hệ hiện chữ thay cho mã.
 - US-002: lưu được quan hệ "Bố/Mẹ" (thêm `BO_ME` vào `nhan_khau.quan_he`).
-  CSDL đã tạo trước đó cần chạy `ALTER TABLE` ghi trong PR.
+  Cần nâng cấp CSDL, xem `docs/setup.md` mục 7.
 - US-002: chặn ngày sinh ở tương lai.
 - TS-001: script PowerShell sao lưu CSDL MySQL `bluemoon` bằng
   `mysqldump`, lưu file có dấu thời gian, log kết quả, khóa chống chạy

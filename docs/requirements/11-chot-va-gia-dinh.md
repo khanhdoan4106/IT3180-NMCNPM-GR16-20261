@@ -65,3 +65,7 @@ Các giả định 47–49 bổ sung khi đưa các trường dữ liệu của 
 48. **Dân tộc, tôn giáo là dữ liệu cá nhân nhạy cảm** (Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân): chỉ Quản trị viên xem và sửa được; Thủ quỹ không thấy hai trường này (NFR-009, US-022). Không điền sẵn giá trị mặc định cho hai trường này.
 49. **Tạm vắng ghi nơi đến; phiếu thu ghi họ tên người nộp:** mỗi đợt tạm vắng có thể ghi nơi đến (để trống với đợt tạm trú, vì nơi thường trú đã ghi ở nhân khẩu) và số giấy tạm trú/tạm vắng nếu có. Phiếu thu ghi họ tên người đến nộp tiền, có thể khác chủ hộ, tách khỏi tài khoản Thủ quỹ đã thu (US-012); kèm ghi chú tùy chọn.
 50. **Độ dài mật khẩu (US-020, US-023):** mật khẩu tối thiểu 8 ký tự, áp dụng khi tạo tài khoản, đặt lại và đổi mật khẩu. Căn cứ: `TaiKhoanService.MAT_KHAU_TOI_THIEU` (AC-056 chỉ ghi "độ dài tối thiểu", không nêu con số). Hiện mã nguồn mới áp dụng khi tạo tài khoản (US-020); đặt lại mật khẩu áp dụng khi làm US-022 (giả định 18), đổi mật khẩu áp dụng khi làm US-023.
+
+Giả định 52 bổ sung ngày 23/11/2026, chờ xác nhận ở họp 29/11.
+
+52. **Quan hệ Bố/Mẹ (US-002, AC-006):** ngoài bốn quan hệ AC-006 nêu, nhân khẩu được khai báo quan hệ Bố/Mẹ với chủ hộ (hộ có bố mẹ sống cùng con là chủ hộ). Bổ sung khi hoàn thiện US-002, xác nhận ở họp Sprint Review 2 (29/11).
