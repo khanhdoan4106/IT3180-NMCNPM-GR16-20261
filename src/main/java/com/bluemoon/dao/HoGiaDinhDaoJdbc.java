@@ -4,6 +4,7 @@ import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
 import java.sql.Connection;
 import java.sql.Date;
@@ -58,6 +59,7 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
             + "VALUES (?, ?, ?, ?, ?, 'CHU_HO')";
 
     private final NguonKetNoi nguonKetNoi;
+    private final NhatKyDao nhatKyDao;
 
     /** Dùng CSDL theo {@code config/db.properties}. */
     public HoGiaDinhDaoJdbc() {
@@ -70,7 +72,19 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
      * @param nguonKetNoi nơi lấy kết nối
      */
     public HoGiaDinhDaoJdbc(NguonKetNoi nguonKetNoi) {
+        this(nguonKetNoi, new NhatKyDaoJdbc(nguonKetNoi));
+    }
+
+    /**
+     * Cho phép thay DAO nhật ký khi kiểm thử lỗi ghi nhật ký.
+     *
+     * @param nguonKetNoi nơi lấy kết nối
+     * @param nhatKyDao DAO ghi nhật ký
+     */
+    public HoGiaDinhDaoJdbc(NguonKetNoi nguonKetNoi,
+            NhatKyDao nhatKyDao) {
         this.nguonKetNoi = nguonKetNoi;
+        this.nhatKyDao = nhatKyDao;
     }
 
     @Override
@@ -124,12 +138,16 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
     }
 
     @Override
-    public int themHoGiaDinh(YeuCauThemHo yeuCau) {
+    public int themHoGiaDinh(YeuCauThemHo yeuCau, NguoiDung nguoiDung) {
         try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
             ketNoi.setAutoCommit(false);
             try {
                 int hoId = chenHo(ketNoi, yeuCau);
                 chenChuHo(ketNoi, hoId, yeuCau);
+                nhatKyDao.ghi(ketNoi, nguoiDung.id(), "THEM_HO",
+                        "Hộ " + yeuCau.maCanHo(),
+                        "Thêm hộ gia đình và chủ hộ "
+                                + yeuCau.tenChuHo());
                 ketNoi.commit();
                 return hoId;
             } catch (SQLException e) {
