@@ -61,7 +61,7 @@ class HoGiaDinhDaoJdbcIT {
     @Test
     void b_themHoGiaDinh_TraVeIdLonHon0VaLuuDungChuHo() throws Exception {
         YeuCauThemHo yc = taoYeuCauMau("B-202", "001090123457");
-        int hoId = dao.themHoGiaDinh(yc);
+        int hoId = dao.themHoGiaDinh(yc, quanTri);
         
         assertTrue(hoId > 0, "ID sinh ra phải lớn hơn 0");
 
