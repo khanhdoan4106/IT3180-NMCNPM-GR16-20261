@@ -20,11 +20,12 @@ import java.util.stream.Collectors;
 public final class PhanQuyen {
 
     /**
-     * Xem thẻ tổng thu tháng trên Trang chính (US-016). Chờ chốt họp 22/11
-     * (phan-quyen.md mục 2); tạm chỉ Quản trị viên theo AC-060.
+     * Xem thẻ tổng thu tháng trên Trang chính (US-016): cả Quản trị viên và
+     * Thủ quỹ (giả định 51, phan-quyen.md mục 2).
      */
     public static final Set<VaiTro> XEM_TONG_THU_THANG =
-            Collections.unmodifiableSet(EnumSet.of(VaiTro.QUAN_TRI));
+            Collections.unmodifiableSet(
+                    EnumSet.of(VaiTro.QUAN_TRI, VaiTro.THU_QUY));
 
     /** Câu báo khi chưa đăng nhập. */
     static final String CHUA_DANG_NHAP = "Cần đăng nhập để làm việc này.";

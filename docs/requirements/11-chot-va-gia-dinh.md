@@ -1,4 +1,6 @@
-Các giả định dưới đây cần cả nhóm xác nhận lại ở buổi họp đầu tiên.
+Các giả định 1–50 đã được cả nhóm xác nhận ở họp Sprint Review 1 ngày
+22/11/2026 ([biên bản](../meeting-notes/2026-11-22-sprint-review-1.md),
+mục 4); giả định 51 chốt tại cùng buổi họp.
 
 # 11. Chốt xác nhận và giả định của nhóm
 
@@ -65,6 +67,10 @@ Các giả định 47–49 bổ sung khi đưa các trường dữ liệu của 
 48. **Dân tộc, tôn giáo là dữ liệu cá nhân nhạy cảm** (Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân): chỉ Quản trị viên xem và sửa được; Thủ quỹ không thấy hai trường này (NFR-009, US-022). Không điền sẵn giá trị mặc định cho hai trường này.
 49. **Tạm vắng ghi nơi đến; phiếu thu ghi họ tên người nộp:** mỗi đợt tạm vắng có thể ghi nơi đến (để trống với đợt tạm trú, vì nơi thường trú đã ghi ở nhân khẩu) và số giấy tạm trú/tạm vắng nếu có. Phiếu thu ghi họ tên người đến nộp tiền, có thể khác chủ hộ, tách khỏi tài khoản Thủ quỹ đã thu (US-012); kèm ghi chú tùy chọn.
 50. **Độ dài mật khẩu (US-020, US-023):** mật khẩu tối thiểu 8 ký tự, áp dụng khi tạo tài khoản, đặt lại và đổi mật khẩu. Căn cứ: `TaiKhoanService.MAT_KHAU_TOI_THIEU` (AC-056 chỉ ghi "độ dài tối thiểu", không nêu con số). Hiện mã nguồn mới áp dụng khi tạo tài khoản (US-020); đặt lại mật khẩu áp dụng khi làm US-022 (giả định 18), đổi mật khẩu áp dụng khi làm US-023.
+
+Giả định 51 chốt ở họp Sprint Review 1 ngày 22/11/2026.
+
+51. **Phạm vi "thu phí" của Thủ quỹ (AC-060, US-022):** "thu phí" gồm cả công việc trước và sau khi thu tiền, đúng như các story viết "Là Thủ quỹ": Thủ quỹ được chốt công nợ đầu tháng (US-009), sửa khoản phải nộp của hộ trước khi hộ đóng (US-008), xuất báo cáo thu (US-018) và xem thẻ tổng thu tháng trên Trang chính (US-016). Đổi đơn giá phí (US-005, AC-016), tạo khoản thu tự nguyện (US-006), quản lý hộ và nhân khẩu, thống kê theo khoản thu (US-019), lọc nợ đọng (US-017) và quản lý tài khoản chỉ Quản trị viên. Bảng chi tiết: `docs/design/phan-quyen.md`.
 
 Giả định 52 bổ sung ngày 23/11/2026, chờ xác nhận ở họp 29/11.
 

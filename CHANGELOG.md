@@ -14,6 +14,21 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 - US-002: lưu được quan hệ "Bố/Mẹ" (thêm `BO_ME` vào `nhan_khau.quan_he`).
   Cần nâng cấp CSDL, xem `docs/setup.md` mục 7.
 - US-002: chặn ngày sinh ở tương lai.
+
+## [v0.1.0] – 24/11/2026 – Sprint 1
+
+Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
+
+### Thêm
+
+- US-001: màn hình Hộ gia đình (nhóm menu Hộ gia đình): xem danh sách hộ
+  đang ở, tìm theo mã căn hộ hoặc tên chủ hộ (không phân biệt hoa thường
+  và dấu), thêm hộ mới kèm chủ hộ trong cùng một giao dịch.
+- US-002: màn hình Nhân khẩu: thêm nhân khẩu vào hộ kèm quan hệ với chủ
+  hộ; số CCCD 12 chữ số, không trùng với người đang ở, bắt buộc với người
+  từ đủ 14 tuổi.
+- US-003: ghi nhận tạm trú, tạm vắng của nhân khẩu kèm ngày bắt đầu, ngày
+  kết thúc và lý do; có kiểm thử tích hợp trên MySQL.
 - TS-001: script PowerShell sao lưu CSDL MySQL `bluemoon` bằng
   `mysqldump`, lưu file có dấu thời gian, log kết quả, khóa chống chạy
   đồng thời, bỏ qua lần chạy tiếp theo trong ngày sau khi đã sao lưu thành
@@ -62,4 +77,15 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   là mẫu View → Controller → Service → DAO → MySQL cho cả nhóm. Kiểm thử
   tích hợp chứng minh dữ liệu một máy ghi thì máy khác thấy (AC-071).
   Tài liệu `docs/design/kien-truc.md`.
-- Thêm màn hình quản lý hộ gia đình: xem danh sách, tìm kiếm và thêm hộ mới kèm chủ hộ (US-001, #7).
+
+### Hạn chế đã biết
+
+- US-002: chọn quan hệ "Bố/Mẹ" lưu bị lỗi, cột Quan hệ hiện mã thay vì
+  chữ, chưa có loại cư trú và nơi thường trú (giả định 8), chưa chặn ngày
+  sinh ở tương lai. Sửa trong Sprint 2.
+- TS-001: sao lưu chạy khi người dùng đăng nhập Windows, chưa chạy đúng
+  giờ khi máy chưa có ai đăng nhập.
+- US-006 (tạo khoản thu tự nguyện) chưa vào bản này, chuyển sang Sprint 2.
+
+[Chưa phát hành]: https://github.com/khanhdoan4106/IT3180-NMCNPM-GR16-20261/compare/v0.1.0...main
+[v0.1.0]: https://github.com/khanhdoan4106/IT3180-NMCNPM-GR16-20261/releases/tag/v0.1.0
