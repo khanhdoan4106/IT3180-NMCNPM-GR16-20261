@@ -71,11 +71,11 @@ class PhanQuyenTest {
                         "Chỉ Quản trị viên xem nhật ký.")).getMessage());
     }
 
-    /** Thẻ tổng thu tháng (US-016): chờ chốt họp 22/11, tạm không cho. */
+    /** Thẻ tổng thu tháng (US-016): cả hai vai trò xem được (giả định 51). */
     @Test
-    void theTongThuThangTamChiQuanTri() {
+    void theTongThuThangCaHaiVaiTro() {
         PhienDangNhap.batDau(THU_QUY);
-        assertThrows(LoiKhongCoQuyen.class, () -> PhanQuyen.yeuCau(
+        assertSame(THU_QUY, PhanQuyen.yeuCau(
                 PhanQuyen.XEM_TONG_THU_THANG, "x"));
         PhienDangNhap.batDau(QUAN_TRI);
         assertSame(QUAN_TRI, PhanQuyen.yeuCau(

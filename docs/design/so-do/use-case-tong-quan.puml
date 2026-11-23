@@ -30,14 +30,13 @@ rectangle "Phần mềm quản lý thu phí BlueMoon" {
   usecase "UC008 Xuất danh sách tạm vắng" as UC008
   usecase "UC009 Đổi chủ hộ" as UC009
   usecase "UC010 Xem lịch sử biến động nhân khẩu" as UC010
+  usecase "UC011 Cập nhật đơn giá phí" as UC011
   usecase "UC012 Tạo khoản thu tự nguyện" as UC012
   usecase "UC015 In thông báo phí" as UC015
-  usecase "UC021 Xem tổng thu tháng" as UC021
   usecase "UC022 Lọc hộ nợ đọng" as UC022
   usecase "UC024 Thống kê theo khoản thu" as UC024
   usecase "UC001 Đăng nhập" as UC001
   usecase "UC004 Cập nhật tài khoản cá nhân" as UC004
-  usecase "UC011 Tính phí theo diện tích" as UC011
   usecase "UC013 Sửa khoản phải nộp" as UC013
   usecase "UC014 Chốt công nợ" as UC014
   usecase "UC016 Tra cứu phí" as UC016
@@ -45,6 +44,7 @@ rectangle "Phần mềm quản lý thu phí BlueMoon" {
   usecase "UC018 Ghi nhận đóng góp tự nguyện" as UC018
   usecase "UC019 In biên lai" as UC019
   usecase "UC020 Hủy phiếu thu" as UC020
+  usecase "UC021 Xem tổng thu tháng" as UC021
   usecase "UC023 Xuất báo cáo thu" as UC023
 }
 
@@ -57,16 +57,15 @@ QT -- UC007
 QT -- UC008
 QT -- UC009
 QT -- UC010
+QT -- UC011
 QT -- UC012
 QT -- UC015
-QT -- UC021
 QT -- UC022
 QT -- UC024
 
-' UC cả hai vai trò dùng: nối với Người dùng
+' UC cả hai vai trò dùng: nối với Người dùng (giả định 51)
 UC001 -- ND
 UC004 -- ND
-UC011 -- ND
 UC013 -- ND
 UC014 -- ND
 UC016 -- ND
@@ -74,20 +73,21 @@ UC017 -- ND
 UC018 -- ND
 UC019 -- ND
 UC020 -- ND
+UC021 -- ND
 UC023 -- ND
 
 ' Đường ẩn để xếp hai cột UC cạnh nhau (không phải quan hệ)
 UC002 -[hidden]- UC001
 UC003 -[hidden]- UC004
-UC005 -[hidden]- UC011
-UC006 -[hidden]- UC013
-UC007 -[hidden]- UC014
-UC008 -[hidden]- UC016
-UC009 -[hidden]- UC017
-UC010 -[hidden]- UC018
-UC012 -[hidden]- UC019
-UC015 -[hidden]- UC020
-UC021 -[hidden]- UC023
+UC005 -[hidden]- UC013
+UC006 -[hidden]- UC014
+UC007 -[hidden]- UC016
+UC008 -[hidden]- UC017
+UC009 -[hidden]- UC018
+UC010 -[hidden]- UC019
+UC011 -[hidden]- UC020
+UC012 -[hidden]- UC021
+UC015 -[hidden]- UC023
 
 ' Kế thừa: Quản trị viên, Thủ quỹ là Người dùng
 QT --|> ND
