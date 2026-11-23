@@ -1,0 +1,70 @@
+@startuml
+' Biểu đồ hoạt động UC024 – Thống kê theo khoản thu
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ hoạt động UC024 – Thống kê theo khoản thu
+
+|Quản trị viên|
+start
+:Mở chức năng Thống kê theo khoản thu;
+
+|View|
+:Hiển thị danh sách khoản thu;
+
+|Quản trị viên|
+:Chọn khoản thu;
+
+|View|
+if (Khoản thu có tồn tại?) then (Có)
+  :Hiển thị lựa chọn đợt phù hợp;
+else (Không)
+  :Thông báo chưa có khoản thu;
+  stop
+endif
+
+|Quản trị viên|
+:Chọn đợt/khoảng thời gian;
+:Nhấn Thống kê;
+
+|Controller|
+if (Đã chọn đủ dữ liệu?) then (Có)
+  :Gọi ThongKeService;
+else (Không)
+  |View|
+  :Yêu cầu chọn khoản và đợt;
+  stop
+endif
+
+|Service|
+:Kiểm tra quyền Quản trị viên;
+if (Có quyền?) then (Có)
+  :Kiểm tra loại khoản và khoảng thời gian;
+else (Không)
+  |Controller|
+  :Nhận lỗi không đủ quyền;
+  |View|
+  :Hiển thị thông báo từ chối;
+  stop
+endif
+
+|DAO|
+:Truy vấn khoản thu và phiếu thu;
+:Loại phiếu thu đã hủy;
+:Áp dụng điều kiện đợt/khoảng thời gian;
+:Tính tổng tiền;
+
+|Service|
+if (Có giao dịch hợp lệ?) then (Có)
+  :Trả tổng tiền đã thu;
+else (Không)
+  :Trả tổng bằng 0 đ;
+endif
+
+|Controller|
+:Nhận kết quả thống kê;
+
+|View|
+:Hiển thị khoản thu, đợt và tổng tiền;
+stop
+@enduml
