@@ -5,7 +5,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ## [Chưa phát hành]
 
-## [v0.1.0] – 24/11/2026 – Sprint 1
+## [v0.1.0] – 23/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
 
