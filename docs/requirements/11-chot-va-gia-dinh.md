@@ -71,3 +71,7 @@ Các giả định 47–49 bổ sung khi đưa các trường dữ liệu của 
 Giả định 51 chốt ở họp Sprint Review 1 ngày 22/11/2026.
 
 51. **Phạm vi "thu phí" của Thủ quỹ (AC-060, US-022):** "thu phí" gồm cả công việc trước và sau khi thu tiền, đúng như các story viết "Là Thủ quỹ": Thủ quỹ được chốt công nợ đầu tháng (US-009), sửa khoản phải nộp của hộ trước khi hộ đóng (US-008), xuất báo cáo thu (US-018) và xem thẻ tổng thu tháng trên Trang chính (US-016). Đổi đơn giá phí (US-005, AC-016), tạo khoản thu tự nguyện (US-006), quản lý hộ và nhân khẩu, thống kê theo khoản thu (US-019), lọc nợ đọng (US-017) và quản lý tài khoản chỉ Quản trị viên. Bảng chi tiết: `docs/design/phan-quyen.md`.
+
+Giả định 52 bổ sung ngày 23/11/2026, chờ xác nhận ở họp 29/11.
+
+52. **Quan hệ Bố/Mẹ (US-002, AC-006):** ngoài bốn quan hệ AC-006 nêu, nhân khẩu được khai báo quan hệ Bố/Mẹ với chủ hộ (hộ có bố mẹ sống cùng con là chủ hộ). Bổ sung khi hoàn thiện US-002, xác nhận ở họp Sprint Review 2 (29/11).

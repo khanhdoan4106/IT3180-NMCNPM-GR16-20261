@@ -5,6 +5,16 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ## [Chưa phát hành]
 
+### Thêm
+
+- US-002: form thêm nhân khẩu có loại cư trú. Người tạm trú bắt buộc
+  nhập nơi thường trú và thời hạn; người và đợt tạm trú đầu tiên lưu
+  trong một giao dịch (giả định 8, 9). Danh sách có cột Loại cư trú và
+  Nơi thường trú; cột Quan hệ hiện chữ thay cho mã.
+- US-002: lưu được quan hệ "Bố/Mẹ" (thêm `BO_ME` vào `nhan_khau.quan_he`).
+  Cần nâng cấp CSDL, xem `docs/setup.md` mục 7.
+- US-002: chặn ngày sinh ở tương lai.
+
 ## [v0.1.0] – 24/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.

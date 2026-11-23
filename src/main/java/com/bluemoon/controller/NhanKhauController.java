@@ -4,12 +4,15 @@ import com.bluemoon.dao.HoGiaDinhDaoJdbc;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.NhanKhauDaoJdbc;
 import com.bluemoon.model.HoGiaDinh;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.QuanHe;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import com.bluemoon.service.HoGiaDinhService;
 import com.bluemoon.service.NhanKhauService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -41,11 +44,15 @@ public class NhanKhauController {
     @FXML private TextField oHoTen;
     @FXML private DatePicker oNgaySinh;
     @FXML private ComboBox<String> oGioiTinh;
-    @FXML private ComboBox<String> oQuanHe;
+    @FXML private ComboBox<QuanHe> oQuanHe;
     @FXML private TextField oCccd;
     @FXML private TextField oDanToc;
     @FXML private TextField oTonGiao;
     @FXML private TextField oNgheNghiep;
+    @FXML private ComboBox<LoaiCuTru> oLoaiCuTru;
+    @FXML private TextField oNoiThuongTru;
+    @FXML private DatePicker oTamTruTu;
+    @FXML private DatePicker oTamTruDen;
 
     @FXML private TableView<NhanKhau> bang;
     @FXML private TableColumn<NhanKhau, String> cotHoTen;
@@ -53,6 +60,8 @@ public class NhanKhauController {
     @FXML private TableColumn<NhanKhau, String> cotGioiTinh;
     @FXML private TableColumn<NhanKhau, String> cotQuanHe;
     @FXML private TableColumn<NhanKhau, String> cotCccd;
+    @FXML private TableColumn<NhanKhau, String> cotLoaiCuTru;
+    @FXML private TableColumn<NhanKhau, String> cotNoiThuongTru;
 
     /** Khởi tạo controller. */
     public NhanKhauController() {
@@ -71,8 +80,17 @@ public class NhanKhauController {
         oGioiTinh.setValue(NAM);
 
         oQuanHe.setItems(FXCollections.observableArrayList(
-                "Vợ/Chồng", "Con", "Bố/Mẹ", "Khác"));
-        oQuanHe.setValue("Con");
+                QuanHe.VO_CHONG, QuanHe.CON, QuanHe.BO_ME, QuanHe.KHAC));
+        oQuanHe.setValue(QuanHe.CON);
+
+        oLoaiCuTru.setItems(
+                FXCollections.observableArrayList(LoaiCuTru.values()));
+        oLoaiCuTru.setValue(LoaiCuTru.THUONG_TRU);
+        BooleanBinding khongTamTru = oLoaiCuTru.valueProperty()
+                .isNotEqualTo(LoaiCuTru.TAM_TRU);
+        oNoiThuongTru.disableProperty().bind(khongTamTru);
+        oTamTruTu.disableProperty().bind(khongTamTru);
+        oTamTruDen.disableProperty().bind(khongTamTru);
 
         cauHinhBang();
         cauHinhChonHo();
@@ -90,11 +108,19 @@ public class NhanKhauController {
                         "NAM".equals(d.getValue().gioiTinh())
                                 ? NAM : NU));
         cotQuanHe.setCellValueFactory(
-                d -> new SimpleStringProperty(d.getValue().quanHe()));
+                d -> new SimpleStringProperty(
+                        QuanHe.tuMa(d.getValue().quanHe()).getNhan()));
         cotCccd.setCellValueFactory(
                 d -> new SimpleStringProperty(
                         d.getValue().soCccd() != null
                                 ? d.getValue().soCccd() : ""));
+        cotLoaiCuTru.setCellValueFactory(
+                d -> new SimpleStringProperty(
+                        d.getValue().loaiCuTru().getNhan()));
+        cotNoiThuongTru.setCellValueFactory(
+                d -> new SimpleStringProperty(
+                        d.getValue().noiThuongTru() != null
+                                ? d.getValue().noiThuongTru() : ""));
     }
 
     private void cauHinhChonHo() {
@@ -161,11 +187,15 @@ public class NhanKhauController {
                     oHoTen.getText(),
                     oNgaySinh.getValue(),
                     NAM.equals(oGioiTinh.getValue()) ? "NAM" : "NU",
-                    maQuanHe(oQuanHe.getValue()),
+                    oQuanHe.getValue().name(),
                     oCccd.getText(),
                     oDanToc.getText(),
                     oTonGiao.getText(),
-                    oNgheNghiep.getText());
+                    oNgheNghiep.getText(),
+                    oLoaiCuTru.getValue(),
+                    oNoiThuongTru.getText(),
+                    oTamTruTu.getValue(),
+                    oTamTruDen.getValue());
 
             nkService.themNhanKhau(yc);
             xoaTrangForm();
@@ -182,28 +212,19 @@ public class NhanKhauController {
         anThongBao();
     }
 
-    private String maQuanHe(String nhan) {
-        if ("Vợ/Chồng".equals(nhan)) {
-            return "VO_CHONG";
-        }
-        if ("Con".equals(nhan)) {
-            return "CON";
-        }
-        if ("Bố/Mẹ".equals(nhan)) {
-            return "BO_ME";
-        }
-        return "KHAC";
-    }
-
     private void xoaTrangForm() {
         oHoTen.clear();
         oNgaySinh.setValue(null);
         oGioiTinh.setValue(NAM);
-        oQuanHe.setValue("Con");
+        oQuanHe.setValue(QuanHe.CON);
         oCccd.clear();
         oDanToc.clear();
         oTonGiao.clear();
         oNgheNghiep.clear();
+        oLoaiCuTru.setValue(LoaiCuTru.THUONG_TRU);
+        oNoiThuongTru.clear();
+        oTamTruTu.setValue(null);
+        oTamTruDen.setValue(null);
     }
 
     private void anThongBao() {

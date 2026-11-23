@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS nhan_khau (
     so_cccd     CHAR(12)     NULL,
     ngay_cap_cccd DATE         NULL,
     noi_cap_cccd  VARCHAR(150) NULL,
-    quan_he     ENUM('CHU_HO', 'VO_CHONG', 'CON', 'KHAC') NOT NULL,
+    quan_he     ENUM('CHU_HO', 'VO_CHONG', 'CON', 'BO_ME', 'KHAC') NOT NULL,
     trang_thai  ENUM('DANG_O', 'DA_CHUYEN_DI') NOT NULL DEFAULT 'DANG_O',
     -- US-003: loai dang ky cu tru, khong doi theo ngay. noi_thuong_tru bat
     -- buoc voi nguoi TAM_TRU (ung dung kiem tra).
