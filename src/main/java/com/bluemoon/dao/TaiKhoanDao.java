@@ -48,7 +48,8 @@ public interface TaiKhoanDao {
      * @return {@code false} nếu không có tài khoản mã đó
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean capNhatThongTin(int id, String hoTen, String soDienThoai);
+    boolean capNhatThongTin(int id, String hoTen, String soDienThoai,
+            NguoiDung nguoiThucHien);
 
     /**
      * Ghi mật khẩu mới đã băm (US-023, AC-063).
@@ -58,7 +59,8 @@ public interface TaiKhoanDao {
      * @return {@code false} nếu không có tài khoản mã đó
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean doiMatKhau(int id, String matKhauBam);
+    boolean doiMatKhau(int id, String matKhauBam,
+            NguoiDung nguoiThucHien);
 
     /**
      * Mọi tài khoản, xếp theo tên đăng nhập (US-022, giả định 18).
