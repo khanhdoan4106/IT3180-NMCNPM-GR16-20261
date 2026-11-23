@@ -6,12 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.NhatKy;
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
 import com.bluemoon.util.MatKhau;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,11 +26,13 @@ import org.junit.jupiter.api.Test;
 class TaiKhoanDaoJdbcIT {
 
     private final NguonKetNoi nguon = CsdlKiemThu.nguonUngDung();
-    private final TaiKhoanDao dao = new TaiKhoanDaoJdbc(nguon);
+    private final TaiKhoanDaoJdbc dao = new TaiKhoanDaoJdbc(nguon);
+    private NguoiDung quanTri;
 
     @BeforeEach
     void datLaiCsdl() throws SQLException, IOException {
         CsdlKiemThu.dungLaiBang();
+        quanTri = CsdlKiemThu.taoQuanTriVien(nguon);
     }
 
     /** AC-054: ghi đủ cột, mật khẩu chỉ lưu dạng băm, mặc định hoạt động. */
@@ -35,7 +40,7 @@ class TaiKhoanDaoJdbcIT {
     void ac054GhiTaiKhoanMoi() throws SQLException {
         String bam = MatKhau.bam("MatKhau@1");
         assertTrue(dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai",
-                VaiTro.THU_QUY, bam)));
+                VaiTro.THU_QUY, bam), quanTri));
         try (Connection ketNoi = nguon.moKetNoi();
                 Statement lenh = ketNoi.createStatement();
                 ResultSet kq = lenh.executeQuery("SELECT ten_dang_nhap, "
@@ -56,9 +61,9 @@ class TaiKhoanDaoJdbcIT {
     @Test
     void ac055TrungTenDangNhapTraFalse() throws SQLException {
         assertTrue(dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai",
-                VaiTro.THU_QUY, MatKhau.bam("MatKhau@1"))));
+                VaiTro.THU_QUY, MatKhau.bam("MatKhau@1")), quanTri));
         assertFalse(dao.them(new TaiKhoanMoi("ThuQuy01", "Lê Văn Bình",
-                VaiTro.QUAN_TRI, MatKhau.bam("MatKhau@2"))));
+                VaiTro.QUAN_TRI, MatKhau.bam("MatKhau@2")), quanTri));
         try (Connection ketNoi = nguon.moKetNoi();
                 Statement lenh = ketNoi.createStatement();
                 ResultSet kq = lenh.executeQuery(
@@ -74,7 +79,7 @@ class TaiKhoanDaoJdbcIT {
     void timTheoTenDangNhap() throws SQLException {
         String bam = MatKhau.bam("MatKhau@1");
         dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai", VaiTro.THU_QUY,
-                bam));
+                bam), quanTri);
         TaiKhoan tk = dao.timTheoTenDangNhap("ThuQuy01").orElseThrow();
         assertEquals("thuquy01", tk.tenDangNhap());
         assertEquals("Trần Thị Mai", tk.hoTen());
@@ -155,7 +160,8 @@ class TaiKhoanDaoJdbcIT {
     // US-022: quản lý tài khoản (giả định 18)
 
     private int them(String ten, VaiTro vaiTro) {
-        dao.them(new TaiKhoanMoi(ten, "Người thử " + ten, vaiTro, "bam"));
+        dao.them(new TaiKhoanMoi(ten, "Người thử " + ten, vaiTro, "bam"),
+                quanTri);
         return dao.timTheoTenDangNhap(ten).orElseThrow().id();
     }
 
@@ -175,12 +181,12 @@ class TaiKhoanDaoJdbcIT {
         int b = them("quantri02", VaiTro.QUAN_TRI);
         int c = them("thuquy01", VaiTro.THU_QUY);
 
-        assertTrue(dao.doiVaiTro(c, VaiTro.QUAN_TRI));
+        assertTrue(dao.doiVaiTro(c, VaiTro.QUAN_TRI, quanTri));
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(c).orElseThrow().vaiTro());
-        assertTrue(dao.doiVaiTro(b, VaiTro.THU_QUY));
-        assertTrue(dao.doiVaiTro(c, VaiTro.THU_QUY));
+        assertTrue(dao.doiVaiTro(b, VaiTro.THU_QUY, quanTri));
+        assertTrue(dao.doiVaiTro(c, VaiTro.THU_QUY, quanTri));
         // admin là Quản trị viên hoạt động cuối cùng.
-        assertFalse(dao.doiVaiTro(a, VaiTro.THU_QUY));
+        assertFalse(dao.doiVaiTro(a, VaiTro.THU_QUY, quanTri));
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(a).orElseThrow().vaiTro());
         assertFalse(dao.doiVaiTro(a + 1000, VaiTro.THU_QUY));
     }
@@ -190,14 +196,53 @@ class TaiKhoanDaoJdbcIT {
         int a = them("admin", VaiTro.QUAN_TRI);
         int b = them("quantri02", VaiTro.QUAN_TRI);
 
-        assertTrue(dao.datHoatDong(b, false));
+        assertTrue(dao.datHoatDong(b, false, quanTri));
         assertFalse(dao.timTheoId(b).orElseThrow().hoatDong());
         // Quản trị viên bị khóa không tính: không khóa được admin.
-        assertFalse(dao.datHoatDong(a, false));
+        assertFalse(dao.datHoatDong(a, false, quanTri));
         assertFalse(dao.doiVaiTro(a, VaiTro.THU_QUY));
         assertTrue(dao.timTheoId(a).orElseThrow().hoatDong());
-        assertTrue(dao.datHoatDong(b, true));
+        assertTrue(dao.datHoatDong(b, true, quanTri));
         assertTrue(dao.datHoatDong(a, false));
-        assertFalse(dao.datHoatDong(a + 1000, true));
+        assertFalse(dao.datHoatDong(a + 1000, true, quanTri));
     }
+ 
+    @Test
+    void ghiNhatKyThatBaiRollbackTaoTaiKhoan() throws SQLException {
+        NhatKyDao loiNhatKy = new NhatKyDao() {
+            @Override
+            public void ghi(Connection ketNoi, int taiKhoanId,
+                    String thaoTac, String doiTuong, String noiDung)
+                    throws SQLException {
+                throw new SQLException("Lỗi giả lập khi ghi nhật ký.");
+            }
+
+            @Override
+            public List<NhatKy> danhSachMoiNhat(int gioiHan) {
+                return List.of();
+            }
+        };
+        TaiKhoanDaoJdbc daoCoLoi = new TaiKhoanDaoJdbc(nguon, loiNhatKy);
+
+        assertThrows(LoiCsdl.class, () -> daoCoLoi.them(
+                new TaiKhoanMoi("rollback01", "Người thử", VaiTro.THU_QUY,
+                        "bam"), quanTri));
+        assertEquals(0, dem("SELECT COUNT(*) FROM tai_khoan "
+                + "WHERE ten_dang_nhap = 'rollback01'"));
+        assertEquals(0, demNhatKy());
+    }
+
+    private int demNhatKy() throws SQLException {
+        return dem("SELECT COUNT(*) FROM nhat_ky");
+    }
+
+    private int dem(String sql) throws SQLException {
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            kq.next();
+            return kq.getInt(1);
+        }
+    }
+
 }
