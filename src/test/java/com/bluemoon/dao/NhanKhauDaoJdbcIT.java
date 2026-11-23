@@ -1,6 +1,7 @@
 package com.bluemoon.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,7 +81,7 @@ class NhanKhauDaoJdbcIT {
                 taoYeuCau(hoId, "Nhan Khau Loi", "004"), quanTri));
         assertEquals(1, demSoNhanKhau(hoId));
         assertEquals(soNhatKyTruoc, demNhatKy());
-        assertTrue(!dao.tonTaiCccdDangO("004"));
+        assertFalse(dao.tonTaiCccdDangO("004"));
     }
 
     private YeuCauThemNhanKhau taoYeuCau(
