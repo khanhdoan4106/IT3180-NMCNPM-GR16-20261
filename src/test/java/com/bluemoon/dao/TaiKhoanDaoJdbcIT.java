@@ -106,11 +106,12 @@ class TaiKhoanDaoJdbcIT {
 
     /** AC-065: sửa thông tin cá nhân, không đổi tên đăng nhập/vai trò. */
     @Test
-    void ac065CapNhatThongTin() {
+    void ac065CapNhatThongTin() throws SQLException {
         dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai",
                 VaiTro.THU_QUY, MatKhau.bam("MatKhau@1")), quanTri);
         int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
-        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", "0912345678", quanTri));
+        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh",
+                "0912345678", quanTri));
         TaiKhoan tk = dao.timTheoId(id).orElseThrow();
         assertEquals("Trần Thị Mai Anh", tk.hoTen());
         assertEquals("0912345678", tk.soDienThoai());
@@ -124,7 +125,7 @@ class TaiKhoanDaoJdbcIT {
 
     /** AC-063: đổi mật khẩu cá nhân chỉ lưu bản băm. */
     @Test
-    void ac063DoiMatKhau() {
+    void ac063DoiMatKhau() throws SQLException {
         dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai",
                 VaiTro.THU_QUY, MatKhau.bam("MatKhau@1")), quanTri);
         String bamKhac = MatKhau.bam("MatKhau@1");
