@@ -41,34 +41,15 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
   connection riêng, không commit và không nuốt lỗi. Lỗi ghi phải được
   truyền lên để giao dịch nghiệp vụ rollback.
 
-Ví dụ tích hợp trong một Service nghiệp vụ:
-
-```java
-try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
-    ketNoi.setAutoCommit(false);
-    try {
-        // DAO nghiệp vụ phải dùng cùng ketNoi để ghi thay đổi.
-        hoGiaDinhDao.them(ketNoi, hoGiaDinh);
-        nhatKyService.ghiTrongGiaoDich(ketNoi, nguoiDung,
-                "THEM_HO", "Hộ " + hoGiaDinh.maCanHo(),
-                "Thêm hộ gia đình");
-        ketNoi.commit();
-    } catch (SQLException | RuntimeException loi) {
-        ketNoi.rollback();
-        throw loi;
-    }
-}
-```
-
-Không gọi API ghi nhật ký sau khi DAO nghiệp vụ đã tự commit hoặc đã
-mở một connection khác: khi đó AC-068 không được bảo đảm.
-
 ## Kiểm soát truy cập và bất biến
 
-- Service xem nhật ký kiểm tra `ManHinh.NHAT_KY`; vai trò Thủ quỹ và
-  phiên chưa đăng nhập bị từ chối trước khi gọi DAO.
-- DAO chỉ có hai thao tác: INSERT và SELECT. Không định nghĩa UPDATE
-  hoặc DELETE.
+- Service nghiệp vụ kiểm tra màn hình tương ứng qua
+  `PhanQuyen.yeuCau(ManHinh)`; phiên chưa đăng nhập và vai trò không
+  được phép bị từ chối trước khi DAO ghi dữ liệu.
+- Service xem nhật ký kiểm tra `ManHinh.NHAT_KY`; chỉ Quản trị viên
+  được xem.
+- DAO nhật ký chỉ có hai thao tác: INSERT và SELECT. Không định nghĩa
+  UPDATE hoặc DELETE.
 - Trigger trong schema chặn UPDATE/DELETE ở CSDL, kể cả khi có lời gọi
   SQL ngoài giao diện.
 - Thời điểm do MySQL tự điền bằng `CURRENT_TIMESTAMP`; không lấy giờ
@@ -88,26 +69,25 @@ mở một connection khác: khi đó AC-068 không được bảo đảm.
   gồm thao tác thêm hộ/chủ hộ.
 - Nếu INSERT nhật ký lỗi, transaction rollback cả hộ, chủ hộ và nhật ký;
   lỗi CSDL được chuyển thành `LoiCsdl`.
-- Không ghi nhật ký cho các truy vấn đọc danh sách hoặc kiểm tra trùng.
+
+## Tích hợp đã hoàn thành: thêm nhân khẩu (THEM_NHAN_KHAU)
+
+- `NhanKhauService` kiểm tra quyền qua
+  `PhanQuyen.yeuCau(ManHinh.NHAN_KHAU)`, chuẩn hóa và kiểm tra dữ liệu,
+  sau đó truyền người đang đăng nhập xuống DAO.
+- `NhanKhauDaoJdbc` thêm nhân khẩu, ghi `THEM_NHAN_KHAU` bằng cùng
+  `Connection`, rồi mới commit. Đối tượng nhật ký là ID nhân khẩu;
+  nội dung ghi tên nhân khẩu và ID hộ.
+- Nếu ghi nhật ký lỗi, thao tác thêm nhân khẩu rollback; không để lại
+  nhân khẩu không có nhật ký tương ứng.
+- Test đơn vị kiểm tra Thủ quỹ và phiên chưa đăng nhập bị từ chối.
+  Test tích hợp MySQL kiểm tra dòng nhật ký được tạo và rollback khi
+  DAO nhật ký phát sinh lỗi.
 
 ## Phần còn phải tích hợp
 
 Các nghiệp vụ còn lại vẫn cần được tích hợp theo cùng nguyên tắc
-transaction, gồm sửa/chuyển đi hộ, nhân khẩu, tạm trú/tạm vắng, tài khoản
-và các nghiệp vụ thu phí. Mỗi thao tác phải dùng đúng mã trong bảng
-danh sách phía trên; không ghi sau khi transaction nghiệp vụ đã commit.
-
-Các test đã thêm/cập nhật:
-- Unit test: Quản trị viên được thêm hộ; Thủ quỹ và phiên chưa đăng nhập
-  bị từ chối trước khi DAO được gọi.
-- Integration test MySQL: thêm hộ tạo đúng một dòng `THEM_HO`; nếu ghi
-  nhật ký thất bại thì cả hộ và chủ hộ đều rollback.
-- Các integration test nhân khẩu và tạm trú/tạm vắng tạo hộ fixture
-  bằng tài khoản Quản trị viên.
-- Bộ test nhật ký trước đó vẫn kiểm tra commit/rollback và trigger
-  chặn UPDATE/DELETE.
-
-Chạy:
-- `mvn verify`
-- `mvn verify -Pmysql` với biến môi trường CSDL kiểm thử theo
-  `docs/setup.md`.
+transaction, gồm sửa/chuyển đi hộ, sửa/chuyển đi nhân khẩu, đổi chủ hộ,
+tạm trú/tạm vắng, tài khoản và các nghiệp vụ thu phí. Chỉ ghi các sự kiện
+khi nghiệp vụ tương ứng thực sự tồn tại; không ghi sau khi transaction
+nghiệp vụ đã commit.

@@ -1,6 +1,7 @@
 package com.bluemoon.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
@@ -10,6 +11,10 @@ import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,26 +35,87 @@ class NhanKhauDaoJdbcIT {
 
     @Test
     void themVaLayNhanKhau_ThanhCong() {
-        // 1. Tạo 1 hộ gia đình trước
-        YeuCauThemHo ycHo = new YeuCauThemHo("A-101", LoaiCanHo.CAN_HO, 1, 
-                new BigDecimal("70.00"), "090", LocalDate.now(), 
+        YeuCauThemHo ycHo = new YeuCauThemHo("A-101", LoaiCanHo.CAN_HO, 1,
+                new BigDecimal("70.00"), "090", LocalDate.now(),
                 "Chu Ho", LocalDate.of(1980, 1, 1), "NAM", "001");
         int hoId = hoDao.themHoGiaDinh(ycHo, quanTri);
 
-        // 2. Thêm nhân khẩu vào hộ đó
-        YeuCauThemNhanKhau ycNk = new YeuCauThemNhanKhau(hoId, "Vo Chu Ho", 
-                LocalDate.of(1982, 1, 1), "NU", "VO_CHONG", "002", 
-                null, null, null);
-        int nkId = dao.themNhanKhau(ycNk);
+        YeuCauThemNhanKhau ycNk = taoYeuCau(hoId, "Vo Chu Ho", "002");
+        int nkId = dao.themNhanKhau(ycNk, quanTri);
         assertTrue(nkId > 0);
 
-        // 3. Kiểm tra danh sách nhân khẩu của hộ
         List<NhanKhau> ds = dao.layDanhSachTheoHo(hoId);
-        // Có 2 người: 1 chủ hộ (tự sinh khi thêm hộ) + 1 vợ (vừa thêm)
         assertEquals(2, ds.size());
-        
-        // Người thứ 2 là vợ (sắp xếp theo ngày sinh tăng dần: 1980 rồi 1982)
         assertEquals("Vo Chu Ho", ds.get(1).hoTen());
         assertTrue(dao.tonTaiCccdDangO("002"));
+        assertEquals(2, demNhatKy()); // THEM_HO + THEM_NHAN_KHAU
+        assertEquals("THEM_NHAN_KHAU", thaoTacNhatKyCuoi());
+    }
+
+    @Test
+    void ghiNhatKyThatBaiRollbackNhanKhau() throws SQLException {
+        YeuCauThemHo ycHo = new YeuCauThemHo("B-202", LoaiCanHo.CAN_HO, 2,
+                new BigDecimal("68.00"), "091", LocalDate.now(),
+                "Chu Ho B", LocalDate.of(1980, 1, 1), "NAM", "003");
+        int hoId = hoDao.themHoGiaDinh(ycHo, quanTri);
+        int soNhatKyTruoc = demNhatKy();
+
+        NhatKyDao daoNhatKyLoi = new NhatKyDao() {
+            @Override
+            public void ghi(Connection ketNoi, int taiKhoanId,
+                    String thaoTac, String doiTuong, String noiDung)
+                    throws SQLException {
+                throw new SQLException("Lỗi giả lập khi ghi nhật ký.");
+            }
+
+            @Override
+            public List<com.bluemoon.model.NhatKy> danhSachMoiNhat(
+                    int gioiHan) {
+                return List.of();
+            }
+        };
+        NhanKhauDaoJdbc daoCoLoi = new NhanKhauDaoJdbc(nguon, daoNhatKyLoi);
+
+        assertThrows(LoiCsdl.class, () -> daoCoLoi.themNhanKhau(
+                taoYeuCau(hoId, "Nhan Khau Loi", "004"), quanTri));
+        assertEquals(1, demSoNhanKhau(hoId));
+        assertEquals(soNhatKyTruoc, demNhatKy());
+        assertTrue(!dao.tonTaiCccdDangO("004"));
+    }
+
+    private YeuCauThemNhanKhau taoYeuCau(
+            int hoId, String hoTen, String cccd) {
+        return new YeuCauThemNhanKhau(hoId, hoTen,
+                LocalDate.of(1982, 1, 1), "NU", "VO_CHONG", cccd,
+                null, null, null);
+    }
+
+    private int demNhatKy() throws SQLException {
+        return dem("SELECT COUNT(*) FROM nhat_ky");
+    }
+
+    private int demSoNhanKhau(int hoId) throws SQLException {
+        return dem("SELECT COUNT(*) FROM nhan_khau WHERE ho_id = " + hoId);
+    }
+
+    private int dem(String sql) throws SQLException {
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            kq.next();
+            return kq.getInt(1);
+        }
+    }
+
+    private String thaoTacNhatKyCuoi() {
+        String sql = "SELECT thao_tac FROM nhat_ky "
+                + "ORDER BY id DESC LIMIT 1";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            return kq.next() ? kq.getString(1) : null;
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
     }
 }
