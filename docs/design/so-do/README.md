@@ -20,7 +20,7 @@ trước.
 | Lược đồ CSDL (12 bảng) | [luoc-do-csdl.dbml](luoc-do-csdl.dbml), [luoc-do-csdl.puml](luoc-do-csdl.puml) | [luoc-do-csdl.png](luoc-do-csdl.png) | TV1 Khánh |
 | DFD mức ngữ cảnh | [dfd-ngu-canh.puml](dfd-ngu-canh.puml) | [dfd-ngu-canh.png](dfd-ngu-canh.png) | TV1 Khánh |
 | DFD mức 1 | [dfd-muc-1.puml](dfd-muc-1.puml) | [dfd-muc-1.png](dfd-muc-1.png) | TV1 Khánh |
-| Biểu đồ lớp tầng model | [bieu-do-lop-model.puml](bieu-do-lop-model.puml) | [bieu-do-lop-model.png](bieu-do-lop-model.png) | TV1 Khánh |
+| Biểu đồ lớp tầng model | [bieu-do-lop-model.puml](bieu-do-lop-model.puml) | [bieu-do-lop-model.png](bieu-do-lop-model.png) | TV1 Khánh |\n| Use case nhóm Thống kê | [use-case-thong-ke.puml](use-case-thong-ke.puml) | Chờ xuất PNG | TV5 Huy |
 
 **Xuất ảnh.** Tải `plantuml.jar` từ
 [trang phát hành PlantUML](https://github.com/plantuml/plantuml/releases) về
