@@ -25,6 +25,8 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
 | `DOI_CHU_HO` | Đổi chủ hộ |
 | `GHI_TAM_TRU_TAM_VANG` | Ghi đợt tạm trú/tạm vắng |
 | `TAO_TAI_KHOAN` | Tạo tài khoản |
+| `SUA_THONG_TIN_TAI_KHOAN` | Sửa họ tên, số điện thoại tài khoản |
+| `DOI_MAT_KHAU` | Người dùng tự đổi mật khẩu |
 | `DOI_VAI_TRO` | Đổi vai trò |
 | `KHOA_TAI_KHOAN`, `MO_KHOA_TAI_KHOAN` | Khóa/mở khóa tài khoản |
 | `DAT_LAI_MAT_KHAU` | Đặt lại mật khẩu |
@@ -95,10 +97,27 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
 - Nếu ghi nhật ký lỗi, bản ghi khai báo rollback. Integration test MySQL
   kiểm tra cả trường hợp thành công và rollback.
 
+## Tích hợp đã hoàn thành: tài khoản
+
+- Tạo tài khoản (`TAO_TAI_KHOAN`), đổi vai trò (`DOI_VAI_TRO`),
+  khóa/mở khóa (`KHOA_TAI_KHOAN`, `MO_KHOA_TAI_KHOAN`), đặt lại mật
+  khẩu (`DAT_LAI_MAT_KHAU`), sửa thông tin cá nhân
+  (`SUA_THONG_TIN_TAI_KHOAN`) và tự đổi mật khẩu (`DOI_MAT_KHAU`)
+  đều ghi nhật ký trong cùng transaction với cập nhật tài khoản.
+- Nội dung ghi nhận tên đăng nhập, trường thay đổi và giá trị trước/sau
+  đối với thông tin/vai trò/trạng thái. Không bao giờ ghi mật khẩu rõ
+  hoặc chuỗi băm vào nhật ký.
+- Khi ghi nhật ký thất bại, thay đổi tài khoản rollback; nếu thao tác
+  không thay đổi dữ liệu (tên đăng nhập trùng, tài khoản không tồn tại,
+  hoặc bị chặn vì phải giữ Quản trị viên cuối cùng) thì không tạo nhật ký.
+- Bổ sung hai mã thao tác cho thay đổi thông tin cá nhân và tự đổi mật
+  khẩu vào CHECK constraint của `database/schema.sql`. CSDL đã được
+  khởi tạo trước đó cần chạy một lần
+  `database/migration_ts002_tai_khoan.sql`.
+
 ## Phần còn phải tích hợp
 
 Các nghiệp vụ còn lại vẫn cần được tích hợp theo cùng nguyên tắc
-transaction, gồm sửa/chuyển đi hộ, sửa/chuyển đi nhân khẩu, đổi chủ hộ,
-tài khoản và các nghiệp vụ thu phí. Chỉ ghi các sự kiện khi nghiệp vụ
+transaction, gồm sửa/chuyển đi hộ, sửa/chuyển đi nhân khẩu, đổi chủ hộ và các nghiệp vụ thu phí. Chỉ ghi các sự kiện khi nghiệp vụ
 tương ứng thực sự tồn tại; không ghi sau khi transaction nghiệp vụ đã
 commit.
