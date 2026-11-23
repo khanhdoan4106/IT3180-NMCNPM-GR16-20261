@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.math.BigDecimal;
@@ -19,10 +20,12 @@ class NhanKhauDaoJdbcIT {
     private final NguonKetNoi nguon = CsdlKiemThu.nguonUngDung();
     private final NhanKhauDaoJdbc dao = new NhanKhauDaoJdbc(nguon);
     private final HoGiaDinhDaoJdbc hoDao = new HoGiaDinhDaoJdbc(nguon);
+    private NguoiDung quanTri;
 
     @BeforeEach
     void datLaiCsdl() throws Exception {
         CsdlKiemThu.dungLaiBang();
+        quanTri = CsdlKiemThu.taoQuanTriVien(nguon);
     }
 
     @Test
@@ -31,7 +34,7 @@ class NhanKhauDaoJdbcIT {
         YeuCauThemHo ycHo = new YeuCauThemHo("A-101", LoaiCanHo.CAN_HO, 1, 
                 new BigDecimal("70.00"), "090", LocalDate.now(), 
                 "Chu Ho", LocalDate.of(1980, 1, 1), "NAM", "001");
-        int hoId = hoDao.themHoGiaDinh(ycHo);
+        int hoId = hoDao.themHoGiaDinh(ycHo, quanTri);
 
         // 2. Thêm nhân khẩu vào hộ đó
         YeuCauThemNhanKhau ycNk = new YeuCauThemNhanKhau(hoId, "Vo Chu Ho", 

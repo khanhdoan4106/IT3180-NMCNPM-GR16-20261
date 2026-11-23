@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
 import com.bluemoon.model.YeuCauKhaiBao;
@@ -23,10 +24,12 @@ class TamTruTamVangDaoJdbcIT {
             new TamTruTamVangDaoJdbc(nguon);
     private final HoGiaDinhDaoJdbc hoDao =
             new HoGiaDinhDaoJdbc(nguon);
+    private NguoiDung quanTri;
 
     @BeforeEach
     void datLaiCsdl() throws Exception {
         CsdlKiemThu.dungLaiBang();
+        quanTri = CsdlKiemThu.taoQuanTriVien(nguon);
     }
 
     @Test
@@ -35,7 +38,7 @@ class TamTruTamVangDaoJdbcIT {
                 "B-202", LoaiCanHo.CAN_HO, 2,
                 new BigDecimal("80.00"), "091", LocalDate.now(),
                 "Chu Ho", LocalDate.of(1985, 5, 5), "NAM", "009");
-        int hoId = hoDao.themHoGiaDinh(ycHo);
+        int hoId = hoDao.themHoGiaDinh(ycHo, quanTri);
 
         List<NguoiTrongHo> dsNguoi = dao.layNguoiTrongHo(hoId);
         assertFalse(dsNguoi.isEmpty());
