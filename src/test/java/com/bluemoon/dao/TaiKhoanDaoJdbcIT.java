@@ -110,15 +110,16 @@ class TaiKhoanDaoJdbcIT {
         dao.them(new TaiKhoanMoi("thuquy01", "Trần Thị Mai",
                 VaiTro.THU_QUY, MatKhau.bam("MatKhau@1")), quanTri);
         int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
-        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", "0912345678"));
+        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", "0912345678", quanTri));
         TaiKhoan tk = dao.timTheoId(id).orElseThrow();
         assertEquals("Trần Thị Mai Anh", tk.hoTen());
         assertEquals("0912345678", tk.soDienThoai());
         assertEquals("thuquy01", tk.tenDangNhap());
         assertEquals(VaiTro.THU_QUY, tk.vaiTro());
-        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", null));
+        assertTrue(dao.capNhatThongTin(id, "Trần Thị Mai Anh", null, quanTri));
         assertNull(dao.timTheoId(id).orElseThrow().soDienThoai());
-        assertFalse(dao.capNhatThongTin(id + 1000, "Ai đó", null));
+        assertFalse(dao.capNhatThongTin(id + 1000, "Ai đó", null, quanTri));
+        assertEquals("SUA_THONG_TIN_TAI_KHOAN", thaoTacNhatKyCuoi());
     }
 
     /** AC-063: đổi mật khẩu cá nhân chỉ lưu bản băm. */
@@ -130,13 +131,15 @@ class TaiKhoanDaoJdbcIT {
         dao.them(new TaiKhoanMoi("thuquy02", "Lê Thị Lan",
                 VaiTro.THU_QUY, bamKhac), quanTri);
         int id = dao.timTheoTenDangNhap("thuquy01").orElseThrow().id();
-        assertTrue(dao.doiMatKhau(id, MatKhau.bam("MatKhauMoi@2")));
+        assertTrue(dao.doiMatKhau(id, MatKhau.bam("MatKhauMoi@2"),
+                dao.timTheoId(id).orElseThrow().nguoiDung()));
         String bamMoi = dao.timTheoId(id).orElseThrow().matKhauBam();
         assertTrue(MatKhau.khop("MatKhauMoi@2", bamMoi));
         assertFalse(MatKhau.khop("MatKhau@1", bamMoi));
+        assertEquals("DOI_MAT_KHAU", thaoTacNhatKyCuoi());
         assertEquals(bamKhac,
                 dao.timTheoTenDangNhap("thuquy02").orElseThrow().matKhauBam());
-        assertFalse(dao.doiMatKhau(id + 1000, bamMoi));
+        assertFalse(dao.doiMatKhau(id + 1000, bamMoi, quanTri));
     }
 
     // US-022: quản lý tài khoản (giả định 18)
