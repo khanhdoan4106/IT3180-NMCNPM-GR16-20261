@@ -15,7 +15,7 @@ trước.
 
 | Sơ đồ | Tệp nguồn | Ảnh | Người phụ trách |
 |---|---|---|---|
-| Use case tổng quan | [use-case-tong-quan.puml](use-case-tong-quan.puml) | [use-case-tong-quan.png](use-case-tong-quan.png) | TV1 Khánh |
+| Use case tổng quan | [use-case-tong-quan.puml](use-case-tong-quan.puml) | [use-case-tong-quan.png](use-case-tong-quan.png) | TV1 Khánh |\n| Use case nhóm Thống kê | [use-case-thong-ke.puml](use-case-thong-ke.puml) | Chờ xuất PNG | TV5 Huy |\n| Hoạt động UC024 – Thống kê theo khoản thu | [hoat-dong-uc024-thong-ke-khoan-thu.puml](hoat-dong-uc024-thong-ke-khoan-thu.puml) | Chờ xuất PNG | TV5 Huy |\n| Tuần tự UC023 – Xuất báo cáo thu | [tuan-tu-uc023-xuat-bao-cao.puml](tuan-tu-uc023-xuat-bao-cao.puml) | Chờ xuất PNG | TV5 Huy |
 | ERD khái niệm (Chen) | [erd-khai-niem.puml](erd-khai-niem.puml) | [erd-khai-niem.png](erd-khai-niem.png) | TV1 Khánh |
 | Lược đồ CSDL (12 bảng) | [luoc-do-csdl.dbml](luoc-do-csdl.dbml), [luoc-do-csdl.puml](luoc-do-csdl.puml) | [luoc-do-csdl.png](luoc-do-csdl.png) | TV1 Khánh |
 | DFD mức ngữ cảnh | [dfd-ngu-canh.puml](dfd-ngu-canh.puml) | [dfd-ngu-canh.png](dfd-ngu-canh.png) | TV1 Khánh |
@@ -176,7 +176,7 @@ có gắn «dự kiến». Tên lớp, thuộc tính theo bảng trong `schema.s
 | TV2 Dũng | Biểu đồ UC nhóm Cư trú (UC005 – UC010); đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009); máy trạng thái Nhân khẩu. Review ERD khái niệm và lược đồ CSDL |
 | TV3 Hùng | Biểu đồ UC nhóm Khoản thu (UC011 – UC015); đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014); máy trạng thái Khoản phải nộp |
 | TV4 Đạt | Biểu đồ UC nhóm Thu phí (UC016 – UC020); đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí; máy trạng thái Phiếu thu |
-| TV5 Huy | Biểu đồ UC nhóm Thống kê (UC021 – UC024); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC024); biểu đồ tuần tự Xuất báo cáo (UC023) |
+| TV5 Huy | Biểu đồ UC nhóm Thống kê (UC021 – UC024); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC024); biểu đồ tuần tự Xuất báo cáo (UC023). Nguồn và đặc tả đang ở PR #102 |
 
 Ghi chú:
 
