@@ -162,8 +162,8 @@ class TaiKhoanDaoJdbcIT {
 
     @Test
     void doiVaiTroGiuMotQuanTriHoatDong() throws SQLException {
-        int a = them("admin02", VaiTro.QUAN_TRI);
-        int b = them("quantri03", VaiTro.QUAN_TRI);
+        int a = quanTri.id();
+        int b = them("quantri02", VaiTro.QUAN_TRI);
         int c = them("thuquy01", VaiTro.THU_QUY);
         assertTrue(dao.doiVaiTro(c, VaiTro.QUAN_TRI, quanTri));
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(c).orElseThrow().vaiTro());
@@ -173,13 +173,13 @@ class TaiKhoanDaoJdbcIT {
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(a).orElseThrow().vaiTro());
         assertFalse(dao.doiVaiTro(a + 1000, VaiTro.THU_QUY, quanTri));
         assertEquals("DOI_VAI_TRO", thaoTacNhatKyCuoi());
-        assertEquals(6, demNhatKy()); // 3 lần tạo + 3 lần đổi vai trò
+        assertEquals(5, demNhatKy()); // 2 lần tạo + 3 lần đổi vai trò
     }
 
     @Test
     void khoaMoKhoaGiuMotQuanTriHoatDong() throws SQLException {
-        int a = them("admin02", VaiTro.QUAN_TRI);
-        int b = them("quantri03", VaiTro.QUAN_TRI);
+        int a = quanTri.id();
+        int b = them("quantri02", VaiTro.QUAN_TRI);
         assertTrue(dao.datHoatDong(b, false, quanTri));
         assertFalse(dao.timTheoId(b).orElseThrow().hoatDong());
         assertFalse(dao.datHoatDong(a, false, quanTri));
@@ -189,7 +189,7 @@ class TaiKhoanDaoJdbcIT {
         assertTrue(dao.datHoatDong(a, false, quanTri));
         assertFalse(dao.datHoatDong(a + 1000, true, quanTri));
         assertEquals("KHOA_TAI_KHOAN", thaoTacNhatKyCuoi());
-        assertEquals(5, demNhatKy()); // 2 tạo + khóa/mở/khóa thành công
+        assertEquals(5, demNhatKy()); // 1 tạo + khóa/mở/khóa thành công
     }
 
     @Test
