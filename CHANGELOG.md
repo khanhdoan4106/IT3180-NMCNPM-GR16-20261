@@ -15,7 +15,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   Cần nâng cấp CSDL, xem `docs/setup.md` mục 7.
 - US-002: chặn ngày sinh ở tương lai.
 
-## [v0.1.0] – 24/11/2026 – Sprint 1
+## [v0.1.0] – 23/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
 
