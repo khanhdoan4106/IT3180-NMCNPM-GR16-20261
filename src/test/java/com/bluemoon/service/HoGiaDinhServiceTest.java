@@ -7,17 +7,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bluemoon.dao.HoGiaDinhDao;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.VaiTro;
 import com.bluemoon.model.YeuCauThemHo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
  * Kiểm thử đơn vị cho {@link HoGiaDinhService} (AC-001..AC-004).
  */
 class HoGiaDinhServiceTest {
+
+    private static final NguoiDung QUAN_TRI = new NguoiDung(
+            1, "admin", "Quản trị viên", VaiTro.QUAN_TRI);
+
+    @BeforeEach
+    void dangNhapQuanTriVien() {
+        PhienDangNhap.batDau(QUAN_TRI);
+    }
+
+    @AfterEach
+    void dangXuat() {
+        PhienDangNhap.ketThuc();
+    }
 
     @Test
     void themHoHopLeLuuDungDienTichVaHienTrongDanhSach() {
@@ -96,6 +113,37 @@ class HoGiaDinhServiceTest {
         assertEquals(1, dao.danhSach.size());
     }
 
+    @Test
+    void thuQuyKhongDuocThemHo() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        HoGiaDinhDaoGia dao = new HoGiaDinhDaoGia();
+        HoGiaDinhService service = new HoGiaDinhService(dao);
+
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.themHoGiaDinh(taoYeuCauHopLe()));
+        assertTrue(dao.danhSach.isEmpty());
+    }
+
+    @Test
+    void chuaDangNhapKhongDuocThemHo() {
+        PhienDangNhap.ketThuc();
+        HoGiaDinhDaoGia dao = new HoGiaDinhDaoGia();
+        HoGiaDinhService service = new HoGiaDinhService(dao);
+
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.themHoGiaDinh(taoYeuCauHopLe()));
+        assertTrue(dao.danhSach.isEmpty());
+    }
+
+    private YeuCauThemHo taoYeuCauHopLe() {
+        return new YeuCauThemHo(
+                "Z-999", LoaiCanHo.CAN_HO, 9,
+                new BigDecimal("80.00"), null,
+                LocalDate.of(2026, 11, 1), "Nguyễn Văn Test",
+                LocalDate.of(1990, 5, 10), "NAM", "001090012346");
+    }
+
     private static final class HoGiaDinhDaoGia implements HoGiaDinhDao {
 
         private final List<HoGiaDinh> danhSach = new ArrayList<>();
@@ -118,7 +166,7 @@ class HoGiaDinhServiceTest {
         }
 
         @Override
-        public int themHoGiaDinh(YeuCauThemHo yc) {
+        public int themHoGiaDinh(YeuCauThemHo yc, NguoiDung nguoiDung) {
             int id = danhSach.size() + 1;
             danhSach.add(new HoGiaDinh(
                     id,
