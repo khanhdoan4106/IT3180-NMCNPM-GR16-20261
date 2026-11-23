@@ -189,7 +189,7 @@ class TaiKhoanDaoJdbcIT {
         assertTrue(dao.datHoatDong(a, false, quanTri));
         assertFalse(dao.datHoatDong(a + 1000, true, quanTri));
         assertEquals("KHOA_TAI_KHOAN", thaoTacNhatKyCuoi());
-        assertEquals(5, demNhatKy()); // 1 tạo + khóa/mở/khóa thành công
+        assertEquals(4, demNhatKy()); // 1 tạo + khóa/mở/khóa thành công
     }
 
     @Test
