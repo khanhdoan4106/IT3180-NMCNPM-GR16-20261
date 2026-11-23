@@ -44,7 +44,8 @@ class HoGiaDinhDaoJdbcIT {
     }
 
     @Test
-    void a_themHoGiaDinh_TraVeDungDanhSachVaSoThanhVien() {
+    void a_themHoGiaDinh_TraVeDungDanhSachVaSoThanhVien()
+            throws SQLException {
         YeuCauThemHo yc = taoYeuCauMau("A-101", "001090123456");
         dao.themHoGiaDinh(yc, quanTri);
 
