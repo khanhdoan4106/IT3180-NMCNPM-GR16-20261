@@ -76,18 +76,36 @@ mở một connection khác: khi đó AC-068 không được bảo đảm.
 - Màn hình hiển thị tối đa 200 dòng mới nhất, sắp xếp theo
   `thoi_diem DESC, id DESC`, không có nút sửa/xóa.
 
+## Tích hợp đã hoàn thành: tạo hộ gia đình (THEM_HO)
+
+- `HoGiaDinhService` kiểm tra phiên và quyền qua
+  `PhanQuyen.yeuCau(ManHinh.HO_GIA_DINH)`, sau đó truyền người thực hiện
+  xuống DAO.
+- `HoGiaDinhDaoJdbc` mở một Connection, tắt auto-commit, thêm hộ,
+  thêm nhân khẩu chủ hộ, rồi gọi `NhatKyDao.ghi(...)` với **chính
+  Connection đó** trước khi commit.
+- Nhật ký lưu mã thao tác `THEM_HO`, đối tượng là mã căn hộ và nội dung
+  gồm thao tác thêm hộ/chủ hộ.
+- Nếu INSERT nhật ký lỗi, transaction rollback cả hộ, chủ hộ và nhật ký;
+  lỗi CSDL được chuyển thành `LoiCsdl`.
+- Không ghi nhật ký cho các truy vấn đọc danh sách hoặc kiểm tra trùng.
+
 ## Phần còn phải tích hợp
 
-Các DAO và Service nghiệp vụ hiện có cần được chuyển sang nhận chung
-Connection/giao dịch rồi gọi `ghiTrongGiaoDich` cho từng mã sự kiện
-ở bảng trên. Việc này phải thực hiện cùng người phụ trách từng story
-để không tạo transaction lồng nhau hoặc commit giữa chừng.
+Các nghiệp vụ còn lại vẫn cần được tích hợp theo cùng nguyên tắc
+transaction, gồm sửa/chuyển đi hộ, nhân khẩu, tạm trú/tạm vắng, tài khoản
+và các nghiệp vụ thu phí. Mỗi thao tác phải dùng đúng mã trong bảng
+danh sách phía trên; không ghi sau khi transaction nghiệp vụ đã commit.
 
-Các test đã thêm:
-- Unit test quyền xem nhật ký: Quản trị viên được xem; Thủ quỹ và
-  người chưa đăng nhập bị từ chối.
-- Integration test MySQL: INSERT rollback cùng giao dịch; INSERT
-  commit được lưu; UPDATE/DELETE bị trigger từ chối.
+Các test đã thêm/cập nhật:
+- Unit test: Quản trị viên được thêm hộ; Thủ quỹ và phiên chưa đăng nhập
+  bị từ chối trước khi DAO được gọi.
+- Integration test MySQL: thêm hộ tạo đúng một dòng `THEM_HO`; nếu ghi
+  nhật ký thất bại thì cả hộ và chủ hộ đều rollback.
+- Các integration test nhân khẩu và tạm trú/tạm vắng tạo hộ fixture
+  bằng tài khoản Quản trị viên.
+- Bộ test nhật ký trước đó vẫn kiểm tra commit/rollback và trigger
+  chặn UPDATE/DELETE.
 
 Chạy:
 - `mvn verify`
