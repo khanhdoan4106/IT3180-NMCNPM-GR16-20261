@@ -42,7 +42,7 @@ class TaiKhoanServiceTest {
         private LoiCsdl loi;
 
         @Override
-        public boolean them(TaiKhoanMoi taiKhoan) {
+        public boolean them(TaiKhoanMoi taiKhoan, NguoiDung nguoiThucHien) {
             if (loi != null) {
                 throw loi;
             }
@@ -98,13 +98,20 @@ class TaiKhoanServiceTest {
         }
 
         @Override
+        public boolean datLaiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
+            return doiMatKhau(id, matKhauBam);
+        }
+
+        @Override
         public List<TaiKhoan> danhSach() {
             soLanDoc++;
             return List.copyOf(theoId.values());
         }
 
         @Override
-        public boolean doiVaiTro(int id, VaiTro vaiTro) {
+        public boolean doiVaiTro(int id, VaiTro vaiTro,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null || (vaiTro != VaiTro.QUAN_TRI
                     && laQuanTriCuoiCung(tk))) {
@@ -118,7 +125,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean datHoatDong(int id, boolean hoatDong) {
+        public boolean datHoatDong(int id, boolean hoatDong,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null || (!hoatDong && laQuanTriCuoiCung(tk))) {
                 return false;
