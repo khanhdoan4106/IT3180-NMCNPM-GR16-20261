@@ -115,13 +115,14 @@ package "Cư trú" {
     NAM
     NU
   }
-  enum QuanHe <<dự kiến>> {
+  enum QuanHe {
     CHU_HO
     VO_CHONG
     CON
+    BO_ME
     KHAC
   }
-  enum LoaiCuTru <<dự kiến>> {
+  enum LoaiCuTru {
     THUONG_TRU
     TAM_TRU
   }
@@ -230,7 +231,7 @@ legend right
   <b>Chú giải</b>
   Không gắn nhãn: lớp đã có trên main, thuộc tính theo mã nguồn:
   SoLieuCuDan (TS-003); TaiKhoanMoi, VaiTro (US-020);
-  TaiKhoan, NguoiDung (US-021).
+  TaiKhoan, NguoiDung (US-021); QuanHe, LoaiCuTru (US-002).
   «dự kiến»: lớp chưa có trên main.
   TaiKhoan chưa có soDienThoai, email, ngayTao (đã có cột
   trong schema.sql); thêm khi làm US-023.
