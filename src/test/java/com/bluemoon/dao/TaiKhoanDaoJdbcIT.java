@@ -156,7 +156,7 @@ class TaiKhoanDaoJdbcIT {
         them("thuquy02", VaiTro.THU_QUY);
         them("admin", VaiTro.QUAN_TRI);
         them("thuquy01", VaiTro.THU_QUY);
-        assertEquals(List.of("admin", "thuquy01", "thuquy02"),
+        assertEquals(List.of("admin", "test-admin", "thuquy01", "thuquy02"),
                 dao.danhSach().stream().map(TaiKhoan::tenDangNhap).toList());
     }
 
