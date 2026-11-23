@@ -46,8 +46,10 @@ class PhanQuyenTest {
         PhienDangNhap.batDau(THU_QUY);
         for (ManHinh manHinh : ManHinh.values()) {
             boolean duoc = manHinh == ManHinh.TRANG_CHINH
+                    || manHinh == ManHinh.CHOT_CONG_NO
                     || manHinh == ManHinh.THU_PHI
                     || manHinh == ManHinh.PHIEU_THU
+                    || manHinh == ManHinh.BAO_CAO_THU
                     || manHinh == ManHinh.TAI_KHOAN;
             if (duoc) {
                 assertSame(THU_QUY, PhanQuyen.yeuCau(manHinh));
