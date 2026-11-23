@@ -70,7 +70,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean capNhatThongTin(int id, String hoTen, String sdt) {
+        public boolean capNhatThongTin(int id, String hoTen, String sdt,
+                NguoiDung nguoiThucHien) {
             if (loi != null) {
                 throw loi;
             }
@@ -85,7 +86,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean doiMatKhau(int id, String matKhauBam) {
+        public boolean doiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null) {
                 return false;
@@ -100,7 +102,7 @@ class TaiKhoanServiceTest {
         @Override
         public boolean datLaiMatKhau(int id, String matKhauBam,
                 NguoiDung nguoiThucHien) {
-            return doiMatKhau(id, matKhauBam);
+            return doiMatKhau(id, matKhauBam, nguoiThucHien);
         }
 
         @Override
