@@ -169,7 +169,7 @@ class TaiKhoanDaoJdbcIT {
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(a).orElseThrow().vaiTro());
         assertFalse(dao.doiVaiTro(a + 1000, VaiTro.THU_QUY, quanTri));
         assertEquals("DOI_VAI_TRO", thaoTacNhatKyCuoi());
-        assertEquals(8, demNhatKy()); // 3 tạo ban đầu + 3 đổi vai trò + 2 tạo admin fixture
+        assertEquals(6, demNhatKy()); // 3 lần tạo + 3 lần đổi vai trò
     }
 
     @Test
