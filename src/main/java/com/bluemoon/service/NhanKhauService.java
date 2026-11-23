@@ -1,8 +1,10 @@
 package com.bluemoon.service;
 
 import com.bluemoon.dao.NhanKhauDao;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
 import com.bluemoon.model.YeuCauThemNhanKhau;
+import com.bluemoon.util.ManHinh;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -39,8 +41,9 @@ public class NhanKhauService {
      * @return định danh (id) của nhân khẩu vừa tạo
      */
     public int themNhanKhau(YeuCauThemNhanKhau yc) {
+        NguoiDung nguoiDung = PhanQuyen.yeuCau(ManHinh.NHAN_KHAU);
         kiemTraTruongBatBuoc(yc);
-        
+
         String cccd = chuanHoa(yc.soCccd());
         if (cccd != null) {
             if (!cccd.matches("\\d{12}")) {
@@ -71,7 +74,7 @@ public class NhanKhauService {
                 chuanHoa(yc.tonGiao()),
                 chuanHoa(yc.ngheNghiep()));
 
-        return nhanKhauDao.themNhanKhau(daChuanHoa);
+        return nhanKhauDao.themNhanKhau(daChuanHoa, nguoiDung);
     }
 
     private void kiemTraTruongBatBuoc(YeuCauThemNhanKhau yc) {

@@ -3,6 +3,7 @@ package com.bluemoon.dao;
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.sql.Connection;
 import java.sql.Date;
@@ -32,6 +33,7 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private final NguonKetNoi nguonKetNoi;
+    private final NhatKyDao nhatKyDao;
 
     /** Khởi tạo DAO với nguồn CSDL mặc định. */
     public NhanKhauDaoJdbc() {
@@ -40,7 +42,13 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
 
     /** Khởi tạo DAO với nguồn kết nối tùy chỉnh (ví dụ: DB test). */
     public NhanKhauDaoJdbc(NguonKetNoi nguonKetNoi) {
+        this(nguonKetNoi, new NhatKyDaoJdbc(nguonKetNoi));
+    }
+
+    /** Cho phép thay DAO nhật ký để kiểm thử tình huống ghi nhật ký lỗi. */
+    public NhanKhauDaoJdbc(NguonKetNoi nguonKetNoi, NhatKyDao nhatKyDao) {
         this.nguonKetNoi = nguonKetNoi;
+        this.nhatKyDao = nhatKyDao;
     }
 
     @Override
@@ -83,23 +91,45 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
     }
 
     @Override
-    public int themNhanKhau(YeuCauThemNhanKhau yc) {
+    public int themNhanKhau(YeuCauThemNhanKhau yc, NguoiDung nguoiDung) {
         int co = Statement.RETURN_GENERATED_KEYS;
-        try (Connection ketNoi = nguonKetNoi.moKetNoi();
-                PreparedStatement ps = ketNoi.prepareStatement(SQL_THEM, co)) {
-            ps.setInt(1, yc.hoId());
-            ps.setString(2, yc.hoTen());
-            ps.setDate(3, Date.valueOf(yc.ngaySinh()));
-            ps.setString(4, yc.gioiTinh());
-            ps.setString(5, yc.quanHe());
-            ps.setString(6, yc.soCccd());
-            ps.setString(7, yc.danToc());
-            ps.setString(8, yc.tonGiao());
-            ps.setString(9, yc.ngheNghiep());
-            ps.executeUpdate();
-            try (ResultSet khoa = ps.getGeneratedKeys()) {
-                khoa.next();
-                return khoa.getInt(1);
+        try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
+            ketNoi.setAutoCommit(false);
+            try {
+                int nhanKhauId;
+                try (PreparedStatement ps =
+                        ketNoi.prepareStatement(SQL_THEM, co)) {
+                    ps.setInt(1, yc.hoId());
+                    ps.setString(2, yc.hoTen());
+                    ps.setDate(3, Date.valueOf(yc.ngaySinh()));
+                    ps.setString(4, yc.gioiTinh());
+                    ps.setString(5, yc.quanHe());
+                    ps.setString(6, yc.soCccd());
+                    ps.setString(7, yc.danToc());
+                    ps.setString(8, yc.tonGiao());
+                    ps.setString(9, yc.ngheNghiep());
+                    ps.executeUpdate();
+                    try (ResultSet khoa = ps.getGeneratedKeys()) {
+                        if (!khoa.next()) {
+                            throw new SQLException(
+                                    "Không nhận được ID nhân khẩu vừa thêm.");
+                        }
+                        nhanKhauId = khoa.getInt(1);
+                    }
+                }
+
+                nhatKyDao.ghi(ketNoi, nguoiDung.id(), "THEM_NHAN_KHAU",
+                        "Nhân khẩu #" + nhanKhauId,
+                        "Thêm " + yc.hoTen() + " vào hộ #" + yc.hoId());
+                ketNoi.commit();
+                return nhanKhauId;
+            } catch (SQLException | RuntimeException loi) {
+                try {
+                    ketNoi.rollback();
+                } catch (SQLException loiRollback) {
+                    loi.addSuppressed(loiRollback);
+                }
+                throw loi;
             }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
