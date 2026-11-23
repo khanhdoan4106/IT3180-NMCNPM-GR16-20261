@@ -1,0 +1,40 @@
+@startuml
+' Biểu đồ use case nhóm Thống kê – BlueMoon v1.0
+' Mã UC, tên UC và tác nhân theo docs/design/so-do/README.md.
+' Mọi UC trừ UC001 có tiền điều kiện: Người dùng đã đăng nhập.
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Biểu đồ use case nhóm Thống kê – BlueMoon v1.0
+
+actor "Quản trị viên" as QT
+actor "Người dùng" as ND
+note top of ND : {abstract}
+actor "Thủ quỹ" as TQ
+
+rectangle "Phần mềm quản lý thu phí BlueMoon" {
+  usecase "UC021 Xem tổng thu tháng" as UC021
+  usecase "UC022 Lọc hộ nợ đọng" as UC022
+  usecase "UC023 Xuất báo cáo thu" as UC023
+  usecase "UC024 Thống kê theo khoản thu" as UC024
+}
+
+' Chỉ Quản trị viên sử dụng các chức năng thống kê nội bộ.
+QT -- UC021
+QT -- UC022
+QT -- UC024
+
+' Theo bảng mã UC chung, UC023 là chức năng của Người dùng
+' (Quản trị viên và Thủ quỹ kế thừa Người dùng).
+ND -- UC023
+
+' Kế thừa vai trò
+QT --|> ND
+ND <|-- TQ
+@enduml
