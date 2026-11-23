@@ -128,7 +128,8 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
                 nhatKyDao.ghi(kn, nguoiDung.id(), "GHI_TAM_TRU_TAM_VANG",
                         "Khai báo #" + khaiBaoId,
                         yc.loai() + " nhân khẩu #" + yc.nhanKhauId()
-                                + " từ " + yc.tuNgay() + " đến " + yc.denNgay());
+                                + " từ " + yc.tuNgay()
+                                + " đến " + yc.denNgay());
                 kn.commit();
                 return khaiBaoId;
             } catch (SQLException | RuntimeException loi) {
