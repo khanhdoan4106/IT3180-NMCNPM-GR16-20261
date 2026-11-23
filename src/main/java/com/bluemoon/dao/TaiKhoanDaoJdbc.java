@@ -53,7 +53,8 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
             + "FOR UPDATE";
 
     private static final String SQL_KHOA_DONG = "SELECT ten_dang_nhap, "
-            + "vai_tro, hoat_dong FROM tai_khoan WHERE id = ? FOR UPDATE";
+            + "ho_ten, so_dien_thoai, vai_tro, hoat_dong "
+            + "FROM tai_khoan WHERE id = ? FOR UPDATE";
 
     private static final String SQL_DOI_VAI_TRO = "UPDATE tai_khoan "
             + "SET vai_tro = ? WHERE id = ?";
@@ -151,27 +152,83 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
 
     @Override
     public boolean capNhatThongTin(int id, String hoTen,
-            String soDienThoai) {
-        try (Connection ketNoi = nguonKetNoi.moKetNoi();
-                PreparedStatement lenh =
+            String soDienThoai, NguoiDung nguoiThucHien) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
+            ketNoi.setAutoCommit(false);
+            try {
+                String tenDangNhap;
+                String hoTenCu;
+                String soDienThoaiCu;
+                try (PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_KHOA_DONG)) {
+                    lenh.setInt(1, id);
+                    try (ResultSet kq = lenh.executeQuery()) {
+                        if (!kq.next()) {
+                            ketNoi.rollback();
+                            return false;
+                        }
+                        tenDangNhap = kq.getString("ten_dang_nhap");
+                        hoTenCu = kq.getString("ho_ten");
+                        soDienThoaiCu = kq.getString("so_dien_thoai");
+                    }
+                }
+                try (PreparedStatement lenh =
                         ketNoi.prepareStatement(SQL_CAP_NHAT_THONG_TIN)) {
-            lenh.setString(1, hoTen);
-            lenh.setString(2, soDienThoai);
-            lenh.setInt(3, id);
-            return lenh.executeUpdate() == 1;
+                    lenh.setString(1, hoTen);
+                    lenh.setString(2, soDienThoai);
+                    lenh.setInt(3, id);
+                    lenh.executeUpdate();
+                }
+                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(),
+                        "SUA_THONG_TIN_TAI_KHOAN", "Tài khoản #" + id,
+                        "Tài khoản " + tenDangNhap + ": họ tên "
+                                + hoTenCu + " -> " + hoTen
+                                + "; số điện thoại " + soDienThoaiCu
+                                + " -> " + soDienThoai);
+                ketNoi.commit();
+                return true;
+            } catch (SQLException | RuntimeException loi) {
+                rollback(ketNoi, loi);
+                throw loi;
+            }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
         }
     }
 
     @Override
-    public boolean doiMatKhau(int id, String matKhauBam) {
-        try (Connection ketNoi = nguonKetNoi.moKetNoi();
-                PreparedStatement lenh =
+    public boolean doiMatKhau(int id, String matKhauBam,
+            NguoiDung nguoiThucHien) {
+        try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
+            ketNoi.setAutoCommit(false);
+            try {
+                String tenDangNhap;
+                try (PreparedStatement lenh =
+                        ketNoi.prepareStatement(SQL_KHOA_DONG)) {
+                    lenh.setInt(1, id);
+                    try (ResultSet kq = lenh.executeQuery()) {
+                        if (!kq.next()) {
+                            ketNoi.rollback();
+                            return false;
+                        }
+                        tenDangNhap = kq.getString("ten_dang_nhap");
+                    }
+                }
+                try (PreparedStatement lenh =
                         ketNoi.prepareStatement(SQL_DOI_MAT_KHAU)) {
-            lenh.setString(1, matKhauBam);
-            lenh.setInt(2, id);
-            return lenh.executeUpdate() == 1;
+                    lenh.setString(1, matKhauBam);
+                    lenh.setInt(2, id);
+                    lenh.executeUpdate();
+                }
+                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), "DOI_MAT_KHAU",
+                        "Tài khoản #" + id,
+                        "Người dùng đổi mật khẩu tài khoản " + tenDangNhap);
+                ketNoi.commit();
+                return true;
+            } catch (SQLException | RuntimeException loi) {
+                rollback(ketNoi, loi);
+                throw loi;
+            }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
         }
