@@ -65,7 +65,7 @@ phải UC riêng). US-024, US-025 thuộc v2.0, không vẽ.
 | UC008 | Xuất danh sách tạm vắng | Quản trị viên | US-004 | Cư trú |
 | UC009 | Đổi chủ hộ | Quản trị viên | US-026 | Cư trú |
 | UC010 | Xem lịch sử biến động nhân khẩu | Quản trị viên | US-027 | Cư trú |
-| UC011 | Tính phí theo diện tích | Người dùng | US-005 | Khoản thu |
+| UC011 | Cập nhật đơn giá phí | Quản trị viên | US-005 | Khoản thu |
 | UC012 | Tạo khoản thu tự nguyện | Quản trị viên | US-006 | Khoản thu |
 | UC013 | Sửa khoản phải nộp | Người dùng | US-008 | Khoản thu |
 | UC014 | Chốt công nợ | Người dùng | US-009 | Khoản thu |
@@ -75,7 +75,7 @@ phải UC riêng). US-024, US-025 thuộc v2.0, không vẽ.
 | UC018 | Ghi nhận đóng góp tự nguyện | Người dùng | US-007 | Thu phí |
 | UC019 | In biên lai | Người dùng | US-013 | Thu phí |
 | UC020 | Hủy phiếu thu | Người dùng | US-014 | Thu phí |
-| UC021 | Xem tổng thu tháng | Quản trị viên | US-016 | Thống kê |
+| UC021 | Xem tổng thu tháng | Người dùng | US-016 | Thống kê |
 | UC022 | Lọc hộ nợ đọng | Quản trị viên | US-017 | Thống kê |
 | UC023 | Xuất báo cáo thu | Người dùng | US-018 | Thống kê |
 | UC024 | Thống kê theo khoản thu | Quản trị viên | US-019 | Thống kê |
@@ -136,8 +136,8 @@ Chỉ có ở mức cài đặt, không có trong ERD khái niệm: bảng `bo_d
 |---|---|---|
 | 1.0 Quản lý tài khoản | UC001 – UC004 | D1, D10 |
 | 2.0 Quản lý cư trú | UC005 – UC010 | D2 – D5, ghi D10 |
-| 3.0 Quản lý khoản thu | UC011 (đơn giá), UC012 | D6, ghi D10 |
-| 4.0 Lập công nợ | UC011 (tính phí), UC013 – UC015 | đọc D2, D6, D9; D7, D8; ghi D10 |
+| 3.0 Quản lý khoản thu | UC011, UC012 | D6, ghi D10 |
+| 4.0 Lập công nợ (tự tính diện tích × đơn giá) | UC013 – UC015 | đọc D2, D6, D9; D7, D8; ghi D10 |
 | 5.0 Thu phí | UC016 – UC020 | đọc D2, D3, D6, D8; D9; ghi D10 |
 | 6.0 Lập báo cáo thống kê | UC021 – UC024 | đọc D2, D3, D6 – D9 |
 
@@ -189,19 +189,16 @@ Ghi chú:
 
 ## Giả định
 
-### Cần chốt ở họp 22/11
+### Đã chốt ở họp 22/11
 
-Sơ đồ giữ nguyên theo story cho tới khi nhóm chốt.
+Theo [biên bản Sprint Review 1](../../meeting-notes/2026-11-22-sprint-review-1.md),
+mục 4, và giả định 51.
 
-- **(a) Quyền của Thủ quỹ.** US-005, US-008, US-009, US-018 viết "Là Thủ
-  quỹ", nhưng AC-060 nói Thủ quỹ "chỉ dùng được chức năng thu phí và tra
-  cứu". Sơ đồ đang theo story: UC011, UC013, UC014, UC023 nối với "Người
-  dùng" (cả hai vai trò). Kết quả chốt ảnh hưởng phân quyền US-022.
-- **(b) UC011 "Tính phí theo diện tích" (US-005).** Việc tính diện tích ×
-  đơn giá do hệ thống tự làm khi chốt công nợ (UC014), không phải mục tiêu
-  của tác nhân. Cần chọn: đổi thành "Cập nhật đơn giá phí" (AC-016: BQT có
-  thể thay đổi đơn giá) hay bỏ UC011. DFD hiện tách phần đổi đơn giá vào
-  tiến trình 3.0, phần tính phí vào 4.0.
+- **(a) Quyền của Thủ quỹ.** UC013, UC014, UC021, UC023 nối với "Người
+  dùng" (cả hai vai trò); UC011 chỉ Quản trị viên.
+- **(b) UC011** đổi tên thành "Cập nhật đơn giá phí" (AC-016). Việc tính
+  diện tích × đơn giá là bước tự động khi chốt công nợ (UC014), nằm trong
+  tiến trình 4.0 của DFD.
 
 ### Giả định khác
 
