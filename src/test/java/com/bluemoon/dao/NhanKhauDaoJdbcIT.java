@@ -35,7 +35,7 @@ class NhanKhauDaoJdbcIT {
     }
 
     @Test
-    void themVaLayNhanKhau_ThanhCong() {
+    void themVaLayNhanKhau_ThanhCong() throws SQLException {
         YeuCauThemHo ycHo = new YeuCauThemHo("A-101", LoaiCanHo.CAN_HO, 1,
                 new BigDecimal("70.00"), "090", LocalDate.now(),
                 "Chu Ho", LocalDate.of(1980, 1, 1), "NAM", "001");
