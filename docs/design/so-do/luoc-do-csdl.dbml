@@ -34,6 +34,7 @@ Enum quan_he {
   CHU_HO
   VO_CHONG
   CON
+  BO_ME
   KHAC
 }
 

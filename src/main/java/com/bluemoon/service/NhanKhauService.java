@@ -1,7 +1,9 @@
 package com.bluemoon.service;
 
 import com.bluemoon.dao.NhanKhauDao;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.QuanHe;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.time.LocalDate;
 import java.time.Period;
@@ -9,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Xử lý nghiệp vụ nhân khẩu: kiểm tra độ tuổi cấp CCCD, chặn trùng lặp.
+ * Xử lý nghiệp vụ nhân khẩu: kiểm tra ngày sinh, độ tuổi cấp CCCD, thông tin
+ * cư trú, chặn trùng lặp.
  */
 public class NhanKhauService {
 
@@ -33,14 +36,25 @@ public class NhanKhauService {
     }
 
     /**
-     * Kiểm tra dữ liệu và thêm mới nhân khẩu vào hộ.
+     * Kiểm tra dữ liệu và thêm mới nhân khẩu vào hộ. Người tạm trú được lưu
+     * cùng đợt tạm trú đầu tiên (giả định 8, 9).
      *
      * @param yc thông tin nhân khẩu cần lưu
      * @return định danh (id) của nhân khẩu vừa tạo
      */
     public int themNhanKhau(YeuCauThemNhanKhau yc) {
         kiemTraTruongBatBuoc(yc);
-        
+        LocalDate homNay = LocalDate.now();
+        if (yc.ngaySinh().isAfter(homNay)) {
+            throw new IllegalArgumentException(
+                    "Ngày sinh không được sau ngày hôm nay.");
+        }
+        QuanHe.tuMa(yc.quanHe());
+        boolean tamTru = yc.loaiCuTru() == LoaiCuTru.TAM_TRU;
+        if (tamTru) {
+            kiemTraTamTru(yc);
+        }
+
         String cccd = chuanHoa(yc.soCccd());
         if (cccd != null) {
             if (!cccd.matches("\\d{12}")) {
@@ -52,8 +66,7 @@ public class NhanKhauService {
                         "Số CCCD " + cccd + " đã tồn tại trong hệ thống.");
             }
         } else {
-            int tuoi = Period.between(
-                    yc.ngaySinh(), LocalDate.now()).getYears();
+            int tuoi = Period.between(yc.ngaySinh(), homNay).getYears();
             if (tuoi >= TUOI_CAP_CCCD) {
                 throw new IllegalArgumentException(
                         "Công dân từ đủ 14 tuổi bắt buộc nhập số CCCD.");
@@ -69,7 +82,11 @@ public class NhanKhauService {
                 cccd,
                 chuanHoa(yc.danToc()),
                 chuanHoa(yc.tonGiao()),
-                chuanHoa(yc.ngheNghiep()));
+                chuanHoa(yc.ngheNghiep()),
+                yc.loaiCuTru(),
+                tamTru ? chuanHoa(yc.noiThuongTru()) : null,
+                tamTru ? yc.tamTruTu() : null,
+                tamTru ? yc.tamTruDen() : null);
 
         return nhanKhauDao.themNhanKhau(daChuanHoa);
     }
@@ -91,9 +108,27 @@ public class NhanKhauService {
         if (yc.quanHe() == null || yc.quanHe().isBlank()) {
             thieu.add("quan hệ");
         }
+        if (yc.loaiCuTru() == null) {
+            thieu.add("loại cư trú");
+        }
         if (!thieu.isEmpty()) {
             throw new IllegalArgumentException(
                     "Vui lòng nhập đầy đủ: " + String.join(", ", thieu));
+        }
+    }
+
+    private void kiemTraTamTru(YeuCauThemNhanKhau yc) {
+        if (chuanHoa(yc.noiThuongTru()) == null) {
+            throw new IllegalArgumentException(
+                    "Người tạm trú bắt buộc nhập nơi thường trú.");
+        }
+        if (yc.tamTruTu() == null || yc.tamTruDen() == null) {
+            throw new IllegalArgumentException(
+                    "Người tạm trú bắt buộc nhập thời hạn tạm trú.");
+        }
+        if (yc.tamTruDen().isBefore(yc.tamTruTu())) {
+            throw new IllegalArgumentException(
+                    "Ngày kết thúc tạm trú không được trước ngày bắt đầu.");
         }
     }
 

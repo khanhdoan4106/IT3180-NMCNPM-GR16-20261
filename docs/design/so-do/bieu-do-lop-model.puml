@@ -119,6 +119,7 @@ package "Cư trú" {
     CHU_HO
     VO_CHONG
     CON
+    BO_ME
     KHAC
   }
   enum LoaiCuTru <<dự kiến>> {
