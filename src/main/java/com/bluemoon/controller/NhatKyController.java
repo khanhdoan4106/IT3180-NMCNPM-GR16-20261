@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 /** Màn hình xem nhật ký thao tác, chỉ Quản trị viên (TS-002). */
 public class NhatKyController {
@@ -43,13 +42,17 @@ public class NhatKyController {
                         () -> cell.getValue().thoiDiem()
                                 .format(DINH_DANG_THOI_DIEM)));
         cotNguoiDung.setCellValueFactory(
-                new PropertyValueFactory<>("tenDangNhap"));
+                cell -> new javafx.beans.property.SimpleStringProperty(
+                        cell.getValue().tenDangNhap()));
         cotThaoTac.setCellValueFactory(
-                new PropertyValueFactory<>("thaoTac"));
+                cell -> new javafx.beans.property.SimpleStringProperty(
+                        cell.getValue().thaoTac()));
         cotDoiTuong.setCellValueFactory(
-                new PropertyValueFactory<>("doiTuong"));
+                cell -> new javafx.beans.property.SimpleStringProperty(
+                        cell.getValue().doiTuong()));
         cotNoiDung.setCellValueFactory(
-                new PropertyValueFactory<>("noiDung"));
+                cell -> new javafx.beans.property.SimpleStringProperty(
+                        cell.getValue().noiDung()));
         thongBaoLoi.managedProperty().bind(
                 thongBaoLoi.visibleProperty());
         taiLai();
