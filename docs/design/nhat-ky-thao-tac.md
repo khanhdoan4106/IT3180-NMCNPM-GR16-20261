@@ -84,10 +84,21 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
   Test tích hợp MySQL kiểm tra dòng nhật ký được tạo và rollback khi
   DAO nhật ký phát sinh lỗi.
 
+## Tích hợp đã hoàn thành: ghi tạm trú, tạm vắng (GHI_TAM_TRU_TAM_VANG)
+
+- `TamTruTamVangService` kiểm tra quyền qua
+  `PhanQuyen.yeuCau(ManHinh.TAM_TRU_TAM_VANG)`, kiểm tra dữ liệu và
+  truyền người đang đăng nhập xuống DAO.
+- `TamTruTamVangDaoJdbc` thêm đợt khai báo và ghi
+  `GHI_TAM_TRU_TAM_VANG` trên cùng Connection trước khi commit.
+- Nhật ký lưu ID khai báo, loại khai báo, ID nhân khẩu và khoảng ngày.
+- Nếu ghi nhật ký lỗi, bản ghi khai báo rollback. Integration test MySQL
+  kiểm tra cả trường hợp thành công và rollback.
+
 ## Phần còn phải tích hợp
 
 Các nghiệp vụ còn lại vẫn cần được tích hợp theo cùng nguyên tắc
 transaction, gồm sửa/chuyển đi hộ, sửa/chuyển đi nhân khẩu, đổi chủ hộ,
-tạm trú/tạm vắng, tài khoản và các nghiệp vụ thu phí. Chỉ ghi các sự kiện
-khi nghiệp vụ tương ứng thực sự tồn tại; không ghi sau khi transaction
-nghiệp vụ đã commit.
+tài khoản và các nghiệp vụ thu phí. Chỉ ghi các sự kiện khi nghiệp vụ
+tương ứng thực sự tồn tại; không ghi sau khi transaction nghiệp vụ đã
+commit.
