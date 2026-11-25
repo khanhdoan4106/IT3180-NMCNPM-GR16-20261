@@ -5,6 +5,7 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.sql.Connection;
 import java.sql.Date;
@@ -108,7 +109,7 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
                 if (yc.loaiCuTru() == LoaiCuTru.TAM_TRU) {
                     chenDotTamTru(ketNoi, id, yc);
                 }
-                nhatKyDao.ghi(ketNoi, nguoiDung.id(), "THEM_NHAN_KHAU",
+                nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_NHAN_KHAU,
                         "Nhân khẩu #" + id,
                         "Thêm " + yc.hoTen() + " vào hộ #" + yc.hoId());
                 ketNoi.commit();

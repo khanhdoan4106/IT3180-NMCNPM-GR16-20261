@@ -3,6 +3,7 @@ package com.bluemoon.dao;
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.NhatKy;
+import com.bluemoon.model.ThaoTac;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,11 +41,11 @@ public class NhatKyDaoJdbc implements NhatKyDao {
     }
 
     @Override
-    public void ghi(Connection ketNoi, int taiKhoanId, String thaoTac,
+    public void ghi(Connection ketNoi, int taiKhoanId, ThaoTac thaoTac,
             String doiTuong, String noiDung) throws SQLException {
         try (PreparedStatement lenh = ketNoi.prepareStatement(SQL_GHI)) {
             lenh.setInt(1, taiKhoanId);
-            lenh.setString(2, thaoTac);
+            lenh.setString(2, thaoTac.name());
             lenh.setString(3, doiTuong);
             lenh.setString(4, noiDung);
             lenh.executeUpdate();
@@ -69,7 +70,7 @@ public class NhatKyDaoJdbc implements NhatKyDao {
                             kq.getInt("id"),
                             thoiDiem.toLocalDateTime(),
                             kq.getString("ten_dang_nhap"),
-                            kq.getString("thao_tac"),
+                            ThaoTac.tuMa(kq.getString("thao_tac")),
                             kq.getString("doi_tuong"),
                             kq.getString("noi_dung")));
                 }

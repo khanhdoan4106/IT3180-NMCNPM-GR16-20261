@@ -9,6 +9,7 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemHo;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -102,7 +103,7 @@ class HoGiaDinhDaoJdbcIT {
         NhatKyDao daoLoi = new NhatKyDao() {
             @Override
             public void ghi(Connection ketNoi, int taiKhoanId,
-                    String thaoTac, String doiTuong, String noiDung)
+                    ThaoTac thaoTac, String doiTuong, String noiDung)
                     throws SQLException {
                 throw new SQLException("Lỗi giả lập khi ghi nhật ký.");
             }

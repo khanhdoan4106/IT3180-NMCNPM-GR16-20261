@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.bluemoon.dao.NhatKyDao;
-import com.bluemoon.model.NhatKy;
 import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.NhatKy;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.VaiTro;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,7 +37,7 @@ class NhatKyServiceTest {
         }
 
         @Override
-        public void ghi(Connection ketNoi, int taiKhoanId, String thaoTac,
+        public void ghi(Connection ketNoi, int taiKhoanId, ThaoTac thaoTac,
                 String doiTuong, String noiDung) throws SQLException {
             throw new UnsupportedOperationException("Không dùng trong test.");
         }
@@ -56,6 +57,18 @@ class NhatKyServiceTest {
 
         assertEquals(duLieu, new NhatKyService(dao).xemMoiNhat());
         assertEquals(NhatKyService.GIOI_HAN_MAC_DINH, dao.gioiHan);
+    }
+
+    @Test
+    void ghiTrongGiaoDichThieuThaoTac_BaoLoi() {
+        NhatKyService service = new NhatKyService(new NhatKyDaoGia(List.of()));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.ghiTrongGiaoDich(null, QUAN_TRI,
+                        ThaoTac.THEM_HO, "Hộ A0101", "Thêm hộ"));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.ghiTrongGiaoDich(null, QUAN_TRI,
+                        null, "Hộ A0101", "Thêm hộ"));
     }
 
     @Test

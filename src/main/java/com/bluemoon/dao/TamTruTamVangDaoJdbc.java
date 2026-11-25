@@ -5,6 +5,7 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauKhaiBao;
 import java.sql.Connection;
 import java.sql.Date;
@@ -125,7 +126,7 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
                     }
                 }
 
-                nhatKyDao.ghi(kn, nguoiDung.id(), "GHI_TAM_TRU_TAM_VANG",
+                nhatKyDao.ghi(kn, nguoiDung.id(), ThaoTac.GHI_TAM_TRU_TAM_VANG,
                         "Khai báo #" + khaiBaoId,
                         yc.loai() + " nhân khẩu #" + yc.nhanKhauId()
                                 + " từ " + yc.tuNgay()

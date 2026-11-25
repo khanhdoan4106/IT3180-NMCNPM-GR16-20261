@@ -46,7 +46,7 @@ public class NhatKyController {
                         cell.getValue().tenDangNhap()));
         cotThaoTac.setCellValueFactory(
                 cell -> new javafx.beans.property.SimpleStringProperty(
-                        cell.getValue().thaoTac()));
+                        cell.getValue().thaoTac().getNhan()));
         cotDoiTuong.setCellValueFactory(
                 cell -> new javafx.beans.property.SimpleStringProperty(
                         cell.getValue().doiTuong()));

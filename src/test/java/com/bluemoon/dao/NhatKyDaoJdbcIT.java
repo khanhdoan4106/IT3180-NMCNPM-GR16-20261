@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.NhatKy;
+import com.bluemoon.model.ThaoTac;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +32,7 @@ class NhatKyDaoJdbcIT {
         int taiKhoanId = themTaiKhoan();
         try (Connection ketNoi = nguon.moKetNoi()) {
             ketNoi.setAutoCommit(false);
-            dao.ghi(ketNoi, taiKhoanId, "THEM_HO", "Hộ A0101",
+            dao.ghi(ketNoi, taiKhoanId, ThaoTac.THEM_HO, "Hộ A0101",
                     "Thêm hộ mới");
             assertEquals(1, demNhatKy(ketNoi));
             ketNoi.rollback();
@@ -42,14 +45,17 @@ class NhatKyDaoJdbcIT {
         int taiKhoanId = themTaiKhoan();
         try (Connection ketNoi = nguon.moKetNoi()) {
             ketNoi.setAutoCommit(false);
-            dao.ghi(ketNoi, taiKhoanId, "SUA_HO", "Hộ A0101",
+            dao.ghi(ketNoi, taiKhoanId, ThaoTac.SUA_HO, "Hộ A0101",
                     "Diện tích: 70 -> 75 m2");
             ketNoi.commit();
         }
         try (Connection ketNoi = nguon.moKetNoi()) {
             assertEquals(1, demNhatKy(ketNoi));
         }
-        assertEquals(1, dao.danhSachMoiNhat(10).size());
+        List<NhatKy> danhSach = dao.danhSachMoiNhat(10);
+        assertEquals(1, danhSach.size());
+        assertEquals(ThaoTac.SUA_HO, danhSach.get(0).thaoTac());
+        assertEquals("Sửa hộ", danhSach.get(0).thaoTac().getNhan());
     }
 
     @Test
@@ -57,7 +63,8 @@ class NhatKyDaoJdbcIT {
         int taiKhoanId = themTaiKhoan();
         try (Connection ketNoi = nguon.moKetNoi()) {
             ketNoi.setAutoCommit(false);
-            dao.ghi(ketNoi, taiKhoanId, "THEM_HO", "Hộ A0101", "Thêm hộ");
+            dao.ghi(ketNoi, taiKhoanId, ThaoTac.THEM_HO, "Hộ A0101",
+                    "Thêm hộ");
             ketNoi.commit();
         }
         try (Connection ketNoi = nguon.moKetNoi();

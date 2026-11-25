@@ -5,6 +5,7 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemHo;
 import java.sql.Connection;
 import java.sql.Date;
@@ -144,7 +145,7 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
             try {
                 int hoId = chenHo(ketNoi, yeuCau);
                 chenChuHo(ketNoi, hoId, yeuCau);
-                nhatKyDao.ghi(ketNoi, nguoiDung.id(), "THEM_HO",
+                nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_HO,
                         "Hộ " + yeuCau.maCanHo(),
                         "Thêm hộ gia đình và chủ hộ "
                                 + yeuCau.tenChuHo());

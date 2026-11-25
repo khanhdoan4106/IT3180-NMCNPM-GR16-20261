@@ -10,6 +10,7 @@ import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauKhaiBao;
 import com.bluemoon.model.YeuCauThemHo;
 import java.math.BigDecimal;
@@ -64,7 +65,7 @@ class TamTruTamVangDaoJdbcIT {
         NhatKyDao daoNhatKyLoi = new NhatKyDao() {
             @Override
             public void ghi(Connection ketNoi, int taiKhoanId,
-                    String thaoTac, String doiTuong, String noiDung)
+                    ThaoTac thaoTac, String doiTuong, String noiDung)
                     throws SQLException {
                 throw new SQLException("Lỗi giả lập khi ghi nhật ký.");
             }

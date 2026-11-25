@@ -11,6 +11,7 @@ import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhatKy;
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.VaiTro;
 import com.bluemoon.util.MatKhau;
 import java.io.IOException;
@@ -209,7 +210,7 @@ class TaiKhoanDaoJdbcIT {
         NhatKyDao loiNhatKy = new NhatKyDao() {
             @Override
             public void ghi(Connection ketNoi, int taiKhoanId,
-                    String thaoTac, String doiTuong, String noiDung)
+                    ThaoTac thaoTac, String doiTuong, String noiDung)
                     throws SQLException {
                 throw new SQLException("Lỗi giả lập khi ghi nhật ký.");
             }

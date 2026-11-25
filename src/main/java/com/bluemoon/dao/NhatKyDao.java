@@ -1,6 +1,7 @@
 package com.bluemoon.dao;
 
 import com.bluemoon.model.NhatKy;
+import com.bluemoon.model.ThaoTac;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -13,12 +14,12 @@ public interface NhatKyDao {
      *
      * @param ketNoi kết nối đang ở trong giao dịch nghiệp vụ
      * @param taiKhoanId mã người thực hiện
-     * @param thaoTac mã thao tác được schema cho phép
+     * @param thaoTac thao tác nghiệp vụ; tên khớp CHECK của schema
      * @param doiTuong đối tượng bị tác động
      * @param noiDung nội dung thay đổi, có thể null
      * @throws SQLException khi không ghi được; bên gọi phải rollback
      */
-    void ghi(Connection ketNoi, int taiKhoanId, String thaoTac,
+    void ghi(Connection ketNoi, int taiKhoanId, ThaoTac thaoTac,
             String doiTuong, String noiDung) throws SQLException;
 
     /**

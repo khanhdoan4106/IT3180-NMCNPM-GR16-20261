@@ -1,8 +1,9 @@
 package com.bluemoon.service;
 
 import com.bluemoon.dao.NhatKyDao;
-import com.bluemoon.model.NhatKy;
 import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.NhatKy;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.util.ManHinh;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,16 +33,16 @@ public class NhatKyService {
      *
      * @param ketNoi kết nối đang ở trong giao dịch nghiệp vụ
      * @param nguoiDung người thực hiện đã được xác thực
-     * @param thaoTac mã thao tác được schema cho phép
+     * @param thaoTac thao tác nghiệp vụ; tên khớp CHECK của schema
      * @param doiTuong đối tượng bị tác động
      * @param noiDung nội dung thay đổi
      * @throws SQLException khi không ghi được nhật ký
      */
     public void ghiTrongGiaoDich(Connection ketNoi, NguoiDung nguoiDung,
-            String thaoTac, String doiTuong, String noiDung)
+            ThaoTac thaoTac, String doiTuong, String noiDung)
             throws SQLException {
         if (ketNoi == null || nguoiDung == null
-                || thaoTac == null || thaoTac.isBlank()
+                || thaoTac == null
                 || doiTuong == null || doiTuong.isBlank()) {
             throw new IllegalArgumentException(
                     "Thiếu thông tin để ghi nhật ký.");

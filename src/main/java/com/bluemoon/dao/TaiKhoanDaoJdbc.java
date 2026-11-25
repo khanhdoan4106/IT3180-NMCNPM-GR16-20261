@@ -5,6 +5,7 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.VaiTro;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,7 +107,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                         id = khoa.getInt(1);
                     }
                 }
-                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), "TAO_TAI_KHOAN",
+                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), ThaoTac.TAO_TAI_KHOAN,
                         "Tài khoản #" + id,
                         "Tạo tài khoản " + taiKhoan.tenDangNhap()
                                 + ", họ tên " + taiKhoan.hoTen()
@@ -180,7 +181,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(),
-                        "SUA_THONG_TIN_TAI_KHOAN", "Tài khoản #" + id,
+                        ThaoTac.SUA_THONG_TIN_TAI_KHOAN, "Tài khoản #" + id,
                         "Tài khoản " + tenDangNhap + ": họ tên "
                                 + hoTenCu + " -> " + hoTen
                                 + "; số điện thoại " + soDienThoaiCu
@@ -220,7 +221,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.setInt(2, id);
                     lenh.executeUpdate();
                 }
-                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), "DOI_MAT_KHAU",
+                nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), ThaoTac.DOI_MAT_KHAU,
                         "Tài khoản #" + id,
                         "Người dùng đổi mật khẩu tài khoản " + tenDangNhap);
                 ketNoi.commit();
@@ -257,14 +258,15 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                 SQL_DOI_VAI_TRO, lenh -> {
                     lenh.setString(1, vaiTro.name());
                     lenh.setInt(2, id);
-                }, nguoiThucHien, "DOI_VAI_TRO", vaiTro.name());
+                }, nguoiThucHien, ThaoTac.DOI_VAI_TRO,
+                vaiTro.name());
     }
 
     @Override
     public boolean datHoatDong(int id, boolean hoatDong,
             NguoiDung nguoiThucHien) {
-        String thaoTac = hoatDong ? "MO_KHOA_TAI_KHOAN"
-                : "KHOA_TAI_KHOAN";
+        ThaoTac thaoTac = hoatDong ? ThaoTac.MO_KHOA_TAI_KHOAN
+                : ThaoTac.KHOA_TAI_KHOAN;
         return ghiGiuQuanTri(id, !hoatDong, SQL_DAT_HOAT_DONG, lenh -> {
             lenh.setBoolean(1, hoatDong);
             lenh.setInt(2, id);
@@ -296,7 +298,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(),
-                        "DAT_LAI_MAT_KHAU", "Tài khoản #" + id,
+                        ThaoTac.DAT_LAI_MAT_KHAU, "Tài khoản #" + id,
                         "Đặt lại mật khẩu cho tài khoản " + tenDangNhap);
                 ketNoi.commit();
                 return true;
@@ -323,7 +325,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
      *        đang hoạt động không (hạ vai trò hoặc khóa)
      */
     private boolean ghiGiuQuanTri(int id, boolean boQuanTri, String sql,
-            DatThamSo thamSo, NguoiDung nguoiThucHien, String thaoTac,
+            DatThamSo thamSo, NguoiDung nguoiThucHien, ThaoTac thaoTac,
             String thayDoi) {
         try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
             ketNoi.setAutoCommit(false);
@@ -347,7 +349,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                             return false;
                         }
                         tenDangNhap = kq.getString("ten_dang_nhap");
-                        giaTriCu = thaoTac.equals("DOI_VAI_TRO")
+                        giaTriCu = thaoTac == ThaoTac.DOI_VAI_TRO
                                 ? kq.getString("vai_tro")
                                 : Boolean.toString(kq.getBoolean("hoat_dong"));
                     }
