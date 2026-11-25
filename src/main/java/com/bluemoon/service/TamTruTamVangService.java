@@ -1,9 +1,11 @@
 package com.bluemoon.service;
 
 import com.bluemoon.dao.TamTruTamVangDao;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
 import com.bluemoon.model.YeuCauKhaiBao;
+import com.bluemoon.util.ManHinh;
 import java.util.List;
 
 /** Xử lý nghiệp vụ tạm trú, tạm vắng. */
@@ -28,6 +30,7 @@ public class TamTruTamVangService {
 
     /** Kiểm tra hợp lệ và thêm khai báo mới. */
     public int themKhaiBao(YeuCauKhaiBao yc) {
+        NguoiDung nguoiDung = PhanQuyen.yeuCau(ManHinh.TAM_TRU_TAM_VANG);
         if (yc.nhanKhauId() <= 0) {
             throw new IllegalArgumentException("Vui lòng chọn nhân khẩu.");
         }
@@ -52,6 +55,6 @@ public class TamTruTamVangService {
                 yc.nhanKhauId(), yc.loai(), yc.soGiay(), yc.tuNgay(),
                 yc.denNgay(), yc.lyDo(), diaChi);
 
-        return dao.themKhaiBao(chuan);
+        return dao.themKhaiBao(chuan, nguoiDung);
     }
 }

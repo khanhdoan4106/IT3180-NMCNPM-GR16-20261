@@ -1,6 +1,7 @@
 package com.bluemoon.dao;
 
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.util.List;
 
@@ -26,10 +27,11 @@ public interface NhanKhauDao {
     boolean tonTaiCccdDangO(String soCccd);
 
     /**
-     * Lưu thông tin nhân khẩu mới vào hệ thống.
+     * Lưu nhân khẩu mới và nhật ký trong cùng một giao dịch.
      *
      * @param yeuCau thông tin nhân khẩu cần thêm
+     * @param nguoiDung người thực hiện
      * @return định danh (id) của dòng dữ liệu mới
      */
-    int themNhanKhau(YeuCauThemNhanKhau yeuCau);
+    int themNhanKhau(YeuCauThemNhanKhau yeuCau, NguoiDung nguoiDung);
 }

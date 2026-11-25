@@ -3,7 +3,9 @@ package com.bluemoon.dao;
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCuTru;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.sql.Connection;
 import java.sql.Date;
@@ -38,6 +40,7 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
             + "den_ngay) VALUES (?, 'TAM_TRU', ?, ?)";
 
     private final NguonKetNoi nguonKetNoi;
+    private final NhatKyDao nhatKyDao;
 
     /** Khởi tạo DAO với nguồn CSDL mặc định. */
     public NhanKhauDaoJdbc() {
@@ -46,7 +49,13 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
 
     /** Khởi tạo DAO với nguồn kết nối tùy chỉnh (ví dụ: DB test). */
     public NhanKhauDaoJdbc(NguonKetNoi nguonKetNoi) {
+        this(nguonKetNoi, new NhatKyDaoJdbc(nguonKetNoi));
+    }
+
+    /** Cho phép thay DAO nhật ký để kiểm thử tình huống ghi nhật ký lỗi. */
+    public NhanKhauDaoJdbc(NguonKetNoi nguonKetNoi, NhatKyDao nhatKyDao) {
         this.nguonKetNoi = nguonKetNoi;
+        this.nhatKyDao = nhatKyDao;
     }
 
     @Override
@@ -92,7 +101,7 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
 
     /** Người tạm trú và đợt đầu tiên lưu trong một giao dịch (giả định 9). */
     @Override
-    public int themNhanKhau(YeuCauThemNhanKhau yc) {
+    public int themNhanKhau(YeuCauThemNhanKhau yc, NguoiDung nguoiDung) {
         try (Connection ketNoi = nguonKetNoi.moKetNoi()) {
             ketNoi.setAutoCommit(false);
             try {
@@ -100,11 +109,18 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
                 if (yc.loaiCuTru() == LoaiCuTru.TAM_TRU) {
                     chenDotTamTru(ketNoi, id, yc);
                 }
+                nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_NHAN_KHAU,
+                        "Nhân khẩu #" + id,
+                        "Thêm " + yc.hoTen() + " vào hộ #" + yc.hoId());
                 ketNoi.commit();
                 return id;
-            } catch (SQLException e) {
-                ketNoi.rollback();
-                throw e;
+            } catch (SQLException | RuntimeException loi) {
+                try {
+                    ketNoi.rollback();
+                } catch (SQLException loiRollback) {
+                    loi.addSuppressed(loiRollback);
+                }
+                throw loi;
             }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
@@ -128,7 +144,10 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
             ps.setString(11, yc.noiThuongTru());
             ps.executeUpdate();
             try (ResultSet khoa = ps.getGeneratedKeys()) {
-                khoa.next();
+                if (!khoa.next()) {
+                    throw new SQLException(
+                            "Không nhận được ID nhân khẩu vừa thêm.");
+                }
                 return khoa.getInt(1);
             }
         }

@@ -1,6 +1,7 @@
 package com.bluemoon.dao;
 
 import com.bluemoon.model.HoGiaDinh;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
 import java.util.List;
 
@@ -33,10 +34,11 @@ public interface HoGiaDinhDao {
     boolean tonTaiCccdDangO(String soCccd);
 
     /**
-     * Thêm hộ gia đình mới cùng nhân khẩu chủ hộ trong một giao dịch.
+     * Thêm hộ và chủ hộ, đồng thời ghi nhật ký trong cùng transaction.
      *
      * @param yeuCau thông tin hộ và chủ hộ
+     * @param nguoiDung người đang thực hiện thao tác
      * @return định danh ({@code id}) của hộ vừa tạo
      */
-    int themHoGiaDinh(YeuCauThemHo yeuCau);
+    int themHoGiaDinh(YeuCauThemHo yeuCau, NguoiDung nguoiDung);
 }

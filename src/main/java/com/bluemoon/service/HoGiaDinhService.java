@@ -2,7 +2,9 @@ package com.bluemoon.service;
 
 import com.bluemoon.dao.HoGiaDinhDao;
 import com.bluemoon.model.HoGiaDinh;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
+import com.bluemoon.util.ManHinh;
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -71,6 +73,7 @@ public class HoGiaDinhService {
      * @throws IllegalArgumentException nếu thiếu hoặc sai dữ liệu nghiệp vụ
      */
     public int themHoGiaDinh(YeuCauThemHo yc) {
+        NguoiDung nguoiDung = PhanQuyen.yeuCau(ManHinh.HO_GIA_DINH);
         kiemTraTruongBatBuoc(yc);
         kiemTraMienGiaTri(yc);
 
@@ -97,7 +100,7 @@ public class HoGiaDinhService {
                 yc.ngaySinhChuHo(),
                 yc.gioiTinhChuHo(),
                 cccd);
-        return hoGiaDinhDao.themHoGiaDinh(daChuanHoa);
+        return hoGiaDinhDao.themHoGiaDinh(daChuanHoa, nguoiDung);
     }
 
     private void kiemTraTruongBatBuoc(YeuCauThemHo yc) {

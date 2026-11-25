@@ -75,7 +75,8 @@ public enum ManHinh {
     TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, "tai-khoan.fxml",
             VaiTro.QUAN_TRI, VaiTro.THU_QUY),
     // TS-002
-    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, null, VaiTro.QUAN_TRI);
+    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, "nhat-ky.fxml",
+            VaiTro.QUAN_TRI);
 
     private final String ten;
     private final NhomMenu nhom;

@@ -6,15 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.bluemoon.dao.NhanKhauDao;
 import com.bluemoon.model.LoaiCuTru;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
 import com.bluemoon.model.QuanHe;
+import com.bluemoon.model.VaiTro;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class NhanKhauServiceTest {
 
+    private static final NguoiDung QUAN_TRI = new NguoiDung(
+            1, "admin", "Quản trị viên", VaiTro.QUAN_TRI);
     private static final LocalDate TU = LocalDate.of(2026, 11, 1);
     private static final LocalDate DEN = LocalDate.of(2027, 4, 30);
 
@@ -29,17 +35,27 @@ class NhanKhauServiceTest {
 
         @Override
         public boolean tonTaiCccdDangO(String soCccd) {
-            return "012345678901".equals(soCccd); // Báo trùng nếu nhập số này
+            return "012345678901".equals(soCccd);
         }
 
         @Override
-        public int themNhanKhau(YeuCauThemNhanKhau yc) {
+        public int themNhanKhau(YeuCauThemNhanKhau yc, NguoiDung nguoiDung) {
             daLuu = yc;
             return 1;
         }
     };
 
     private final NhanKhauService service = new NhanKhauService(daoGia);
+
+    @BeforeEach
+    void dangNhapQuanTriVien() {
+        PhienDangNhap.batDau(QUAN_TRI);
+    }
+
+    @AfterEach
+    void dangXuat() {
+        PhienDangNhap.ketThuc();
+    }
 
     private static YeuCauThemNhanKhau tamTru(String noiThuongTru,
             LocalDate tu, LocalDate den) {
@@ -77,6 +93,24 @@ class NhanKhauServiceTest {
                 () -> service.themNhanKhau(yc));
         assertEquals("Số CCCD 012345678901 đã tồn tại trong hệ thống.",
                 loi.getMessage());
+    }
+
+    @Test
+    void thuQuyKhongDuocThemNhanKhau() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        YeuCauThemNhanKhau yc = taoYeuCauHopLe();
+
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.themNhanKhau(yc));
+    }
+
+    @Test
+    void chuaDangNhapKhongDuocThemNhanKhau() {
+        PhienDangNhap.ketThuc();
+
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.themNhanKhau(taoYeuCauHopLe()));
     }
 
     @Test
@@ -161,5 +195,11 @@ class NhanKhauServiceTest {
         assertNull(daLuu.noiThuongTru());
         assertNull(daLuu.tamTruTu());
         assertNull(daLuu.tamTruDen());
+    }
+
+    private YeuCauThemNhanKhau taoYeuCauHopLe() {
+        return new YeuCauThemNhanKhau(1, "Nguyễn D",
+                LocalDate.now().minusYears(20), "NAM", "CON",
+                "123456789012", null, null, null);
     }
 }

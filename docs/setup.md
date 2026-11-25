@@ -136,3 +136,12 @@ ALTER TABLE nhan_khau
 Lệnh giữ nguyên dữ liệu đang có. Bản này không thêm cột mới: `loai_cu_tru`
 và `noi_thuong_tru` đã có trong `schema.sql`. Chưa chạy lệnh thì lưu nhân
 khẩu có quan hệ Bố/Mẹ sẽ báo lỗi.
+
+### Bản sau v0.1.0: nhật ký thao tác tài khoản (TS-002)
+
+Chạy một lần bằng root: mở `database/migration_ts002_tai_khoan.sql` trong
+MySQL Workbench rồi chạy (biểu tượng tia sét), chọn đúng CSDL `bluemoon`.
+Tệp thay ràng buộc `chk_nky_thao_tac` của bảng `nhat_ky` để thêm hai mã
+`SUA_THONG_TIN_TAI_KHOAN` và `DOI_MAT_KHAU`; dữ liệu nhật ký đang có được
+giữ nguyên. Chưa chạy thì đổi mật khẩu hoặc sửa thông tin cá nhân sẽ báo
+lỗi CSDL và thao tác bị hủy.

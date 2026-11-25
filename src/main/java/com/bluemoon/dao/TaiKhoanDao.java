@@ -1,5 +1,6 @@
 package com.bluemoon.dao;
 
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TaiKhoan;
 import com.bluemoon.model.TaiKhoanMoi;
 import com.bluemoon.model.VaiTro;
@@ -17,7 +18,7 @@ public interface TaiKhoanDao {
      * @return {@code false} nếu tên đăng nhập đã có, không thêm gì
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean them(TaiKhoanMoi taiKhoan);
+    boolean them(TaiKhoanMoi taiKhoan, NguoiDung nguoiThucHien);
 
     /**
      * Tìm tài khoản theo tên đăng nhập (US-021), không phân biệt chữ hoa,
@@ -47,7 +48,8 @@ public interface TaiKhoanDao {
      * @return {@code false} nếu không có tài khoản mã đó
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean capNhatThongTin(int id, String hoTen, String soDienThoai);
+    boolean capNhatThongTin(int id, String hoTen, String soDienThoai,
+            NguoiDung nguoiThucHien);
 
     /**
      * Ghi mật khẩu mới đã băm (US-023, AC-063).
@@ -57,7 +59,8 @@ public interface TaiKhoanDao {
      * @return {@code false} nếu không có tài khoản mã đó
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean doiMatKhau(int id, String matKhauBam);
+    boolean doiMatKhau(int id, String matKhauBam,
+            NguoiDung nguoiThucHien);
 
     /**
      * Mọi tài khoản, xếp theo tên đăng nhập (US-022, giả định 18).
@@ -78,7 +81,8 @@ public interface TaiKhoanDao {
      *         trị viên đang hoạt động cuối cùng
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean doiVaiTro(int id, VaiTro vaiTro);
+    boolean doiVaiTro(int id, VaiTro vaiTro,
+            NguoiDung nguoiThucHien);
 
     /**
      * Khóa hoặc mở khóa một tài khoản (US-022, giả định 18). Không khóa
@@ -91,5 +95,10 @@ public interface TaiKhoanDao {
      *         trị viên đang hoạt động cuối cùng
      * @throws LoiCsdl khi không ghi được CSDL
      */
-    boolean datHoatDong(int id, boolean hoatDong);
+    boolean datHoatDong(int id, boolean hoatDong,
+            NguoiDung nguoiThucHien);
+
+    /** Đặt lại mật khẩu cho tài khoản khác và ghi nhật ký cùng transaction. */
+    boolean datLaiMatKhau(int id, String matKhauBam,
+            NguoiDung nguoiThucHien);
 }

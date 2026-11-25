@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCuTru;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import java.sql.Connection;
@@ -28,10 +29,12 @@ class NhanKhauCuTruDaoJdbcIT {
     private final NguonKetNoi nguon = CsdlKiemThu.nguonUngDung();
     private final NhanKhauDaoJdbc dao = new NhanKhauDaoJdbc(nguon);
     private int hoId;
+    private NguoiDung quanTri;
 
     @BeforeEach
     void datLaiCsdl() throws Exception {
         CsdlKiemThu.dungLaiBang();
+        quanTri = CsdlKiemThu.taoQuanTriVien(nguon);
         try (Connection ketNoi = nguon.moKetNoi();
                 PreparedStatement lenh = ketNoi.prepareStatement(
                         "INSERT INTO ho_gia_dinh (ma_can_ho, loai_can_ho, "
@@ -65,7 +68,7 @@ class NhanKhauCuTruDaoJdbcIT {
     @Test
     void luuQuanHeBoMe() {
         dao.themNhanKhau(new YeuCauThemNhanKhau(hoId, "Bố Chủ Hộ", SINH,
-                "NAM", "BO_ME", null, null, null, null));
+                "NAM", "BO_ME", null, null, null, null), quanTri);
 
         NhanKhau nguoi = dao.layDanhSachTheoHo(hoId).get(0);
         assertEquals("BO_ME", nguoi.quanHe());
@@ -75,7 +78,7 @@ class NhanKhauCuTruDaoJdbcIT {
 
     @Test
     void tamTruLuuCungDotDauTien() throws Exception {
-        int id = dao.themNhanKhau(tamTru(TU, DEN));
+        int id = dao.themNhanKhau(tamTru(TU, DEN), quanTri);
 
         List<NhanKhau> ds = dao.layDanhSachTheoHo(hoId);
         assertEquals(LoaiCuTru.TAM_TRU, ds.get(0).loaiCuTru());
@@ -100,7 +103,7 @@ class NhanKhauCuTruDaoJdbcIT {
     @Test
     void dotTamTruLoi_KhongLuuNguoi() throws Exception {
         assertThrows(LoiCsdl.class,
-                () -> dao.themNhanKhau(tamTru(DEN, TU)));
+                () -> dao.themNhanKhau(tamTru(DEN, TU), quanTri));
 
         assertEquals(0, dem("nhan_khau"));
         assertEquals(0, dem("tam_tru_tam_vang"));

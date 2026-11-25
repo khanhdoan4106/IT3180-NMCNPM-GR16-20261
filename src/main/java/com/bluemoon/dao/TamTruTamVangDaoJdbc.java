@@ -2,8 +2,10 @@ package com.bluemoon.dao;
 
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauKhaiBao;
 import java.sql.Connection;
 import java.sql.Date;
@@ -34,6 +36,7 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
             + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private final NguonKetNoi nguon;
+    private final NhatKyDao nhatKyDao;
 
     /** Khởi tạo với nguồn kết nối mặc định. */
     public TamTruTamVangDaoJdbc() {
@@ -42,7 +45,13 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
 
     /** Khởi tạo với nguồn kết nối tùy chỉnh. */
     public TamTruTamVangDaoJdbc(NguonKetNoi nguon) {
+        this(nguon, new NhatKyDaoJdbc(nguon));
+    }
+
+    /** Cho phép thay DAO nhật ký để kiểm thử rollback. */
+    public TamTruTamVangDaoJdbc(NguonKetNoi nguon, NhatKyDao nhatKyDao) {
         this.nguon = nguon;
+        this.nhatKyDao = nhatKyDao;
     }
 
     @Override
@@ -93,21 +102,44 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
     }
 
     @Override
-    public int themKhaiBao(YeuCauKhaiBao yc) {
+    public int themKhaiBao(YeuCauKhaiBao yc, NguoiDung nguoiDung) {
         int co = Statement.RETURN_GENERATED_KEYS;
-        try (Connection kn = nguon.moKetNoi();
-                PreparedStatement ps = kn.prepareStatement(SQL_THEM, co)) {
-            ps.setInt(1, yc.nhanKhauId());
-            ps.setString(2, yc.loai());
-            ps.setString(3, yc.soGiay());
-            ps.setDate(4, Date.valueOf(yc.tuNgay()));
-            ps.setDate(5, Date.valueOf(yc.denNgay()));
-            ps.setString(6, yc.lyDo());
-            ps.setString(7, yc.diaChiTamVang());
-            ps.executeUpdate();
-            try (ResultSet khoa = ps.getGeneratedKeys()) {
-                khoa.next();
-                return khoa.getInt(1);
+        try (Connection kn = nguon.moKetNoi()) {
+            kn.setAutoCommit(false);
+            try {
+                int khaiBaoId;
+                try (PreparedStatement ps = kn.prepareStatement(SQL_THEM, co)) {
+                    ps.setInt(1, yc.nhanKhauId());
+                    ps.setString(2, yc.loai());
+                    ps.setString(3, yc.soGiay());
+                    ps.setDate(4, Date.valueOf(yc.tuNgay()));
+                    ps.setDate(5, Date.valueOf(yc.denNgay()));
+                    ps.setString(6, yc.lyDo());
+                    ps.setString(7, yc.diaChiTamVang());
+                    ps.executeUpdate();
+                    try (ResultSet khoa = ps.getGeneratedKeys()) {
+                        if (!khoa.next()) {
+                            throw new SQLException(
+                                    "Không nhận được ID khai báo vừa thêm.");
+                        }
+                        khaiBaoId = khoa.getInt(1);
+                    }
+                }
+
+                nhatKyDao.ghi(kn, nguoiDung.id(), ThaoTac.GHI_TAM_TRU_TAM_VANG,
+                        "Khai báo #" + khaiBaoId,
+                        yc.loai() + " nhân khẩu #" + yc.nhanKhauId()
+                                + " từ " + yc.tuNgay()
+                                + " đến " + yc.denNgay());
+                kn.commit();
+                return khaiBaoId;
+            } catch (SQLException | RuntimeException loi) {
+                try {
+                    kn.rollback();
+                } catch (SQLException loiRollback) {
+                    loi.addSuppressed(loiRollback);
+                }
+                throw loi;
             }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);

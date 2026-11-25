@@ -42,7 +42,7 @@ class TaiKhoanServiceTest {
         private LoiCsdl loi;
 
         @Override
-        public boolean them(TaiKhoanMoi taiKhoan) {
+        public boolean them(TaiKhoanMoi taiKhoan, NguoiDung nguoiThucHien) {
             if (loi != null) {
                 throw loi;
             }
@@ -70,7 +70,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean capNhatThongTin(int id, String hoTen, String sdt) {
+        public boolean capNhatThongTin(int id, String hoTen, String sdt,
+                NguoiDung nguoiThucHien) {
             if (loi != null) {
                 throw loi;
             }
@@ -85,7 +86,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean doiMatKhau(int id, String matKhauBam) {
+        public boolean doiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null) {
                 return false;
@@ -98,13 +100,20 @@ class TaiKhoanServiceTest {
         }
 
         @Override
+        public boolean datLaiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
+            return doiMatKhau(id, matKhauBam, nguoiThucHien);
+        }
+
+        @Override
         public List<TaiKhoan> danhSach() {
             soLanDoc++;
             return List.copyOf(theoId.values());
         }
 
         @Override
-        public boolean doiVaiTro(int id, VaiTro vaiTro) {
+        public boolean doiVaiTro(int id, VaiTro vaiTro,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null || (vaiTro != VaiTro.QUAN_TRI
                     && laQuanTriCuoiCung(tk))) {
@@ -118,7 +127,8 @@ class TaiKhoanServiceTest {
         }
 
         @Override
-        public boolean datHoatDong(int id, boolean hoatDong) {
+        public boolean datHoatDong(int id, boolean hoatDong,
+                NguoiDung nguoiThucHien) {
             TaiKhoan tk = theoId.get(id);
             if (tk == null || (!hoatDong && laQuanTriCuoiCung(tk))) {
                 return false;
