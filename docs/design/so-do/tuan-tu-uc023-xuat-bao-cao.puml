@@ -29,8 +29,7 @@ else Đã chọn tháng
     Service -> DAO : layDuLieuBaoCaoTheoThang(thang)
     DAO -> DAO : Lấy phiếu chưa hủy và chi tiết khoản thu
     DAO --> Service : Danh sách dòng báo cáo
-    Service -> Service : Lập cột theo khoản/quỹ,
- tính tổng từng cột và tổng từng phiếu
+    Service -> Service : Lập cột theo khoản/quỹ,\n tính tổng từng cột và tổng từng phiếu
     alt Không có phiếu thu trong tháng
       Service --> Controller : KhongCoDuLieu
       Controller --> View : Thông báo không có dữ liệu
