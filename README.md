@@ -39,8 +39,8 @@ Mỗi Sprint 1 tuần, cuối dự án có 1 tuần chốt
 
 | Vòng | Thời gian | Phạm vi chính | Phiên bản | Trạng thái |
 |---|---|---|---|---|
-| Sprint 1 | 16/11 – 22/11/2026 | Nền tảng Java + MySQL, đăng ký và đăng nhập, hộ gia đình, nhân khẩu, tạm trú/tạm vắng, tạo khoản thu tự nguyện, sao lưu CSDL | `v0.1.0` | Đang làm |
-| Sprint 2 | 23/11 – 29/11/2026 | Phân quyền, quản lý tài khoản, đổi chủ hộ, lịch sử biến động nhân khẩu, tính phí tự động, chốt công nợ, nhật ký thao tác | `v0.2.0` | Chưa bắt đầu |
+| Sprint 1 | 16/11 – 22/11/2026 | Nền tảng Java + MySQL, đăng ký và đăng nhập, hộ gia đình, nhân khẩu, tạm trú/tạm vắng, tạo khoản thu tự nguyện, sao lưu CSDL | [`v0.1.0`](https://github.com/khanhdoan4106/IT3180-NMCNPM-GR16-20261/releases/tag/v0.1.0) | Đã phát hành |
+| Sprint 2 | 23/11 – 29/11/2026 | Phân quyền, quản lý tài khoản, đổi chủ hộ, lịch sử biến động nhân khẩu, tính phí tự động, chốt công nợ, nhật ký thao tác | `v0.2.0` | Đang làm |
 | Sprint 3 | 30/11 – 06/12/2026 | Tra cứu phí, thu tất cả các khoản, hình thức thanh toán và người thu, đóng góp tự nguyện, sửa khoản thu, thông báo phí, báo cáo nhân khẩu; UAT lần 1 | `v0.3.0` | Chưa bắt đầu |
 | Sprint 4 | 07/12 – 13/12/2026 | In biên lai, hủy phiếu thu, tổng thu tháng, lọc nợ đọng, thống kê theo khoản thu, xuất Excel, rà soát giao diện | `v0.4.0` | Chưa bắt đầu |
 | Tuần chốt | 14/12 – 20/12/2026 | Không nhận story mới: sửa lỗi UAT, UAT lần 2, tài liệu nộp | `v1.0.0` | Chưa bắt đầu |
@@ -162,6 +162,7 @@ Request → thành viên khác review → merge vào `main` → cuối Sprint c�
 | Thiết kế | [Quy ước mã](docs/design/coding-convention.md), [Giao diện](docs/design/ui.md), [Kiến trúc](docs/design/kien-truc.md) |
 | Vận hành | [Cài đặt](docs/setup.md), [Kiểm thử](docs/testing.md), [Quy trình làm việc](docs/workflow.md), [Nhật ký thay đổi](CHANGELOG.md), [Ghi chú phát hành](docs/releases/README.md), [Báo cáo rà soát](docs/review/README.md) |
 | Họp nhóm | [Biên bản họp](docs/meeting-notes/README.md) |
+| Quản lý dự án | [Bảng giao việc (Google Sheet)](https://docs.google.com/spreadsheets/d/13APZsjZj4Dh5jlbh4GALKAoKI_hEWVHzbrsvdXAR60U/edit): việc theo Sprint, hạn, người review, trạng thái |
 
 ## Thành viên
 

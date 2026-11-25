@@ -72,6 +72,26 @@
                GridPane.rowIndex="3" GridPane.columnIndex="2"/>
         <TextField fx:id="oTonGiao" promptText="Tùy chọn"
                    GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+        <Label text="Loại cư trú *"
+               GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="oLoaiCuTru" maxWidth="Infinity"
+                  GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Nơi thường trú (tạm trú *)"
+               GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+        <TextField fx:id="oNoiThuongTru"
+                   GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+
+        <Label text="Tạm trú từ ngày (tạm trú *)"
+               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="oTamTruTu" maxWidth="Infinity"
+                    GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="Đến ngày (tạm trú *)"
+               GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+        <DatePicker fx:id="oTamTruDen" maxWidth="Infinity"
+                    GridPane.rowIndex="5" GridPane.columnIndex="3"/>
     </GridPane>
 
     <HBox spacing="12">
@@ -92,6 +112,10 @@
             <TableColumn fx:id="cotGioiTinh" text="Giới tính" prefWidth="90"/>
             <TableColumn fx:id="cotQuanHe" text="Quan hệ" prefWidth="120"/>
             <TableColumn fx:id="cotCccd" text="Số CCCD" prefWidth="150"/>
+            <TableColumn fx:id="cotLoaiCuTru" text="Loại cư trú"
+                         prefWidth="110"/>
+            <TableColumn fx:id="cotNoiThuongTru" text="Nơi thường trú"
+                         prefWidth="180"/>
         </columns>
     </TableView>
 </VBox>
