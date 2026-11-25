@@ -14,6 +14,7 @@ import com.bluemoon.util.Ngay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -23,10 +24,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
 /**
- * Điều khiển màn hình Danh mục khoản thu và tạo khoản thu tự nguyện
- * (US-006, {@code danh-muc-khoan-thu.fxml}).
+ * Điều khiển màn hình Danh mục khoản thu, tính phí tự động và tạo khoản thu
+ * tự nguyện (US-005, US-006, {@code danh-muc-khoan-thu.fxml}).
  */
 public class DanhMucKhoanThuController {
 
@@ -36,6 +38,22 @@ public class DanhMucKhoanThuController {
     private Label thongBaoLoi;
     @FXML
     private Label thongBaoThanhCong;
+
+    @FXML
+    private ComboBox<KhoanPhi> cboKhoanPhiBatBuoc;
+    @FXML
+    private Label lblDonGiaHienTai;
+    @FXML
+    private TextField oDonGiaMoi;
+
+    @FXML
+    private TextField oDienTichTinhThu;
+    @FXML
+    private Label lblKetQuaPhiDichVu;
+    @FXML
+    private Label lblKetQuaPhiQuanLy;
+    @FXML
+    private Label lblTongCongPhi;
 
     @FXML
     private TextField oTenKhoanThu;
@@ -111,6 +129,41 @@ public class DanhMucKhoanThuController {
         Ngay.ganDinhDang(oDenNgay);
         oTuNgay.setValue(LocalDate.now());
 
+        cboKhoanPhiBatBuoc.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(KhoanPhi kp) {
+                return kp != null ? kp.ten() : "";
+            }
+
+            @Override
+            public KhoanPhi fromString(String string) {
+                return null;
+            }
+        });
+
+        cboKhoanPhiBatBuoc.valueProperty().addListener((obs, cu, moi) -> {
+            if (moi != null && moi.donGia() != null) {
+                lblDonGiaHienTai.setText(String.format(
+                        Locale.forLanguageTag("vi-VN"), "%,.0f đ/m²",
+                        moi.donGia()));
+            } else {
+                lblDonGiaHienTai.setText("-");
+            }
+        });
+
+        bangKhoanThu.getSelectionModel().selectedItemProperty()
+                .addListener((obs, cu, moi) -> {
+                    if (moi != null
+                            && moi.loai() == LoaiKhoanPhi.BAT_BUOC) {
+                        for (KhoanPhi item : cboKhoanPhiBatBuoc.getItems()) {
+                            if (item.id() == moi.id()) {
+                                cboKhoanPhiBatBuoc.setValue(item);
+                                break;
+                            }
+                        }
+                    }
+                });
+
         cauHinhBang();
         taiLai();
     }
@@ -173,10 +226,128 @@ public class DanhMucKhoanThuController {
             String tuKhoa = oTimKiem != null ? oTimKiem.getText() : "";
             List<KhoanPhi> danhSach = khoanPhiService.timKiem(tuKhoa);
             bangKhoanThu.getItems().setAll(danhSach);
+
+            List<KhoanPhi> batBuoc = danhSach.stream()
+                    .filter(k -> k.loai() == LoaiKhoanPhi.BAT_BUOC)
+                    .toList();
+            KhoanPhi dangChon = cboKhoanPhiBatBuoc.getValue();
+            cboKhoanPhiBatBuoc.setItems(
+                    FXCollections.observableArrayList(batBuoc));
+            if (dangChon != null) {
+                for (KhoanPhi item : batBuoc) {
+                    if (item.id() == dangChon.id()) {
+                        cboKhoanPhiBatBuoc.setValue(item);
+                        break;
+                    }
+                }
+            } else if (!batBuoc.isEmpty()) {
+                cboKhoanPhiBatBuoc.setValue(batBuoc.get(0));
+            }
+            tinhThuPhi();
         } catch (LoiKhongCoQuyen | LoiCsdl e) {
             bangKhoanThu.getItems().clear();
             hienLoi(e.getMessage());
         }
+    }
+
+    /**
+     * Cập nhật đơn giá cho khoản phí bắt buộc (US-005, AC-016).
+     */
+    @FXML
+    public void capNhatDonGia() {
+        try {
+            anThongBao();
+            KhoanPhi chon = cboKhoanPhiBatBuoc.getValue();
+            if (chon == null) {
+                hienLoi("Vui lòng chọn khoản phí cần cập nhật đơn giá.");
+                return;
+            }
+
+            BigDecimal donGiaMoi = docSoTien(oDonGiaMoi.getText());
+            if (donGiaMoi == null) {
+                hienLoi("Vui lòng nhập đơn giá mới.");
+                return;
+            }
+
+            khoanPhiService.capNhatDonGia(chon.id(), donGiaMoi);
+            oDonGiaMoi.clear();
+            napBang();
+            hienThanhCong("Đã cập nhật đơn giá cho " + chon.ten()
+                    + " thành công.");
+        } catch (LoiNhapLieu | LoiNghiepVu | LoiKhongCoQuyen | LoiCsdl e) {
+            hienLoi(e.getMessage());
+        }
+    }
+
+    /**
+     * Tự động tính thử phí theo diện tích nhập vào (AC-015, AC-018).
+     */
+    @FXML
+    public void tinhThuPhi() {
+        String dtText = oDienTichTinhThu != null
+                ? oDienTichTinhThu.getText() : null;
+        if (dtText == null || dtText.isBlank()) {
+            datRongKetQuaTinhThu();
+            return;
+        }
+
+        try {
+            BigDecimal dienTich = docSoThapPhan(dtText);
+            if (dienTich == null
+                    || dienTich.compareTo(BigDecimal.ZERO) <= 0) {
+                datRongKetQuaTinhThu();
+                return;
+            }
+
+            List<KhoanPhi> ds = bangKhoanThu.getItems();
+            BigDecimal dgDichVu = BigDecimal.ZERO;
+            BigDecimal dgQuanLy = BigDecimal.valueOf(7000);
+
+            for (KhoanPhi kp : ds) {
+                String ten = kp.ten().toLowerCase(Locale.ROOT);
+                if (ten.contains("dịch vụ") && kp.donGia() != null) {
+                    dgDichVu = kp.donGia();
+                } else if (ten.contains("quản lý") && kp.donGia() != null) {
+                    dgQuanLy = kp.donGia();
+                }
+            }
+
+            BigDecimal phiDichVu = khoanPhiService.tinhPhi(
+                    dienTich, dgDichVu);
+            BigDecimal phiQuanLy = khoanPhiService.tinhPhi(
+                    dienTich, dgQuanLy);
+            BigDecimal tong = phiDichVu.add(phiQuanLy);
+
+            Locale viVn = Locale.forLanguageTag("vi-VN");
+            lblKetQuaPhiDichVu.setText(String.format(
+                    viVn, "%,.0f đ", phiDichVu));
+            lblKetQuaPhiQuanLy.setText(String.format(
+                    viVn, "%,.0f đ", phiQuanLy));
+            lblTongCongPhi.setText(String.format(
+                    viVn, "%,.0f đ", tong));
+        } catch (NumberFormatException e) {
+            datRongKetQuaTinhThu();
+        }
+    }
+
+    private void datRongKetQuaTinhThu() {
+        if (lblKetQuaPhiDichVu != null) {
+            lblKetQuaPhiDichVu.setText("-");
+        }
+        if (lblKetQuaPhiQuanLy != null) {
+            lblKetQuaPhiQuanLy.setText("-");
+        }
+        if (lblTongCongPhi != null) {
+            lblTongCongPhi.setText("-");
+        }
+    }
+
+    private BigDecimal docSoThapPhan(String chuoi) {
+        if (chuoi == null || chuoi.isBlank()) {
+            return null;
+        }
+        String sach = chuoi.trim().replace(",", ".");
+        return new BigDecimal(sach);
     }
 
     /**

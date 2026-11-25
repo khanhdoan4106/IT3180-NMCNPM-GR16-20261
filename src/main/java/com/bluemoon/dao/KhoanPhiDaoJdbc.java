@@ -5,6 +5,8 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.CachTinhPhi;
 import com.bluemoon.model.KhoanPhi;
 import com.bluemoon.model.LoaiKhoanPhi;
+import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.TrangThaiKhoanPhi;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -38,11 +40,18 @@ public class KhoanPhiDaoJdbc implements KhoanPhiDao {
     private static final String SQL_TIM_THEO_ID = SQL_CHON
             + "WHERE id = ?";
 
+    private static final String SQL_TIM_THEO_TEN = SQL_CHON
+            + "WHERE LOWER(TRIM(ten)) = LOWER(TRIM(?)) LIMIT 1";
+
+    private static final String SQL_CAP_NHAT_DON_GIA = "UPDATE khoan_phi "
+            + "SET don_gia = ? WHERE id = ?";
+
     private static final String SQL_KIEM_TRA_TRUNG = "SELECT 1 FROM "
             + "khoan_phi WHERE LOWER(TRIM(ten)) = LOWER(TRIM(?)) "
             + "AND tu_ngay = ? LIMIT 1";
 
     private final NguonKetNoi nguonKetNoi;
+    private final NhatKyDao nhatKyDao;
 
     /**
      * Khởi tạo DAO dùng cấu hình mặc định trong {@code config/db.properties}.
@@ -52,12 +61,23 @@ public class KhoanPhiDaoJdbc implements KhoanPhiDao {
     }
 
     /**
-     * Khởi tạo DAO với nguồn kết nối chỉ định (dùng trong kiểm thử tích hợp).
+     * Khởi tạo DAO với nguồn kết nối chỉ định.
      *
      * @param nguonKetNoi nguồn cấp kết nối CSDL
      */
     public KhoanPhiDaoJdbc(NguonKetNoi nguonKetNoi) {
+        this(nguonKetNoi, new NhatKyDaoJdbc(nguonKetNoi));
+    }
+
+    /**
+     * Khởi tạo DAO với nguồn kết nối và DAO nhật ký chỉ định.
+     *
+     * @param nguonKetNoi nguồn cấp kết nối CSDL
+     * @param nhatKyDao DAO ghi nhật ký thao tác
+     */
+    public KhoanPhiDaoJdbc(NguonKetNoi nguonKetNoi, NhatKyDao nhatKyDao) {
         this.nguonKetNoi = nguonKetNoi;
+        this.nhatKyDao = nhatKyDao;
     }
 
     @Override
@@ -138,6 +158,65 @@ public class KhoanPhiDaoJdbc implements KhoanPhiDao {
                     return Optional.of(docKhoanPhi(rs));
                 }
                 return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public Optional<KhoanPhi> timTheoTen(String ten) {
+        try (Connection conn = nguonKetNoi.moKetNoi();
+                PreparedStatement ps = conn.prepareStatement(
+                        SQL_TIM_THEO_TEN)) {
+            ps.setString(1, ten);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(docKhoanPhi(rs));
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public void capNhatDonGia(int id, BigDecimal donGiaMoi,
+            NguoiDung nguoiDung, String noiDungNhatKy) {
+        try (Connection conn = nguonKetNoi.moKetNoi()) {
+            conn.setAutoCommit(false);
+            try {
+                String tenKhoan = "";
+                try (PreparedStatement psDoc = conn.prepareStatement(
+                        "SELECT ten FROM khoan_phi WHERE id = ? FOR UPDATE")) {
+                    psDoc.setInt(1, id);
+                    try (ResultSet rs = psDoc.executeQuery()) {
+                        if (rs.next()) {
+                            tenKhoan = rs.getString(1);
+                        }
+                    }
+                }
+
+                try (PreparedStatement ps = conn.prepareStatement(
+                        SQL_CAP_NHAT_DON_GIA)) {
+                    ps.setBigDecimal(1, donGiaMoi);
+                    ps.setInt(2, id);
+                    ps.executeUpdate();
+                }
+
+                if (nguoiDung != null && nhatKyDao != null) {
+                    nhatKyDao.ghi(conn, nguoiDung.id(), ThaoTac.SUA_DON_GIA,
+                            "Khoản phí: " + tenKhoan, noiDungNhatKy);
+                }
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException loiRb) {
+                    e.addSuppressed(loiRb);
+                }
+                throw e;
             }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);

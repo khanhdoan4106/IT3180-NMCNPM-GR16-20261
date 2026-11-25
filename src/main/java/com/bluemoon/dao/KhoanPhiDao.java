@@ -47,4 +47,26 @@ public interface KhoanPhiDao {
      * @throws LoiCsdl khi không đọc được CSDL
      */
     Optional<KhoanPhi> timTheoId(int id);
+
+    /**
+     * Tìm kiếm khoản thu theo tên chính xác.
+     *
+     * @param ten tên khoản thu
+     * @return thông tin khoản thu, rỗng nếu không tìm thấy
+     * @throws LoiCsdl khi không đọc được CSDL
+     */
+    Optional<KhoanPhi> timTheoTen(String ten);
+
+    /**
+     * Cập nhật đơn giá cho khoản thu và ghi nhật ký thao tác trong cùng giao
+     * dịch (US-005, TS-002).
+     *
+     * @param id mã khoản thu
+     * @param donGiaMoi đơn giá mới
+     * @param nguoiDung người thực hiện thao tác
+     * @param noiDungNhatKy nội dung chi tiết thay đổi để ghi nhật ký
+     * @throws LoiCsdl khi không cập nhật được CSDL
+     */
+    void capNhatDonGia(int id, java.math.BigDecimal donGiaMoi,
+            com.bluemoon.model.NguoiDung nguoiDung, String noiDungNhatKy);
 }

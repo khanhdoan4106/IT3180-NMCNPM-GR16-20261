@@ -4,25 +4,41 @@ import com.bluemoon.dao.KhoanPhiDao;
 import com.bluemoon.model.CachTinhPhi;
 import com.bluemoon.model.KhoanPhi;
 import com.bluemoon.model.LoaiKhoanPhi;
+import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TrangThaiKhoanPhi;
 import com.bluemoon.model.YeuCauTaoKhoanTuNguyen;
 import com.bluemoon.util.ManHinh;
 import com.bluemoon.util.TimKiem;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
- * Nghiệp vụ quản lý danh mục khoản thu và tạo khoản thu tự nguyện
- * (US-006, EPIC-02). Mọi thao tác kiểm quyền bằng {@link PhanQuyen}.
+ * Nghiệp vụ quản lý danh mục khoản thu, tính phí tự động và cập nhật đơn giá
+ * (US-005, US-006, EPIC-02). Mọi thao tác kiểm quyền bằng {@link PhanQuyen}.
  */
 public class KhoanPhiService {
 
     /** Độ dài tên tối đa cho phép. */
     public static final int TEN_TOI_DA = 100;
+
+    /** Đơn giá phí dịch vụ tối thiểu: 2.500 đ/m² (AC-015, AC-017). */
+    public static final BigDecimal PHI_DICH_VU_TOI_THIEU =
+            BigDecimal.valueOf(2500);
+
+    /** Đơn giá phí dịch vụ tối đa: 16.500 đ/m² (AC-015, AC-017). */
+    public static final BigDecimal PHI_DICH_VU_TOI_DA =
+            BigDecimal.valueOf(16500);
+
+    /** Đơn giá phí quản lý tối thiểu: 7.000 đ/m² (AC-016, giả định 14). */
+    public static final BigDecimal PHI_QUAN_LY_TOI_THIEU =
+            BigDecimal.valueOf(7000);
 
     /**
      * Các ô nhập trên form tạo khoản thu tự nguyện, phục vụ báo lỗi từng ô
@@ -183,5 +199,101 @@ public class KhoanPhiService {
             loi.put(O.DEN_NGAY,
                     "Ngày kết thúc không được trước ngày bắt đầu.");
         }
+    }
+
+    /**
+     * Tự động tính phí theo diện tích và đơn giá (AC-015, AC-018).
+     * Phí = Diện tích × Đơn giá, làm tròn đến hàng đơn vị đồng.
+     *
+     * @param dienTich diện tích căn hộ (m²)
+     * @param donGia đơn giá áp dụng (đ/m²)
+     * @return số tiền phải nộp
+     */
+    public BigDecimal tinhPhi(BigDecimal dienTich, BigDecimal donGia) {
+        if (dienTich == null || dienTich.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (donGia == null || donGia.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return dienTich.multiply(donGia).setScale(0, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Tìm khoản phí theo mã định danh.
+     *
+     * @param id mã khoản thu
+     * @return thông tin khoản thu nếu có
+     * @throws LoiKhongCoQuyen khi không có quyền
+     */
+    public Optional<KhoanPhi> timTheoId(int id) {
+        PhanQuyen.yeuCau(ManHinh.DANH_MUC_KHOAN_THU);
+        return khoanPhiDao.timTheoId(id);
+    }
+
+    /**
+     * Tìm khoản phí theo tên chính xác.
+     *
+     * @param ten tên khoản thu
+     * @return thông tin khoản thu nếu có
+     * @throws LoiKhongCoQuyen khi không có quyền
+     */
+    public Optional<KhoanPhi> timTheoTen(String ten) {
+        PhanQuyen.yeuCau(ManHinh.DANH_MUC_KHOAN_THU);
+        return khoanPhiDao.timTheoTen(ten);
+    }
+
+    /**
+     * Cập nhật đơn giá cho khoản phí bắt buộc và ghi nhật ký (US-005, TS-002).
+     * Chỉ Quản trị viên mới được thực hiện (AC-016, giả định 51).
+     *
+     * @param khoanPhiId mã khoản thu cần cập nhật đơn giá
+     * @param donGiaMoi đơn giá mới
+     * @throws LoiKhongCoQuyen khi không phải Quản trị viên
+     * @throws LoiNhapLieu khi đơn giá không hợp lệ hoặc ngoài khoảng quy định
+     * @throws LoiNghiepVu khi khoản phí không tồn tại hoặc không phải bắt buộc
+     */
+    public void capNhatDonGia(int khoanPhiId, BigDecimal donGiaMoi) {
+        NguoiDung nguoiDung = PhanQuyen.chiQuanTriVien(
+                "Chỉ Quản trị viên được cập nhật đơn giá.");
+
+        if (donGiaMoi == null
+                || donGiaMoi.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new LoiNhapLieu(Collections.singletonMap(
+                    O.DON_GIA, "Đơn giá phải lớn hơn 0 đ/m²."));
+        }
+
+        KhoanPhi kp = khoanPhiDao.timTheoId(khoanPhiId).orElseThrow(
+                () -> new LoiNghiepVu("Khoản phí không tồn tại."));
+
+        if (kp.loai() != LoaiKhoanPhi.BAT_BUOC) {
+            throw new LoiNghiepVu(
+                    "Chỉ được sửa đơn giá cho khoản phí bắt buộc.");
+        }
+
+        String tenLower = kp.ten().toLowerCase();
+        if (tenLower.contains("dịch vụ")) {
+            if (donGiaMoi.compareTo(PHI_DICH_VU_TOI_THIEU) < 0
+                    || donGiaMoi.compareTo(PHI_DICH_VU_TOI_DA) > 0) {
+                throw new LoiNhapLieu(Collections.singletonMap(
+                        O.DON_GIA,
+                        "Đơn giá phí dịch vụ phải từ 2.500 đến 16.500 đ/m²."));
+            }
+        } else if (tenLower.contains("quản lý")) {
+            if (donGiaMoi.compareTo(PHI_QUAN_LY_TOI_THIEU) < 0) {
+                throw new LoiNhapLieu(Collections.singletonMap(
+                        O.DON_GIA,
+                        "Đơn giá phí quản lý phải từ 7.000 đ/m² trở lên."));
+            }
+        }
+
+        Locale viVn = Locale.forLanguageTag("vi-VN");
+        BigDecimal donGiaCu = kp.donGia() == null
+                ? BigDecimal.ZERO : kp.donGia();
+        String noiDung = String.format(viVn,
+                "Đổi đơn giá từ %,.0f đ/m² thành %,.0f đ/m²",
+                donGiaCu, donGiaMoi);
+
+        khoanPhiDao.capNhatDonGia(khoanPhiId, donGiaMoi, nguoiDung, noiDung);
     }
 }
