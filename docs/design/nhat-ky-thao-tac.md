@@ -33,7 +33,14 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
 
 ## API đã thêm
 
-- Model: `com.bluemoon.model.NhatKy`.
+- Model: `com.bluemoon.model.NhatKy` và enum `com.bluemoon.model.ThaoTac`.
+- `ThaoTac` liệt kê đủ 21 mã trong bảng trên, tên hằng giống hệt mã
+  trong `chk_nky_thao_tac` của `database/schema.sql`; mỗi hằng có nhãn
+  tiếng Việt (`getNhan()`, ví dụ `THEM_HO` là "Thêm hộ"). DAO và Service
+  nhận `ThaoTac` thay cho `String`, DAO lưu `name()` vào cột `thao_tac`
+  và đọc lại bằng `ThaoTac.tuMa(...)`. Màn hình Nhật ký hiển thị nhãn,
+  không hiển thị mã thô. Khi thêm mã mới vào CHECK phải thêm hằng vào
+  enum; `ThaoTacTest` đối chiếu hai danh sách và sẽ báo lỗi nếu lệch.
 - DAO: `NhatKyDao`, `NhatKyDaoJdbc`.
 - Service: `NhatKyService`.
 - Màn hình: `nhat-ky.fxml`, `NhatKyController`, đã đăng ký trong

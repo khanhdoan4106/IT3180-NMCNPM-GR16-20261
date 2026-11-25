@@ -14,6 +14,16 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 - US-002: lưu được quan hệ "Bố/Mẹ" (thêm `BO_ME` vào `nhan_khau.quan_he`).
   Cần nâng cấp CSDL, xem `docs/setup.md` mục 7.
 - US-002: chặn ngày sinh ở tương lai.
+- TS-002: nhật ký thao tác. Màn hình Nhật ký chỉ đọc cho Quản trị viên,
+  mới nhất ở trên, cột Thao tác hiện nhãn tiếng Việt từ enum `ThaoTac`
+  (khớp danh sách mã trong `database/schema.sql`). Ghi nhật ký cùng
+  transaction với thao tác: lỗi ghi nhật ký thì thao tác rollback. Đã
+  tích hợp thêm hộ, thêm nhân khẩu, ghi tạm trú/tạm vắng và các thay đổi
+  tài khoản (tạo, sửa thông tin, đổi mật khẩu, đổi vai trò, khóa/mở khóa,
+  đặt lại mật khẩu); nhật ký không lưu mật khẩu rõ hay chuỗi băm. Các
+  nghiệp vụ còn lại chưa có API nên chưa tích hợp. Cần nâng cấp CSDL cũ
+  bằng `database/migration_ts002_tai_khoan.sql` (thêm hai mã
+  `SUA_THONG_TIN_TAI_KHOAN`, `DOI_MAT_KHAU`).
 
 ## [v0.1.0] – 23/11/2026 – Sprint 1
 
