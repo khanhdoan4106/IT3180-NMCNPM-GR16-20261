@@ -1,12 +1,15 @@
 package com.bluemoon.dao;
 
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.NguoiDung;
+import com.bluemoon.model.VaiTro;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,6 +40,31 @@ final class CsdlKiemThu {
     static NguonKetNoi nguonUngDung() {
         return () -> DriverManager.getConnection(url(),
                 bien("BLUEMOON_DB_USER"), bienTuyChon("BLUEMOON_DB_PASSWORD"));
+    }
+
+    /**
+     * Tạo tài khoản Quản trị viên dùng làm người thực hiện trong test.
+     *
+     * @param nguon nguồn CSDL kiểm thử
+     * @return người dùng có khóa ngoại hợp lệ trong bảng tai_khoan
+     * @throws SQLException khi không tạo được tài khoản
+     */
+    static NguoiDung taoQuanTriVien(NguonKetNoi nguon)
+            throws SQLException {
+        String sql = "INSERT INTO tai_khoan "
+                + "(ten_dang_nhap, mat_khau_bam, ho_ten, vai_tro) "
+                + "VALUES ('test-admin', 'test-hash', 'Test Admin', "
+                + "'QUAN_TRI')";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(
+                        sql, Statement.RETURN_GENERATED_KEYS)) {
+            lenh.executeUpdate();
+            try (ResultSet khoa = lenh.getGeneratedKeys()) {
+                khoa.next();
+                return new NguoiDung(khoa.getInt(1), "test-admin",
+                        "Test Admin", VaiTro.QUAN_TRI);
+            }
+        }
     }
 
     /**

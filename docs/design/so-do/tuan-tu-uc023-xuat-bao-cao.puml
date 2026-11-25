@@ -1,0 +1,45 @@
+@startuml
+' Biểu đồ tuần tự UC023 – Xuất báo cáo thu
+' Theo kiến trúc View -> Controller -> Service -> DAO.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ tuần tự UC023 – Xuất báo cáo thu
+
+actor "Người dùng" as User
+boundary "BaoCaoThuView" as View
+control "BaoCaoThuController" as Controller
+control "BaoCaoThuService" as Service
+entity "PhieuThuDao" as DAO
+
+User -> View : Chọn tháng và nhấn Xuất Excel
+View -> Controller : xuatBaoCao(thang)
+Controller -> Controller : Kiểm tra tháng được chọn
+alt Chưa chọn tháng
+  Controller --> View : Yêu cầu chọn tháng
+  View --> User : Hiển thị thông báo
+else Đã chọn tháng
+  Controller -> Service : taoBaoCaoThu(thang, nguoiDung)
+  Service -> Service : Kiểm tra phiên và quyền
+  alt Không đủ quyền
+    Service --> Controller : LoiKhongDuQuyen
+    Controller --> View : Hiển thị lỗi
+    View --> User : Thông báo không đủ quyền
+  else Có quyền
+    Service -> DAO : layDuLieuBaoCaoTheoThang(thang)
+    DAO -> DAO : Lấy phiếu chưa hủy và chi tiết khoản thu
+    DAO --> Service : Danh sách dòng báo cáo
+    Service -> Service : Lập cột theo khoản/quỹ,\n tính tổng từng cột và tổng từng phiếu
+    alt Không có phiếu thu trong tháng
+      Service --> Controller : KhongCoDuLieu
+      Controller --> View : Thông báo không có dữ liệu
+      View --> User : Không tạo tệp
+    else Có dữ liệu
+      Service --> Controller : DuLieuBaoCao
+      Controller -> View : Yêu cầu tạo tệp XLSX
+      View -> View : Ghi workbook theo mẫu sổ thu
+      View --> User : Tệp Excel được tạo
+    end
+  end
+end
+@enduml

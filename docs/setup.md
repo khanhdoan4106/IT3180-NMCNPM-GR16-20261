@@ -117,3 +117,31 @@ xuống dòng LF, thụt 4 dấu cách (YAML, PlantUML, Markdown thụt 2), Java
 
 Trước khi commit, xem lại `git diff`: nếu thấy cả tệp đổi (thường do đổi
 xuống dòng hoặc thụt lề) thì hoàn tác phần thừa rồi mới commit.
+
+## 7. Nâng cấp CSDL
+
+Chỉ áp dụng cho CSDL đã dựng trước bản ghi tương ứng. CSDL dựng mới từ
+`database/schema.sql` đã đủ, không cần chạy. Chạy bằng root, mỗi lệnh một
+lần trên từng CSDL.
+
+### Bản sau v0.1.0: quan hệ Bố/Mẹ (US-002, giả định 52)
+
+```sql
+USE bluemoon;
+ALTER TABLE nhan_khau
+    MODIFY quan_he ENUM('CHU_HO', 'VO_CHONG', 'CON', 'BO_ME', 'KHAC')
+    NOT NULL;
+```
+
+Lệnh giữ nguyên dữ liệu đang có. Bản này không thêm cột mới: `loai_cu_tru`
+và `noi_thuong_tru` đã có trong `schema.sql`. Chưa chạy lệnh thì lưu nhân
+khẩu có quan hệ Bố/Mẹ sẽ báo lỗi.
+
+### Bản sau v0.1.0: nhật ký thao tác tài khoản (TS-002)
+
+Chạy một lần bằng root: mở `database/migration_ts002_tai_khoan.sql` trong
+MySQL Workbench rồi chạy (biểu tượng tia sét), chọn đúng CSDL `bluemoon`.
+Tệp thay ràng buộc `chk_nky_thao_tac` của bảng `nhat_ky` để thêm hai mã
+`SUA_THONG_TIN_TAI_KHOAN` và `DOI_MAT_KHAU`; dữ liệu nhật ký đang có được
+giữ nguyên. Chưa chạy thì đổi mật khẩu hoặc sửa thông tin cá nhân sẽ báo
+lỗi CSDL và thao tác bị hủy.

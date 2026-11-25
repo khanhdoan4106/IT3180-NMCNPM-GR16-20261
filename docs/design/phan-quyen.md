@@ -16,13 +16,15 @@ Căn cứ chính:
 - **Giả định 18:** chỉ Quản trị viên quản lý tài khoản, không tự khóa hay tự
   đổi vai trò của mình.
 - **Giả định 28:** Thủ quỹ chỉ hủy phiếu thu do chính mình lập.
+- **Giả định 51:** phạm vi "thu phí" của Thủ quỹ ở AC-060 (mục 2).
 
-Bảng này là đề xuất, **chốt ở họp 22/11** cùng các dòng "Chờ chốt" (mục 2).
+Bảng đã được nhóm chốt ở họp Sprint Review 1 ngày 22/11/2026
+([biên bản](../meeting-notes/2026-11-22-sprint-review-1.md), mục 4).
 
 ## 1. Ma trận chức năng – vai trò
 
 Ký hiệu: **Có** là dùng được; **Không** là không thấy trên menu và Service
-từ chối; **Chờ chốt** xem mục 2.
+từ chối.
 
 ### 1.1. Màn hình
 
@@ -30,18 +32,19 @@ Theo đúng thứ tự trong `ManHinh` (cũng là thứ tự trên menu trái).
 
 | Màn hình (`ManHinh`) | Nhóm menu | US | Quản trị viên | Thủ quỹ | Căn cứ |
 |---|---|---|---|---|---|
-| Trang chính (`TRANG_CHINH`) | – | US-016 | Có | Có (trang mở đầu sau đăng nhập); thẻ tổng thu tháng xem mục 2 | AC-061; US-016 "Là Ban quản trị" |
+| Trang chính (`TRANG_CHINH`) | – | US-016 | Có | Có (trang mở đầu sau đăng nhập), gồm thẻ tổng thu tháng | AC-061; giả định 51 |
 | Hộ gia đình (`HO_GIA_DINH`) | Hộ gia đình | US-001 | Có | Không | AC-060, AC-062 |
 | Nhân khẩu (`NHAN_KHAU`) | Hộ gia đình | US-002 | Có | Không | AC-060, AC-062; giả định 48 |
 | Tạm trú, tạm vắng (`TAM_TRU_TAM_VANG`) | Hộ gia đình | US-003 | Có | Không | AC-060, AC-062 |
 | Báo cáo nhân khẩu (`BAO_CAO_NHAN_KHAU`) | Hộ gia đình | US-004 | Có | Không | AC-060, AC-062 |
-| Danh mục khoản thu (`DANH_MUC_KHOAN_THU`) | Khoản thu | US-005, US-006, US-008 | Có | US-006: Không. US-005, US-008: **Chờ chốt** | AC-060; US-006 "Là Ban quản trị" |
-| Chốt công nợ (`CHOT_CONG_NO`) | Khoản thu | US-009 | Có | **Chờ chốt** | AC-060; giả định 15, 32 |
+| Danh mục khoản thu (`DANH_MUC_KHOAN_THU`) | Khoản thu | US-005 (đổi đơn giá), US-006 | Có | Không | AC-016; US-006 "Là Ban quản trị"; giả định 51 |
+| Chốt công nợ (`CHOT_CONG_NO`) | Khoản thu | US-009, US-008 (sửa khoản phải nộp của hộ) | Có | Có | Giả định 15, 32, 51 |
 | Thông báo phí (`THONG_BAO_PHI`) | Khoản thu | US-015 | Có | Không | AC-060; US-015 "Là Ban quản trị" |
 | Thu phí (`THU_PHI`) | Thu phí | US-007, US-010, US-011, US-012 | Có | Có | AC-060 (thu phí và tra cứu) |
 | Phiếu thu (`PHIEU_THU`) | Thu phí | US-013, US-014 | Có | Có; hủy phiếu theo mục 1.2 | AC-060; giả định 28 |
 | Hộ nợ đọng (`NO_DONG`) | Thống kê | US-017 | Có | Không | AC-060, AC-062; US-017 "Là Ban quản trị" |
-| Thống kê theo khoản thu (`THONG_KE_KHOAN_THU`) | Thống kê | US-018, US-019 | Có | US-019: Không. US-018: **Chờ chốt** | AC-060; US-019 "Là Ban quản trị" |
+| Thống kê theo khoản thu (`THONG_KE_KHOAN_THU`) | Thống kê | US-019 | Có | Không | AC-060; US-019 "Là Ban quản trị" |
+| Báo cáo thu (`BAO_CAO_THU`) | Thống kê | US-018 | Có | Có | Giả định 51 |
 | Tài khoản (`TAI_KHOAN`) | Hệ thống | US-020, US-022, US-023 | Có | Chỉ phần tài khoản của mình (US-023); không thấy phần quản lý tài khoản | AC-061; giả định 18, 19 |
 | Nhật ký thao tác (`NHAT_KY`) | Hệ thống | TS-002 | Có | Không | AC-069; giả định 44 |
 
@@ -52,9 +55,10 @@ Ghi chú:
   của hộ đang tra cứu (AC-060 "tra cứu").
 - Dân tộc, tôn giáo chỉ Quản trị viên xem và sửa (giả định 48). Màn hình
   nào có hiện nhân khẩu thì không đưa hai trường này cho Thủ quỹ.
-- Một màn hình gồm nhiều story mà Thủ quỹ chỉ được một phần (vd Danh mục
-  khoản thu, Thống kê theo khoản thu) thì ẩn phần không được dùng bên trong
-  màn hình, và Service vẫn kiểm tra như mọi thao tác khác.
+- Mỗi màn hình chỉ gồm các story cùng một mức quyền, để Service kiểm tra
+  bằng `PhanQuyen.yeuCau(ManHinh)` là đủ. Vì vậy US-008 đặt ở màn Chốt công
+  nợ (Thủ quỹ được dùng) thay vì Danh mục khoản thu, và US-018 có màn Báo
+  cáo thu riêng, tách khỏi Thống kê theo khoản thu (US-019).
 
 ### 1.2. Thao tác đặc biệt
 
@@ -64,34 +68,23 @@ Ghi chú:
 | Hủy phiếu thu | US-014 | Có, mọi phiếu, trong ngày lập phiếu | Chỉ phiếu do mình lập, trong ngày lập phiếu | AC-041, AC-042; giả định 28, 38 |
 | Xem nhật ký thao tác | TS-002 | Có | Không | AC-069; giả định 44 |
 
-## 2. Cần chốt ở họp 22/11
+## 2. Quyền của Thủ quỹ (đã chốt 22/11)
 
-Các dòng dưới đây **không tự quyết**; ghi "Chờ chốt" trong bảng mục 1 cho
-tới khi nhóm chốt, rồi sửa bảng này trong một Pull Request riêng.
-
-**Mâu thuẫn:** bốn story dưới viết "Là Thủ quỹ", nhưng AC-060 chỉ cho Thủ
-quỹ "thu phí và tra cứu". Sơ đồ use case
-([so-do/README.md](so-do/README.md), mục "Cần chốt ở họp 22/11", ý a) đang
-theo story: các UC này nối với "Người dùng".
+Bốn story US-005, US-008, US-009, US-018 viết "Là Thủ quỹ", trong khi AC-060
+cho Thủ quỹ "thu phí và tra cứu". Nhóm thống nhất hiểu "thu phí" gồm cả
+công việc trước và sau khi thu tiền (giả định 51):
 
 | Story | Nội dung | Màn hình | UC | Thủ quỹ |
 |---|---|---|---|---|
-| US-005 | Tự tính phí dịch vụ, phí quản lý theo diện tích × đơn giá | Danh mục khoản thu | UC011 | Chờ chốt |
-| US-008 | Sửa khoản phải nộp của một hộ trước khi hộ đóng | Danh mục khoản thu | UC013 | Chờ chốt |
-| US-009 | Chốt công nợ đầu tháng | Chốt công nợ | UC014 | Chờ chốt |
-| US-018 | Xuất báo cáo thu tiền ra Excel | Thống kê theo khoản thu | UC023 | Chờ chốt |
-
-Cần chốt thêm một điểm nhỏ: Thủ quỹ có thấy thẻ tổng thu tháng (US-016,
-"Là Ban quản trị") trên Trang chính không.
-
-Kết quả chốt ảnh hưởng menu (mục 3.1), Service của TV3 (US-005, US-008,
-US-009) và TV5 (US-018).
+| US-005 | Đổi đơn giá phí dịch vụ, phí quản lý (AC-016) | Danh mục khoản thu | UC011 "Cập nhật đơn giá phí" | Không |
+| US-008 | Sửa khoản phải nộp của một hộ trước khi hộ đóng | Chốt công nợ | UC013 | Có |
+| US-009 | Chốt công nợ đầu tháng | Chốt công nợ | UC014 | Có |
+| US-018 | Xuất báo cáo thu tiền ra Excel | Báo cáo thu | UC023 | Có |
+| US-016 | Thẻ tổng thu tháng trên Trang chính | Trang chính | UC021 | Có |
 
 ## 3. Cài đặt trong mã
 
-Hai lớp kiểm tra theo giả định 17. Hiện trên `main` (sau US-021) chưa có
-kiểm tra vai trò nào: menu hiện mọi `ManHinh`, `DieuHuong` chỉ chặn khi
-chưa đăng nhập (AC-059), Service chưa đọc vai trò.
+Hai lớp kiểm tra theo giả định 17, đã cài ở US-022 (#94).
 
 ### 3.1. Lớp 1: menu và điều hướng
 

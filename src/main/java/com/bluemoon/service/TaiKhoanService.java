@@ -124,7 +124,8 @@ public class TaiKhoanService {
      */
     public TaiKhoanMoi taoTaiKhoan(String tenDangNhap, String hoTen,
             VaiTro vaiTro, String matKhau, String nhapLai) {
-        PhanQuyen.chiQuanTriVien("Chỉ Quản trị viên được tạo tài khoản.");
+        NguoiDung nguoiThucHien = PhanQuyen.chiQuanTriVien(
+                "Chỉ Quản trị viên được tạo tài khoản.");
         String ten = gon(tenDangNhap);
         String hoTenGon = gon(hoTen);
         String mk = matKhau == null ? "" : matKhau;
@@ -150,7 +151,7 @@ public class TaiKhoanService {
 
         TaiKhoanMoi taiKhoan = new TaiKhoanMoi(ten, hoTenGon, vaiTro,
                 bamMatKhau.apply(mk));
-        if (!taiKhoanDao.them(taiKhoan)) {
+        if (!taiKhoanDao.them(taiKhoan, nguoiThucHien)) {
             throw new LoiNhapLieu(Map.of(O.TEN_DANG_NHAP, "Tên đăng nhập “"
                     + ten + "” đã có người dùng. Chọn tên khác."));
         }
@@ -201,7 +202,7 @@ public class TaiKhoanService {
         }
 
         if (!taiKhoanDao.capNhatThongTin(nguoiDung.id(), hoTenGon,
-                soGon.isEmpty() ? null : soGon)) {
+                soGon.isEmpty() ? null : soGon, nguoiDung)) {
             throw new IllegalStateException(
                     "Không có tài khoản " + nguoiDung.id());
         }
@@ -226,7 +227,8 @@ public class TaiKhoanService {
      */
     public void doiMatKhau(String matKhauCu, String matKhauMoi,
             String nhapLai) {
-        int id = nguoiDangNhap().id();
+        NguoiDung nguoiDung = nguoiDangNhap();
+        int id = nguoiDung.id();
         String cu = matKhauCu == null ? "" : matKhauCu;
         String moi = matKhauMoi == null ? "" : matKhauMoi;
         Map<O, String> loi = new LinkedHashMap<>();
@@ -250,7 +252,7 @@ public class TaiKhoanService {
             throw new LoiNhapLieu(Map.of(O.MAT_KHAU_CU,
                     "Mật khẩu hiện tại không đúng."));
         }
-        if (!taiKhoanDao.doiMatKhau(id, bamMatKhau.apply(moi))) {
+        if (!taiKhoanDao.doiMatKhau(id, bamMatKhau.apply(moi), nguoiDung)) {
             throw new IllegalStateException("Không có tài khoản " + id);
         }
     }
@@ -295,7 +297,7 @@ public class TaiKhoanService {
         if (taiKhoan.vaiTro() == vaiTro) {
             return taiKhoan;
         }
-        if (!taiKhoanDao.doiVaiTro(id, vaiTro)) {
+        if (!taiKhoanDao.doiVaiTro(id, vaiTro, toi)) {
             throw new LoiNghiepVu(CON_MOT_QUAN_TRI);
         }
         return timTaiKhoan(id);
@@ -323,7 +325,7 @@ public class TaiKhoanService {
         if (taiKhoan.hoatDong() != khoa) {
             return taiKhoan;
         }
-        if (!taiKhoanDao.datHoatDong(id, !khoa)) {
+        if (!taiKhoanDao.datHoatDong(id, !khoa, toi)) {
             throw new LoiNghiepVu(CON_MOT_QUAN_TRI);
         }
         return timTaiKhoan(id);
@@ -349,7 +351,8 @@ public class TaiKhoanService {
         }
         timTaiKhoan(id);
         String matKhauTam = sinhMatKhauTam();
-        if (!taiKhoanDao.doiMatKhau(id, bamMatKhau.apply(matKhauTam))) {
+        if (!taiKhoanDao.datLaiMatKhau(id, bamMatKhau.apply(matKhauTam),
+                toi)) {
             throw new LoiNghiepVu(KHONG_CON_TAI_KHOAN);
         }
         return matKhauTam;

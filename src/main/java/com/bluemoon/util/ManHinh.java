@@ -24,29 +24,33 @@ public enum ManHinh {
 
     /**
      * Trang chính, mở khi vào ứng dụng hoặc bấm tên ứng dụng. Thẻ tổng thu
-     * tháng (US-016) trên trang này: chờ chốt họp 22/11, tạm chỉ Quản trị
-     * viên, xem {@code PhanQuyen.XEM_TONG_THU_THANG}.
+     * tháng (US-016) trên trang này cả hai vai trò xem được (giả định 51),
+     * xem {@code PhanQuyen.XEM_TONG_THU_THANG}.
      */
     TRANG_CHINH("Trang chính", null, "trang-chinh.fxml",
             VaiTro.QUAN_TRI, VaiTro.THU_QUY),
 
     // US-001
-    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, null, VaiTro.QUAN_TRI),
+    HO_GIA_DINH("Hộ gia đình", NhomMenu.HO_GIA_DINH, 
+    "ho-gia-dinh.fxml", VaiTro.QUAN_TRI),
     // US-002
-    NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, null, VaiTro.QUAN_TRI),
+    NHAN_KHAU("Nhân khẩu", NhomMenu.HO_GIA_DINH, 
+    "nhan-khau.fxml", VaiTro.QUAN_TRI),
     // US-003
-    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH, null,
+    TAM_TRU_TAM_VANG("Tạm trú, tạm vắng", NhomMenu.HO_GIA_DINH,
+     "tam-tru-tam-vang.fxml",
             VaiTro.QUAN_TRI),
     // US-004
     BAO_CAO_NHAN_KHAU("Báo cáo nhân khẩu", NhomMenu.HO_GIA_DINH, null,
             VaiTro.QUAN_TRI),
 
-    // US-005, US-006, US-008. Thủ quỹ với US-005, US-008: chờ chốt họp
-    // 22/11, tạm không cho theo AC-060.
+    // US-005 (đổi đơn giá), US-006. Chỉ Quản trị viên (giả định 51).
     DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU,
             "danh-muc-khoan-thu.fxml", VaiTro.QUAN_TRI),
-    // US-009. Thủ quỹ: chờ chốt họp 22/11, tạm không cho theo AC-060.
-    CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null, VaiTro.QUAN_TRI),
+    // US-009 chốt công nợ, US-008 sửa khoản phải nộp của hộ trước khi hộ
+    // đóng. Thủ quỹ được dùng (giả định 51).
+    CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null,
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
     // US-015
     THONG_BAO_PHI("Thông báo phí", NhomMenu.KHOAN_THU, null,
             VaiTro.QUAN_TRI),
@@ -60,16 +64,19 @@ public enum ManHinh {
 
     // US-017
     NO_DONG("Hộ nợ đọng", NhomMenu.THONG_KE, null, VaiTro.QUAN_TRI),
-    // US-018, US-019. Thủ quỹ với US-018: chờ chốt họp 22/11, tạm không
-    // cho theo AC-060.
+    // US-019
     THONG_KE_KHOAN_THU("Thống kê theo khoản thu", NhomMenu.THONG_KE, null,
             VaiTro.QUAN_TRI),
+    // US-018. Thủ quỹ được xuất báo cáo thu (giả định 51).
+    BAO_CAO_THU("Báo cáo thu", NhomMenu.THONG_KE, null,
+            VaiTro.QUAN_TRI, VaiTro.THU_QUY),
 
     // US-020, US-022, US-023. Thủ quỹ chỉ thấy tab "Tài khoản của tôi".
     TAI_KHOAN("Tài khoản", NhomMenu.HE_THONG, "tai-khoan.fxml",
             VaiTro.QUAN_TRI, VaiTro.THU_QUY),
     // TS-002
-    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, null, VaiTro.QUAN_TRI);
+    NHAT_KY("Nhật ký thao tác", NhomMenu.HE_THONG, "nhat-ky.fxml",
+            VaiTro.QUAN_TRI);
 
     private final String ten;
     private final NhomMenu nhom;

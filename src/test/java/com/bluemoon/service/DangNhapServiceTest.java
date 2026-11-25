@@ -31,7 +31,7 @@ class DangNhapServiceTest {
         private LoiCsdl loi;
 
         @Override
-        public boolean them(TaiKhoanMoi moi) {
+        public boolean them(TaiKhoanMoi moi, NguoiDung nguoiThucHien) {
             throw new UnsupportedOperationException();
         }
 
@@ -54,12 +54,14 @@ class DangNhapServiceTest {
         }
 
         @Override
-        public boolean capNhatThongTin(int id, String hoTen, String sdt) {
+        public boolean capNhatThongTin(int id, String hoTen, String sdt,
+                NguoiDung nguoiThucHien) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean doiMatKhau(int id, String matKhauBam) {
+        public boolean doiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
             throw new UnsupportedOperationException();
         }
 
@@ -69,12 +71,20 @@ class DangNhapServiceTest {
         }
 
         @Override
-        public boolean doiVaiTro(int id, VaiTro vaiTro) {
+        public boolean doiVaiTro(int id, VaiTro vaiTro,
+                NguoiDung nguoiThucHien) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean datHoatDong(int id, boolean hoatDong) {
+        public boolean datHoatDong(int id, boolean hoatDong,
+                NguoiDung nguoiThucHien) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean datLaiMatKhau(int id, String matKhauBam,
+                NguoiDung nguoiThucHien) {
             throw new UnsupportedOperationException();
         }
 

@@ -46,8 +46,10 @@ class PhanQuyenTest {
         PhienDangNhap.batDau(THU_QUY);
         for (ManHinh manHinh : ManHinh.values()) {
             boolean duoc = manHinh == ManHinh.TRANG_CHINH
+                    || manHinh == ManHinh.CHOT_CONG_NO
                     || manHinh == ManHinh.THU_PHI
                     || manHinh == ManHinh.PHIEU_THU
+                    || manHinh == ManHinh.BAO_CAO_THU
                     || manHinh == ManHinh.TAI_KHOAN;
             if (duoc) {
                 assertSame(THU_QUY, PhanQuyen.yeuCau(manHinh));
@@ -71,11 +73,11 @@ class PhanQuyenTest {
                         "Chỉ Quản trị viên xem nhật ký.")).getMessage());
     }
 
-    /** Thẻ tổng thu tháng (US-016): chờ chốt họp 22/11, tạm không cho. */
+    /** Thẻ tổng thu tháng (US-016): cả hai vai trò xem được (giả định 51). */
     @Test
-    void theTongThuThangTamChiQuanTri() {
+    void theTongThuThangCaHaiVaiTro() {
         PhienDangNhap.batDau(THU_QUY);
-        assertThrows(LoiKhongCoQuyen.class, () -> PhanQuyen.yeuCau(
+        assertSame(THU_QUY, PhanQuyen.yeuCau(
                 PhanQuyen.XEM_TONG_THU_THANG, "x"));
         PhienDangNhap.batDau(QUAN_TRI);
         assertSame(QUAN_TRI, PhanQuyen.yeuCau(
