@@ -1,0 +1,78 @@
+@startuml
+' Biểu đồ hoạt động UC014 – Chốt công nợ
+' Làn theo cột "Thực hiện bởi" của dac-ta-uc014-chot-cong-no.md; số bước
+' ghi trong ngoặc vuông khớp đặc tả.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ hoạt động UC014 – Chốt công nợ
+
+|Người dùng|
+start
+:[1] Mở màn "Chốt công nợ";
+
+|View|
+:[2] Hiển thị ô chọn tháng (mặc định tháng hiện tại)
+và cho biết tháng đã chốt hay chưa;
+
+|Người dùng|
+repeat
+  :[3] Chọn tháng, nhấn "Chốt công nợ";
+  |Controller|
+backward :[4a] Yêu cầu chọn tháng;
+repeat while (Đã chọn tháng?) is (Không) not (Có)
+:[4] Gọi Service;
+
+|Service|
+:[5] Kiểm tra quyền;
+if (Có quyền?) then (Không)
+  :[5a] Từ chối, báo không đủ quyền;
+  stop
+else (Có)
+endif
+
+|DAO|
+:[6] Đọc hộ đang ở và khoản bắt buộc
+có hiệu lực trong tháng;
+
+|Service|
+if (Có khoản bắt buộc?) then (Không)
+  :[6a] Báo "Chưa có khoản phí bắt buộc cho tháng này";
+  stop
+else (Có)
+endif
+:[7] Tính số tiền = diện tích × đơn giá;
+note right
+  [7a] Hộ chưa có diện tích:
+  bỏ qua, thêm cảnh báo
+end note
+
+|DAO|
+:[8] Bắt đầu giao dịch;
+:Tạo đợt thu nếu chưa có;
+:Thêm các khoản phải nộp còn thiếu,
+bỏ qua cặp hộ – khoản đã có;
+if (Có khoản mới?) then (Có)
+  :Ghi nhật ký CHOT_CONG_NO;
+else (Không)
+  :[8a] Không thêm gì, không ghi nhật ký;
+endif
+if (Lỗi CSDL?) then (Không)
+  :Xác nhận giao dịch;
+else (Có)
+  :[8b] Hủy giao dịch;
+  |View|
+  :Hiển thị câu báo lỗi;
+  stop
+endif
+
+|Service|
+:[9] Trả kết quả chốt;
+
+|Controller|
+:[10] Yêu cầu View hiển thị;
+
+|View|
+:[11] Hiển thị kết quả và cảnh báo;
+stop
+@enduml

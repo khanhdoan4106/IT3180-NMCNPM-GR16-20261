@@ -36,6 +36,13 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   ghi cho người thường trú (giả định 11).
 - US-002: thêm thành viên với quan hệ "Chủ hộ" báo "Mỗi hộ chỉ có một
   chủ hộ." thay cho câu báo lỗi CSDL chung (AC-007).
+- US-001, US-002, US-003: chữ hiển thị theo `docs/design/ui.md`. Ô Loại
+  khai báo hiện "Tạm trú", "Tạm vắng" thay cho mã; cột Diện tích hiện
+  "72,50 m²" và ô nhập nhận dấu phẩy thập phân; ô ngày dạng dd/MM/yyyy
+  kèm gợi ý "ngày/tháng/năm"; bảng trống có câu báo; thống nhất nhãn
+  ("Tải lại", "Nơi đến", "Số điện thoại", "Số giấy tạm trú/tạm vắng").
+- TS-002: màn Nhật ký thao tác mở được (sửa cách khai báo
+  `columnResizePolicy` trong `nhat-ky.fxml`); bảng trống có câu báo.
 - US-022: các hàm đọc của Hộ gia đình, Nhân khẩu, Tạm trú tạm vắng kiểm
   tra vai trò như hàm ghi (giả định 17). Các màn Hộ gia đình, Nhân khẩu,
   Tạm trú tạm vắng, Nhật ký, Trang chính, Tài khoản của tôi hiện câu báo

@@ -1,0 +1,66 @@
+@startuml
+' Biểu đồ tuần tự UC017 – Thu phí (US-011, US-012)
+' Theo kiến trúc View -> Controller -> Service -> DAO (docs/design/kien-truc.md).
+' Tên lớp theo quy ước đặt tên ở kien-truc.md mục 3; ThuPhiController,
+' ThuPhiService, PhieuThuDao chưa có trong mã nguồn. Bước trong ngoặc vuông
+' khớp dac-ta-uc017-thu-phi.md.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ tuần tự UC017 – Thu phí
+
+actor "Người dùng" as User
+boundary "thu-phi.fxml" as View
+control "ThuPhiController" as Controller
+control "ThuPhiService" as Service
+entity "PhieuThuDaoJdbc" as DAO
+entity "NhatKyDaoJdbc" as NhatKy
+database "MySQL" as DB
+
+User -> View : [1] Chọn khoản hoặc nhấn "Thu tất cả"
+View --> User : [2] Hiển thị tổng tiền tự cộng
+User -> View : [3] Chọn hình thức thanh toán,\nnhập người nộp, nhấn "Xác nhận thu"
+View -> Controller : xacNhanThu()
+Controller -> Controller : [4] Kiểm tra đã chọn khoản\nvà hình thức thanh toán
+alt Chưa chọn khoản hoặc hình thức thanh toán [4a, 4b]
+  Controller --> View : Báo lỗi ở ô còn thiếu
+  View --> User : Hiển thị câu báo
+else Đã chọn đủ
+  Controller -> Service : lapPhieuThu(yeuCau)
+  Service -> Service : [5] PhanQuyen.yeuCau(ManHinh.THU_PHI),\nlấy người thu từ phiên
+  alt Không đủ quyền [5a]
+    Service --> Controller : LoiKhongCoQuyen
+    Controller --> View : Hiển thị lỗi
+    View --> User : Thông báo không đủ quyền
+  else Có quyền
+    Service -> DAO : lapPhieuThu(yeuCau, nguoiThu)
+    DAO -> DB : [6] Bắt đầu giao dịch;\nkhóa các khoản phải nộp được chọn
+    DB --> DAO : Số tiền và tình trạng từng khoản
+    alt Khoản vừa được thu hoặc vừa bị sửa [6a]
+      DAO -> DB : Hủy giao dịch
+      DAO --> Service : LoiNghiepVu
+      Service --> Controller : LoiNghiepVu
+      Controller --> View : Báo khoản vừa thay đổi
+      View --> User : Nhắc tra cứu lại
+    else Khoản còn chưa đóng, số tiền không đổi
+      DAO -> DB : Lấy thời điểm máy chủ;\nkhóa bộ đếm năm, cấp số biên lai
+      DAO -> DB : Lưu phiếu thu và từng khoản
+      DAO -> NhatKy : ghi(ketNoi, LAP_PHIEU_THU, ...)
+      NhatKy -> DB : Thêm dòng nhật ký\n(cùng kết nối)
+      alt Lỗi CSDL [6b]
+        DAO -> DB : Hủy giao dịch
+        DAO --> Service : LoiCsdl
+        Service --> Controller : LoiCsdl
+        Controller --> View : Hiển thị câu báo lỗi
+        View --> User : Thông báo lỗi
+      else Ghi thành công
+        DAO -> DB : Xác nhận giao dịch
+        DAO --> Service : Phiếu thu vừa lập
+        Service --> Controller : [7] Phiếu thu
+        Controller --> View : [8] Hiển thị phiếu thu
+        View --> User : [9] Số biên lai, tổng tiền, ngày thu,\nngười thu; nút "In biên lai"
+      end
+    end
+  end
+end
+@enduml

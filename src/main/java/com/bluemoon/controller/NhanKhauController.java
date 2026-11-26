@@ -11,6 +11,7 @@ import com.bluemoon.model.YeuCauThemNhanKhau;
 import com.bluemoon.service.HoGiaDinhService;
 import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.NhanKhauService;
+import com.bluemoon.util.Ngay;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javafx.beans.binding.BooleanBinding;
@@ -92,6 +93,9 @@ public class NhanKhauController {
         oNoiThuongTru.disableProperty().bind(khongTamTru);
         oTamTruTu.disableProperty().bind(khongTamTru);
         oTamTruDen.disableProperty().bind(khongTamTru);
+        Ngay.ganDinhDang(oNgaySinh);
+        Ngay.ganDinhDang(oTamTruTu);
+        Ngay.ganDinhDang(oTamTruDen);
 
         cauHinhBang();
         cauHinhChonHo();

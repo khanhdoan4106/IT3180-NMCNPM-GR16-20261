@@ -1,0 +1,75 @@
+@startuml
+' Biểu đồ hoạt động UC009 – Đổi chủ hộ
+' Làn theo cột "Thực hiện bởi" của dac-ta-uc009-doi-chu-ho.md; số bước ghi
+' trong ngoặc vuông khớp đặc tả.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ hoạt động UC009 – Đổi chủ hộ
+
+|Quản trị viên|
+start
+:[1] Chọn hộ đang ở, nhấn "Đổi chủ hộ";
+
+|View|
+if (Hộ còn thành viên khác đang ở?) then (Có)
+  :[2] Hiển thị chủ hộ hiện tại và các thành viên đang ở khác;
+else (Không)
+  :[2a] Báo "Hộ không còn thành viên khác đang ở",
+  hướng dẫn đánh dấu hộ chuyển đi;
+  stop
+endif
+
+|Quản trị viên|
+repeat
+  :[3] Chọn chủ hộ mới, chọn quan hệ mới của chủ hộ cũ
+  hoặc "Rời hộ", nhấn "Lưu";
+  |Controller|
+backward :[4a] Báo ô còn thiếu;
+repeat while (Đã chọn đủ?) is (Không) not (Có)
+:[4] Gọi Service;
+
+|Service|
+:[5] Kiểm tra quyền và dữ liệu;
+if (Có quyền?) then (Không)
+  :[5a] Từ chối, báo không đủ quyền;
+  stop
+else (Có)
+endif
+if (Hộ còn thành viên khác đang ở?) then (Không)
+  :[5b] Từ chối, hướng dẫn đánh dấu hộ chuyển đi;
+  stop
+else (Có)
+endif
+if (Người được chọn đang ở trong hộ?) then (Không)
+  :[5c] Từ chối, giữ nguyên chủ hộ;
+  stop
+else (Có)
+endif
+
+|DAO|
+:[6] Bắt đầu giao dịch, khóa hộ và nhân khẩu;
+:Đổi chủ hộ cũ sang quan hệ mới
+hoặc đánh dấu đã chuyển đi;
+:Đặt người được chọn làm chủ hộ;
+:Ghi lịch sử biến động
+và nhật ký DOI_CHU_HO;
+if (Lỗi CSDL?) then (Không)
+  :Xác nhận giao dịch;
+else (Có)
+  :[6a] Hủy giao dịch;
+  |View|
+  :Hiển thị câu báo lỗi;
+  stop
+endif
+
+|Service|
+:[7] Trả kết quả;
+
+|Controller|
+:[8] Yêu cầu View cập nhật;
+
+|View|
+:[9] Hiển thị "Đã đổi chủ hộ" và chủ hộ mới;
+stop
+@enduml
