@@ -25,6 +25,13 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   bằng `database/migration_ts002_tai_khoan.sql` (thêm hai mã
   `SUA_THONG_TIN_TAI_KHOAN`, `DOI_MAT_KHAU`).
 
+### Sửa
+
+- US-022: các hàm đọc của Hộ gia đình, Nhân khẩu, Tạm trú tạm vắng kiểm
+  tra vai trò như hàm ghi (giả định 17). Các màn Hộ gia đình, Nhân khẩu,
+  Tạm trú tạm vắng, Nhật ký, Trang chính, Tài khoản của tôi hiện câu báo
+  khi không đủ quyền thay cho lỗi không bắt.
+
 ## [v0.1.0] – 23/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
