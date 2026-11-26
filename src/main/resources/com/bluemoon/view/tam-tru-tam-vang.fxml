@@ -16,7 +16,7 @@
       fx:controller="com.bluemoon.controller.TamTruTamVangController"
       styleClass="trang">
 
-    <Label text="Quản lý Tạm trú, Tạm vắng" styleClass="tieu-de-trang"/>
+    <Label text="Tạm trú, tạm vắng" styleClass="tieu-de-trang"/>
 
     <Label fx:id="thongBaoLoi" styleClass="thong-bao-loi"
            wrapText="true" visible="false"/>
@@ -24,10 +24,10 @@
            wrapText="true" visible="false"/>
 
     <HBox spacing="12" alignment="CENTER_LEFT">
-        <Label text="Chọn hộ gia đình:" styleClass="chu-phu"/>
+        <Label text="Chọn hộ gia đình" styleClass="chu-phu"/>
         <ComboBox fx:id="oHoGiaDinh" prefWidth="300"
                   promptText="Chọn mã hộ - tên chủ hộ..."/>
-        <Button text="Tải lại DS Hộ" onAction="#taiLai"/>
+        <Button text="Tải lại" onAction="#taiLai"/>
     </HBox>
 
     <Label text="Thêm khai báo mới" styleClass="tieu-de-khung"/>
@@ -44,14 +44,14 @@
         <ComboBox fx:id="oLoaiKhaiBao" maxWidth="Infinity"
                   GridPane.rowIndex="0" GridPane.columnIndex="3"/>
 
-        <Label text="Số giấy tờ"
+        <Label text="Số giấy tạm trú/tạm vắng"
                GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="oSoGiay" promptText="Sổ tạm trú..."
+        <TextField fx:id="oSoGiay" promptText="Tùy chọn"
                    GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="Địa chỉ tạm vắng"
+        <Label text="Nơi đến"
                GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-        <TextField fx:id="oDiaChiVang" promptText="Đến nơi nào..."
+        <TextField fx:id="oDiaChiVang" promptText="Chỉ ghi khi tạm vắng"
                    GridPane.rowIndex="1" GridPane.columnIndex="3"/>
 
         <Label text="Từ ngày *"
@@ -81,7 +81,8 @@
 
     <TableView fx:id="bang" VBox.vgrow="ALWAYS">
         <placeholder>
-            <Label text="Vui lòng chọn một hộ gia đình ở trên."/>
+            <Label fx:id="bangTrong"
+                   text="Vui lòng chọn một hộ gia đình ở trên."/>
         </placeholder>
         <columns>
             <TableColumn fx:id="cotHoTen" text="Họ và tên" prefWidth="150"/>

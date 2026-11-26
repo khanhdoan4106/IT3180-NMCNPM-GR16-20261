@@ -7,6 +7,8 @@ import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.util.DienTich;
+import com.bluemoon.util.Ngay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -78,13 +80,15 @@ public class HoGiaDinhController {
     @FXML
     private TableView<HoGiaDinh> bangHo;
     @FXML
+    private Label bangHoTrong;
+    @FXML
     private TableColumn<HoGiaDinh, String> cotMaCanHo;
     @FXML
     private TableColumn<HoGiaDinh, String> cotLoaiCanHo;
     @FXML
     private TableColumn<HoGiaDinh, Integer> cotTang;
     @FXML
-    private TableColumn<HoGiaDinh, BigDecimal> cotDienTich;
+    private TableColumn<HoGiaDinh, String> cotDienTich;
     @FXML
     private TableColumn<HoGiaDinh, String> cotChuHo;
     @FXML
@@ -108,6 +112,10 @@ public class HoGiaDinhController {
                 FXCollections.observableArrayList(NHAN_NAM, NHAN_NU));
         oGioiTinhChuHo.setValue(NHAN_NAM);
         oNgayChuyenDen.setValue(LocalDate.now());
+        Ngay.ganDinhDang(oNgaySinhChuHo);
+        Ngay.ganDinhDang(oNgayChuyenDen);
+        Ngay.ganDinhDang(oTamTruTu);
+        Ngay.ganDinhDang(oTamTruDen);
 
         oLoaiCuTruChuHo.setItems(
                 FXCollections.observableArrayList(LoaiCuTru.values()));
@@ -131,7 +139,8 @@ public class HoGiaDinhController {
         cotTang.setCellValueFactory(
                 d -> new SimpleObjectProperty<>(d.getValue().tang()));
         cotDienTich.setCellValueFactory(
-                d -> new SimpleObjectProperty<>(d.getValue().dienTich()));
+                d -> new SimpleStringProperty(
+                        DienTich.dinhDang(d.getValue().dienTich())));
         cotChuHo.setCellValueFactory(
                 d -> new SimpleStringProperty(d.getValue().tenChuHo()));
         cotSoDienThoai.setCellValueFactory(
@@ -163,6 +172,9 @@ public class HoGiaDinhController {
         try {
             String tuKhoa = oTimKiem != null ? oTimKiem.getText() : "";
             List<HoGiaDinh> danhSach = hoGiaDinhService.timKiem(tuKhoa);
+            bangHoTrong.setText(tuKhoa == null || tuKhoa.isBlank()
+                    ? "Chưa có hộ nào đang ở."
+                    : "Không có hộ nào khớp với “" + tuKhoa.trim() + "”.");
             bangHo.getItems().setAll(danhSach);
         } catch (LoiCsdl loi) {
             bangHo.getItems().clear();
@@ -235,7 +247,7 @@ public class HoGiaDinhController {
             return null;
         }
         try {
-            return new BigDecimal(chuoi.trim());
+            return new BigDecimal(chuoi.trim().replace(',', '.'));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                     tenTruong + " phải là số hợp lệ.");

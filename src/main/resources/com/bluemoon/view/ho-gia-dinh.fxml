@@ -44,7 +44,7 @@
 
         <Label text="Diện tích (m²) *"
                GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-        <TextField fx:id="oDienTich" promptText="VD: 72.50"
+        <TextField fx:id="oDienTich" promptText="VD: 72,50"
                    GridPane.rowIndex="1" GridPane.columnIndex="3"/>
 
         <Label text="Tên chủ hộ *"
@@ -114,6 +114,9 @@
     </HBox>
 
     <TableView fx:id="bangHo" VBox.vgrow="ALWAYS">
+        <placeholder>
+            <Label fx:id="bangHoTrong" text="Chưa có hộ nào đang ở."/>
+        </placeholder>
         <columns>
             <TableColumn fx:id="cotMaCanHo" text="Mã căn hộ"
                          prefWidth="110"/>
@@ -121,11 +124,11 @@
                          prefWidth="110"/>
             <TableColumn fx:id="cotTang" text="Tầng"
                          prefWidth="70"/>
-            <TableColumn fx:id="cotDienTich" text="Diện tích (m²)"
+            <TableColumn fx:id="cotDienTich" text="Diện tích"
                          prefWidth="130"/>
             <TableColumn fx:id="cotChuHo" text="Chủ hộ"
                          prefWidth="200"/>
-            <TableColumn fx:id="cotSoDienThoai" text="Điện thoại"
+            <TableColumn fx:id="cotSoDienThoai" text="Số điện thoại"
                          prefWidth="130"/>
             <TableColumn fx:id="cotSoThanhVien" text="Thành viên"
                          prefWidth="100"/>
