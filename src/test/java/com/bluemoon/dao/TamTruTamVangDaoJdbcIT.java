@@ -15,6 +15,7 @@ import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauKhaiBao;
 import com.bluemoon.model.YeuCauThemHo;
+import com.bluemoon.util.Ngay;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -62,6 +63,11 @@ class TamTruTamVangDaoJdbcIT {
         assertEquals("TAM_TRU", ds.get(0).loai());
         assertEquals(2, demNhatKy()); // THEM_HO + GHI_TAM_TRU_TAM_VANG
         assertEquals("GHI_TAM_TRU_TAM_VANG", thaoTacNhatKyCuoi());
+        assertEquals("Nhân khẩu Chu Ho (hộ B-202)",
+                cotNhatKyCuoi("doi_tuong"));
+        assertEquals("Tạm trú: Chu Ho, từ " + Ngay.dinhDang(ycKb.tuNgay())
+                + " đến " + Ngay.dinhDang(ycKb.denNgay()),
+                cotNhatKyCuoi("noi_dung"));
     }
 
     @Test
@@ -187,6 +193,18 @@ class TamTruTamVangDaoJdbcIT {
 
     private String thaoTacNhatKyCuoi() {
         String sql = "SELECT thao_tac FROM nhat_ky "
+                + "ORDER BY id DESC LIMIT 1";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            return kq.next() ? kq.getString(1) : null;
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    private String cotNhatKyCuoi(String cot) {
+        String sql = "SELECT " + cot + " FROM nhat_ky "
                 + "ORDER BY id DESC LIMIT 1";
         try (Connection ketNoi = nguon.moKetNoi();
                 PreparedStatement lenh = ketNoi.prepareStatement(sql);

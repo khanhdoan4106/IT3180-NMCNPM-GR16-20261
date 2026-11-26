@@ -152,12 +152,23 @@ class HoGiaDinhDaoJdbcIT {
                 assertFalse(kq.next());
             }
         }
+        assertEquals("Thêm hộ gia đình và chủ hộ Trần Thị Thuê, tạm trú từ "
+                + "01/11/2026 đến 30/04/2027", noiDungNhatKyCuoi());
     }
 
     @Test
     void chuHoThuongTruKhongCoDotTamTru() throws SQLException {
         dao.themHoGiaDinh(taoYeuCauMau("G-707", "001090123461"), quanTri);
         assertEquals(0, demBang("tam_tru_tam_vang"));
+    }
+
+    private String noiDungNhatKyCuoi() throws SQLException {
+        String sql = "SELECT noi_dung FROM nhat_ky ORDER BY id DESC LIMIT 1";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            return kq.next() ? kq.getString(1) : null;
+        }
     }
 
     private int demNhatKy() throws SQLException {

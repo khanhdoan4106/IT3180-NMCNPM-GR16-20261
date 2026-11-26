@@ -8,6 +8,7 @@ import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemHo;
+import com.bluemoon.util.Ngay;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -154,9 +155,7 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
                     chenDotTamTru(ketNoi, chuHoId, yeuCau);
                 }
                 nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_HO,
-                        "Hộ " + yeuCau.maCanHo(),
-                        "Thêm hộ gia đình và chủ hộ "
-                                + yeuCau.tenChuHo());
+                        "Hộ " + yeuCau.maCanHo(), noiDungNhatKy(yeuCau));
                 ketNoi.commit();
                 return hoId;
             } catch (SQLException | RuntimeException e) {
@@ -223,5 +222,18 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
             ps.setDate(3, Date.valueOf(yc.tamTruDen()));
             ps.executeUpdate();
         }
+    }
+
+    /**
+     * Vd "Thêm hộ gia đình và chủ hộ Nguyễn Văn A, tạm trú từ 01/11/2026
+     * đến 30/04/2027" (phần tạm trú chỉ có khi chủ hộ tạm trú).
+     */
+    private static String noiDungNhatKy(YeuCauThemHo yc) {
+        String noiDung = "Thêm hộ gia đình và chủ hộ " + yc.tenChuHo();
+        if (yc.loaiCuTruChuHo() == LoaiCuTru.TAM_TRU) {
+            noiDung += ", tạm trú từ " + Ngay.dinhDang(yc.tamTruTu())
+                    + " đến " + Ngay.dinhDang(yc.tamTruDen());
+        }
+        return noiDung;
     }
 }

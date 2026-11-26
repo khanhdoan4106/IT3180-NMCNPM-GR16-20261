@@ -47,6 +47,11 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   tra vai trò như hàm ghi (giả định 17). Các màn Hộ gia đình, Nhân khẩu,
   Tạm trú tạm vắng, Nhật ký, Trang chính, Tài khoản của tôi hiện câu báo
   khi không đủ quyền thay cho lỗi không bắt.
+- TS-002: nội dung nhật ký dễ đọc. Đối tượng ghi tên thay cho "#id"
+  (vd "Nhân khẩu Nguyễn Văn A (hộ A-101)", "Tài khoản thuquy01"); nội
+  dung dùng nhãn tiếng Việt và ngày dd/MM/yyyy (vd "Tạm trú: Nguyễn Văn
+  A, từ 01/11/2026 đến 30/04/2027", "Vai trò: Thủ quỹ → Quản trị viên").
+  Dòng nhật ký đã ghi trước bản này giữ nguyên.
 
 ## [v0.1.0] – 23/11/2026 – Sprint 1
 

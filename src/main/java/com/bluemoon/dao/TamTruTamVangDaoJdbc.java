@@ -8,6 +8,7 @@ import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauKhaiBao;
+import com.bluemoon.util.Ngay;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -48,6 +49,10 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
             "SELECT 1 FROM tam_tru_tam_vang "
             + "WHERE nhan_khau_id = ? AND tu_ngay <= ? AND den_ngay >= ? "
             + "LIMIT 1";
+
+    private static final String SQL_TEN_NGUOI =
+            "SELECT n.ho_ten, h.ma_can_ho FROM nhan_khau n "
+            + "JOIN ho_gia_dinh h ON h.id = n.ho_id WHERE n.id = ?";
 
     private final NguonKetNoi nguon;
     private final NhatKyDao nhatKyDao;
@@ -164,11 +169,10 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
                     }
                 }
 
+                String[] nguoi = docTenNguoi(kn, yc.nhanKhauId());
                 nhatKyDao.ghi(kn, nguoiDung.id(), ThaoTac.GHI_TAM_TRU_TAM_VANG,
-                        "Khai báo #" + khaiBaoId,
-                        yc.loai() + " nhân khẩu #" + yc.nhanKhauId()
-                                + " từ " + yc.tuNgay()
-                                + " đến " + yc.denNgay());
+                        "Nhân khẩu " + nguoi[0] + " (hộ " + nguoi[1] + ")",
+                        noiDungNhatKy(yc, nguoi[0]));
                 kn.commit();
                 return khaiBaoId;
             } catch (SQLException | RuntimeException loi) {
@@ -203,6 +207,33 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
             ps.setDate(3, Date.valueOf(tuNgay));
             try (ResultSet kq = ps.executeQuery()) {
                 return kq.next();
+            }
+        }
+    }
+
+    /** Vd "Tạm trú: Nguyễn Văn A, từ 01/11/2026 đến 30/04/2027". */
+    private static String noiDungNhatKy(YeuCauKhaiBao yc, String hoTen) {
+        boolean tamTru = "TAM_TRU".equals(yc.loai());
+        String noiDung = (tamTru ? "Tạm trú: " : "Tạm vắng: ") + hoTen
+                + ", từ " + Ngay.dinhDang(yc.tuNgay())
+                + " đến " + Ngay.dinhDang(yc.denNgay());
+        if (!tamTru && yc.diaChiTamVang() != null) {
+            noiDung += ", nơi đến " + yc.diaChiTamVang();
+        }
+        return noiDung;
+    }
+
+    /** Họ tên và mã căn hộ của nhân khẩu, để nhật ký không ghi ID. */
+    private static String[] docTenNguoi(Connection kn, int nhanKhauId)
+            throws SQLException {
+        try (PreparedStatement ps = kn.prepareStatement(SQL_TEN_NGUOI)) {
+            ps.setInt(1, nhanKhauId);
+            try (ResultSet kq = ps.executeQuery()) {
+                if (!kq.next()) {
+                    throw new SQLException(
+                            "Không tìm thấy nhân khẩu #" + nhanKhauId);
+                }
+                return new String[] {kq.getString(1), kq.getString(2)};
             }
         }
     }
