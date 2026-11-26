@@ -20,11 +20,13 @@ public class TamTruTamVangService {
 
     /** Lấy danh sách nhân khẩu đang ở trong hộ. */
     public List<NguoiTrongHo> layNguoiTrongHo(int hoId) {
+        PhanQuyen.yeuCau(ManHinh.TAM_TRU_TAM_VANG);
         return dao.layNguoiTrongHo(hoId);
     }
 
     /** Lấy lịch sử khai báo theo hộ. */
     public List<TamTruTamVang> layDanhSachTheoHo(int hoId) {
+        PhanQuyen.yeuCau(ManHinh.TAM_TRU_TAM_VANG);
         return dao.layDanhSachTheoHo(hoId);
     }
 

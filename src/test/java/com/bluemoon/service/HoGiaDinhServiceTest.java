@@ -184,4 +184,24 @@ class HoGiaDinhServiceTest {
             return id;
         }
     }
+
+    @Test
+    void thuQuyKhongDuocXemDanhSachHo() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        HoGiaDinhService service =
+                new HoGiaDinhService(new HoGiaDinhDaoGia());
+
+        assertThrows(LoiKhongCoQuyen.class, service::layDanhSachDangO);
+        assertThrows(LoiKhongCoQuyen.class, () -> service.timKiem("A"));
+    }
+
+    @Test
+    void chuaDangNhapKhongDuocXemDanhSachHo() {
+        PhienDangNhap.ketThuc();
+        HoGiaDinhService service =
+                new HoGiaDinhService(new HoGiaDinhDaoGia());
+
+        assertThrows(LoiKhongCoQuyen.class, () -> service.timKiem(""));
+    }
 }

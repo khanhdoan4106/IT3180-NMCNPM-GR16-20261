@@ -85,4 +85,14 @@ class TamTruTamVangServiceTest {
                 LocalDate.now(), LocalDate.now().plusDays(5),
                 "Test", null);
     }
+
+    @Test
+    void thuQuyKhongDuocXemTamTruTamVang() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.layNguoiTrongHo(1));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.layDanhSachTheoHo(1));
+    }
 }

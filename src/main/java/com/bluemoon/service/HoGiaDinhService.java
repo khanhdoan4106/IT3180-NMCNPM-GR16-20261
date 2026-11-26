@@ -39,6 +39,7 @@ public class HoGiaDinhService {
      * @return danh sách hộ đang ở
      */
     public List<HoGiaDinh> layDanhSachDangO() {
+        PhanQuyen.yeuCau(ManHinh.HO_GIA_DINH);
         return hoGiaDinhDao.layDanhSachDangO();
     }
 
@@ -50,6 +51,7 @@ public class HoGiaDinhService {
      * @return danh sách hộ khớp từ khóa
      */
     public List<HoGiaDinh> timKiem(String tuKhoa) {
+        PhanQuyen.yeuCau(ManHinh.HO_GIA_DINH);
         List<HoGiaDinh> tatCa = hoGiaDinhDao.layDanhSachDangO();
         if (tuKhoa == null || tuKhoa.isBlank()) {
             return tatCa;
