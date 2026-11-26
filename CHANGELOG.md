@@ -25,6 +25,16 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   bằng `database/migration_ts002_tai_khoan.sql` (thêm hai mã
   `SUA_THONG_TIN_TAI_KHOAN`, `DOI_MAT_KHAU`).
 
+### Sửa
+
+- US-001, US-002, US-003: chữ hiển thị theo `docs/design/ui.md`. Ô Loại
+  khai báo hiện "Tạm trú", "Tạm vắng" thay cho mã; cột Diện tích hiện
+  "72,50 m²" và ô nhập nhận dấu phẩy thập phân; ô ngày dạng dd/MM/yyyy
+  kèm gợi ý "ngày/tháng/năm"; bảng trống có câu báo; thống nhất nhãn
+  ("Tải lại", "Nơi đến", "Số điện thoại", "Số giấy tạm trú/tạm vắng").
+- TS-002: màn Nhật ký thao tác mở được (sửa cách khai báo
+  `columnResizePolicy` trong `nhat-ky.fxml`); bảng trống có câu báo.
+
 ## [v0.1.0] – 23/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
