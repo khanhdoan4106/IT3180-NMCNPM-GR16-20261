@@ -1,0 +1,43 @@
+@startuml
+' Biểu đồ use case nhóm Khoản thu – BlueMoon v1.0
+' Mã UC, tên UC và tác nhân theo docs/design/so-do/README.md.
+' Mọi UC trừ UC001 có tiền điều kiện: Người dùng đã đăng nhập.
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Biểu đồ use case nhóm Khoản thu – BlueMoon v1.0
+
+actor "Quản trị viên" as QT
+actor "Người dùng" as ND
+note top of ND : {abstract}
+actor "Thủ quỹ" as TQ
+
+' Thứ tự khai báo chỉ để ảnh xếp UC theo mã từ trên xuống.
+rectangle "Phần mềm quản lý thu phí BlueMoon" {
+  usecase "UC015 In thông báo phí" as UC015
+  usecase "UC011 Cập nhật đơn giá phí" as UC011
+  usecase "UC012 Tạo khoản thu tự nguyện" as UC012
+  usecase "UC014 Chốt công nợ" as UC014
+  usecase "UC013 Sửa khoản phải nộp" as UC013
+}
+
+' UC011, UC012, UC015 chỉ Quản trị viên dùng (giả định 51).
+QT -- UC011
+QT -- UC012
+QT -- UC015
+
+' UC013, UC014 là chức năng của Người dùng (chốt ở họp 22/11, giả định 51;
+' Quản trị viên và Thủ quỹ kế thừa Người dùng).
+ND -- UC013
+ND -- UC014
+
+' Kế thừa: Quản trị viên, Thủ quỹ là Người dùng
+QT --|> ND
+ND <|-- TQ
+@enduml
