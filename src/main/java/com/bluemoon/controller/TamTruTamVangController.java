@@ -9,6 +9,7 @@ import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
 import com.bluemoon.model.YeuCauKhaiBao;
 import com.bluemoon.service.HoGiaDinhService;
 import com.bluemoon.service.TamTruTamVangService;
+import com.bluemoon.util.Ngay;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,6 +29,9 @@ public class TamTruTamVangController {
     private static final DateTimeFormatter NGAY =
             DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    private static final String CHUA_CHON_HO =
+            "Vui lòng chọn một hộ gia đình ở trên.";
+
     private final HoGiaDinhService hoService;
     private final TamTruTamVangService ttvService;
 
@@ -43,6 +47,7 @@ public class TamTruTamVangController {
     @FXML private TextField oLyDo;
 
     @FXML private TableView<TamTruTamVang> bang;
+    @FXML private Label bangTrong;
     @FXML private TableColumn<TamTruTamVang, String> cotHoTen;
     @FXML private TableColumn<TamTruTamVang, String> cotCccd;
     @FXML private TableColumn<TamTruTamVang, String> cotLoai;
@@ -66,10 +71,23 @@ public class TamTruTamVangController {
 
         oLoaiKhaiBao.setItems(FXCollections.observableArrayList(
                 "TAM_TRU", "TAM_VANG"));
+        oLoaiKhaiBao.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(String loai) {
+                return nhanLoai(loai);
+            }
+
+            @Override
+            public String fromString(String s) {
+                return null;
+            }
+        });
         oLoaiKhaiBao.setValue("TAM_TRU");
         oLoaiKhaiBao.getSelectionModel().selectedItemProperty()
                 .addListener((ob, cu, moi) -> capNhatTrangThaiForm(moi));
         capNhatTrangThaiForm("TAM_TRU");
+        Ngay.ganDinhDang(oTuNgay);
+        Ngay.ganDinhDang(oDenNgay);
 
         cauHinhBang();
         cauHinhChonHo();
@@ -93,8 +111,7 @@ public class TamTruTamVangController {
                 d -> new SimpleStringProperty(d.getValue().soCccd()));
         cotLoai.setCellValueFactory(
                 d -> new SimpleStringProperty(
-                        "TAM_TRU".equals(d.getValue().loai())
-                                ? "Tạm trú" : "Tạm vắng"));
+                        nhanLoai(d.getValue().loai())));
         cotTuNgay.setCellValueFactory(
                 d -> new SimpleStringProperty(
                         d.getValue().tuNgay().format(NGAY)));
@@ -106,6 +123,13 @@ public class TamTruTamVangController {
                         d.getValue().diaChiTamVang()));
         cotLyDo.setCellValueFactory(
                 d -> new SimpleStringProperty(d.getValue().lyDo()));
+    }
+
+    private static String nhanLoai(String loai) {
+        if ("TAM_TRU".equals(loai)) {
+            return "Tạm trú";
+        }
+        return "TAM_VANG".equals(loai) ? "Tạm vắng" : "";
     }
 
     private void cauHinhChonHo() {
@@ -176,11 +200,14 @@ public class TamTruTamVangController {
     private void napBangKhaiBao(HoGiaDinh ho) {
         if (ho == null) {
             bang.getItems().clear();
+            bangTrong.setText(CHUA_CHON_HO);
             return;
         }
         try {
             List<TamTruTamVang> ds = ttvService.layDanhSachTheoHo(ho.id());
             bang.getItems().setAll(ds);
+            bangTrong.setText(
+                    "Hộ này chưa có đợt tạm trú, tạm vắng nào.");
         } catch (LoiCsdl loi) {
             bang.getItems().clear();
             hienLoi(loi.getMessage());

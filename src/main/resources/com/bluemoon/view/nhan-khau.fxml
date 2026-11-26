@@ -24,10 +24,10 @@
            wrapText="true" visible="false"/>
 
     <HBox spacing="12" alignment="CENTER_LEFT">
-        <Label text="Chọn hộ gia đình:" styleClass="chu-phu"/>
+        <Label text="Chọn hộ gia đình" styleClass="chu-phu"/>
         <ComboBox fx:id="oHoGiaDinh" prefWidth="300"
                   promptText="Chọn mã hộ - tên chủ hộ..."/>
-        <Button text="Tải lại DS Hộ" onAction="#taiLai"/>
+        <Button text="Tải lại" onAction="#taiLai"/>
     </HBox>
 
     <Label text="Thêm thành viên mới" styleClass="tieu-de-khung"/>

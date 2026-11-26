@@ -21,15 +21,19 @@ trước.
 | DFD mức ngữ cảnh | [dfd-ngu-canh.puml](dfd-ngu-canh.puml) | [dfd-ngu-canh.png](dfd-ngu-canh.png) | TV1 Khánh |
 | DFD mức 1 | [dfd-muc-1.puml](dfd-muc-1.puml) | [dfd-muc-1.png](dfd-muc-1.png) | TV1 Khánh |
 | Biểu đồ lớp tầng model | [bieu-do-lop-model.puml](bieu-do-lop-model.puml) | [bieu-do-lop-model.png](bieu-do-lop-model.png) | TV1 Khánh |
-| Use case nhóm Thống kê | [use-case-thong-ke.puml](use-case-thong-ke.puml) | [use-case-thong-ke.png](use-case-thong-ke.png) | TV5 Huy |
-| Hoạt động UC024 – Thống kê theo khoản thu | [hoat-dong-uc024-thong-ke-khoan-thu.puml](hoat-dong-uc024-thong-ke-khoan-thu.puml) | [hoat-dong-uc024-thong-ke-khoan-thu.png](hoat-dong-uc024-thong-ke-khoan-thu.png) | TV5 Huy |
-| Tuần tự UC023 – Xuất báo cáo thu | [tuan-tu-uc023-xuat-bao-cao.puml](tuan-tu-uc023-xuat-bao-cao.puml) | [tuan-tu-uc023-xuat-bao-cao.png](tuan-tu-uc023-xuat-bao-cao.png) | TV5 Huy |
 | Use case nhóm Cư trú | [use-case-cu-tru.puml](use-case-cu-tru.puml) | [use-case-cu-tru.png](use-case-cu-tru.png) | TV1 Khánh |
 | Use case nhóm Khoản thu | [use-case-khoan-thu.puml](use-case-khoan-thu.puml) | [use-case-khoan-thu.png](use-case-khoan-thu.png) | TV1 Khánh |
 | Use case nhóm Thu phí | [use-case-thu-phi.puml](use-case-thu-phi.puml) | [use-case-thu-phi.png](use-case-thu-phi.png) | TV1 Khánh |
+| Use case nhóm Thống kê | [use-case-thong-ke.puml](use-case-thong-ke.puml) | [use-case-thong-ke.png](use-case-thong-ke.png) | TV5 Huy |
 | Máy trạng thái cư trú của Nhân khẩu | [trang-thai-nhan-khau.puml](trang-thai-nhan-khau.puml) | [trang-thai-nhan-khau.png](trang-thai-nhan-khau.png) | TV1 Khánh |
 | Máy trạng thái Khoản phải nộp | [trang-thai-khoan-phai-nop.puml](trang-thai-khoan-phai-nop.puml) | [trang-thai-khoan-phai-nop.png](trang-thai-khoan-phai-nop.png) | TV1 Khánh |
 | Máy trạng thái Phiếu thu | [trang-thai-phieu-thu.puml](trang-thai-phieu-thu.puml) | [trang-thai-phieu-thu.png](trang-thai-phieu-thu.png) | TV1 Khánh |
+| Hoạt động UC009 – Đổi chủ hộ | [hoat-dong-uc009-doi-chu-ho.puml](hoat-dong-uc009-doi-chu-ho.puml) | [hoat-dong-uc009-doi-chu-ho.png](hoat-dong-uc009-doi-chu-ho.png) | TV1 Khánh |
+| Hoạt động UC014 – Chốt công nợ | [hoat-dong-uc014-chot-cong-no.puml](hoat-dong-uc014-chot-cong-no.puml) | [hoat-dong-uc014-chot-cong-no.png](hoat-dong-uc014-chot-cong-no.png) | TV1 Khánh |
+| Hoạt động UC017 – Thu phí | [hoat-dong-uc017-thu-phi.puml](hoat-dong-uc017-thu-phi.puml) | [hoat-dong-uc017-thu-phi.png](hoat-dong-uc017-thu-phi.png) | TV1 Khánh |
+| Hoạt động UC024 – Thống kê theo khoản thu | [hoat-dong-uc024-thong-ke-khoan-thu.puml](hoat-dong-uc024-thong-ke-khoan-thu.puml) | [hoat-dong-uc024-thong-ke-khoan-thu.png](hoat-dong-uc024-thong-ke-khoan-thu.png) | TV5 Huy |
+| Tuần tự UC017 – Thu phí | [tuan-tu-uc017-thu-phi.puml](tuan-tu-uc017-thu-phi.puml) | [tuan-tu-uc017-thu-phi.png](tuan-tu-uc017-thu-phi.png) | TV1 Khánh |
+| Tuần tự UC023 – Xuất báo cáo thu | [tuan-tu-uc023-xuat-bao-cao.puml](tuan-tu-uc023-xuat-bao-cao.puml) | [tuan-tu-uc023-xuat-bao-cao.png](tuan-tu-uc023-xuat-bao-cao.png) | TV5 Huy |
 
 **Xuất ảnh.** Tải `plantuml.jar` từ
 [trang phát hành PlantUML](https://github.com/plantuml/plantuml/releases) về
@@ -182,9 +186,9 @@ có gắn «dự kiến». Tên lớp, thuộc tính theo bảng trong `schema.s
 
 | Thành viên | Sơ đồ |
 |---|---|
-| TV2 Dũng | Đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009). Review ERD khái niệm và lược đồ CSDL. Biểu đồ UC nhóm Cư trú (UC005 – UC010) và máy trạng thái Nhân khẩu: TV1 Khánh |
-| TV3 Hùng | Đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014). Biểu đồ UC nhóm Khoản thu (UC011 – UC015) và máy trạng thái Khoản phải nộp: TV1 Khánh |
-| TV4 Đạt | Đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí. Biểu đồ UC nhóm Thu phí (UC016 – UC020) và máy trạng thái Phiếu thu: TV1 Khánh |
+| TV2 Dũng | Review ERD khái niệm và lược đồ CSDL. Biểu đồ UC nhóm Cư trú (UC005 – UC010), máy trạng thái Nhân khẩu, đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009): TV1 Khánh, đặc tả [dac-ta-uc009-doi-chu-ho.md](dac-ta-uc009-doi-chu-ho.md) |
+| TV3 Hùng | Biểu đồ UC nhóm Khoản thu (UC011 – UC015), máy trạng thái Khoản phải nộp, đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014): TV1 Khánh, đặc tả [dac-ta-uc014-chot-cong-no.md](dac-ta-uc014-chot-cong-no.md) |
+| TV4 Đạt | Biểu đồ UC nhóm Thu phí (UC016 – UC020), máy trạng thái Phiếu thu, đặc tả, biểu đồ hoạt động và biểu đồ tuần tự "Thu phí" (UC017): TV1 Khánh, đặc tả [dac-ta-uc017-thu-phi.md](dac-ta-uc017-thu-phi.md) |
 | TV5 Huy | Biểu đồ UC nhóm Thống kê (UC021 – UC024); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC024); biểu đồ tuần tự Xuất báo cáo (UC023). Đặc tả UC024: [dac-ta-uc024-thong-ke-khoan-thu.md](dac-ta-uc024-thong-ke-khoan-thu.md) |
 
 Ghi chú:
@@ -259,3 +263,16 @@ mục 4, và giả định 51.
     nộp và đóng góp tự nguyện trên cùng màn hình (AC-024, bảng
     `phieu_thu_chi_tiet`), nên máy trạng thái Phiếu thu ghi cả hai UC cho
     sự kiện lập phiếu.
+15. **Đổi chủ hộ (UC009)** đặt ở màn Nhân khẩu, vì `ManHinh` chưa có màn
+    riêng cho US-026. Quan hệ của các thành viên khác giữ nguyên khi đổi chủ
+    hộ; cần thì Quản trị viên sửa từng nhân khẩu. Chủ hộ cũ rời hộ vẫn chỉ
+    ghi một dòng nhật ký `DOI_CHU_HO`, nội dung ghi rõ việc rời hộ; lịch sử
+    biến động ghi cả "Đổi chủ hộ" và "Chuyển đi" (giả định 26).
+16. **Chốt lại không có khoản mới (UC014)** thì không ghi nhật ký, cùng
+    cách `nhat-ky-thao-tac.md` xử lý thao tác không đổi dữ liệu.
+17. **Hộ chưa có diện tích (AC-029).** `schema.sql` bắt buộc diện tích lớn
+    hơn 0 (`chk_ho_dien_tich`), nên nhánh 7a của UC014 chỉ là kiểm tra phòng
+    thủ.
+18. **Tên lớp Thu phí (UC017).** `ThuPhiController`, `ThuPhiService`,
+    `PhieuThuDao`/`PhieuThuDaoJdbc`, `thu-phi.fxml` chưa có trong mã nguồn;
+    đặt theo quy ước ở `kien-truc.md` mục 3, có thể đổi khi cài.
