@@ -45,8 +45,8 @@ public enum ManHinh {
             VaiTro.QUAN_TRI),
 
     // US-005 (đổi đơn giá), US-006. Chỉ Quản trị viên (giả định 51).
-    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU, null,
-            VaiTro.QUAN_TRI),
+    DANH_MUC_KHOAN_THU("Danh mục khoản thu", NhomMenu.KHOAN_THU,
+            "danh-muc-khoan-thu.fxml", VaiTro.QUAN_TRI),
     // US-009 chốt công nợ, US-008 sửa khoản phải nộp của hộ trước khi hộ
     // đóng. Thủ quỹ được dùng (giả định 51).
     CHOT_CONG_NO("Chốt công nợ", NhomMenu.KHOAN_THU, null,
