@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemHo;
@@ -122,6 +123,41 @@ class HoGiaDinhDaoJdbcIT {
         assertEquals(0, demBang("ho_gia_dinh"));
         assertEquals(0, demBang("nhan_khau"));
         assertEquals(0, demNhatKy());
+    }
+
+    @Test
+    void chuHoTamTruLuuLoaiCuTruVaDotDauTien() throws SQLException {
+        LocalDate tu = LocalDate.of(2026, 11, 1);
+        LocalDate den = LocalDate.of(2027, 4, 30);
+        int hoId = dao.themHoGiaDinh(new YeuCauThemHo("F-606",
+                LoaiCanHo.CAN_HO, 6, new BigDecimal("55.00"), null, tu,
+                "Trần Thị Thuê", LocalDate.of(1995, 3, 3), "NU",
+                "001195012345", LoaiCuTru.TAM_TRU, "Nam Định", tu, den),
+                quanTri);
+
+        String sql = "SELECT n.loai_cu_tru, n.noi_thuong_tru, t.loai, "
+                + "t.tu_ngay, t.den_ngay FROM nhan_khau n "
+                + "JOIN tam_tru_tam_vang t ON t.nhan_khau_id = n.id "
+                + "WHERE n.ho_id = ? AND n.quan_he = 'CHU_HO'";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql)) {
+            lenh.setInt(1, hoId);
+            try (ResultSet kq = lenh.executeQuery()) {
+                assertTrue(kq.next());
+                assertEquals("TAM_TRU", kq.getString("loai_cu_tru"));
+                assertEquals("Nam Định", kq.getString("noi_thuong_tru"));
+                assertEquals("TAM_TRU", kq.getString("loai"));
+                assertEquals(tu, kq.getDate("tu_ngay").toLocalDate());
+                assertEquals(den, kq.getDate("den_ngay").toLocalDate());
+                assertFalse(kq.next());
+            }
+        }
+    }
+
+    @Test
+    void chuHoThuongTruKhongCoDotTamTru() throws SQLException {
+        dao.themHoGiaDinh(taoYeuCauMau("G-707", "001090123461"), quanTri);
+        assertEquals(0, demBang("tam_tru_tam_vang"));
     }
 
     private int demNhatKy() throws SQLException {
