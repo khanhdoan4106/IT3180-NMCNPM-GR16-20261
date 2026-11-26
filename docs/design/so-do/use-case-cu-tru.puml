@@ -1,0 +1,41 @@
+@startuml
+' Biểu đồ use case nhóm Cư trú – BlueMoon v1.0
+' Mã UC, tên UC và tác nhân theo docs/design/so-do/README.md.
+' Mọi UC trừ UC001 có tiền điều kiện: Người dùng đã đăng nhập.
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Biểu đồ use case nhóm Cư trú – BlueMoon v1.0
+
+actor "Quản trị viên" as QT
+actor "Người dùng" as ND
+note top of ND : {abstract}
+actor "Thủ quỹ" as TQ
+
+rectangle "Phần mềm quản lý thu phí BlueMoon" {
+  usecase "UC005 Thêm hộ gia đình" as UC005
+  usecase "UC006 Khai báo nhân khẩu" as UC006
+  usecase "UC007 Ghi nhận tạm trú, tạm vắng" as UC007
+  usecase "UC008 Xuất danh sách tạm vắng" as UC008
+  usecase "UC009 Đổi chủ hộ" as UC009
+  usecase "UC010 Xem lịch sử biến động nhân khẩu" as UC010
+}
+
+' Quản lý hộ và nhân khẩu chỉ Quản trị viên dùng (giả định 51).
+QT -- UC005
+QT -- UC006
+QT -- UC007
+QT -- UC008
+QT -- UC009
+QT -- UC010
+
+' Kế thừa: Quản trị viên, Thủ quỹ là Người dùng
+QT --|> ND
+ND <|-- TQ
+@enduml
