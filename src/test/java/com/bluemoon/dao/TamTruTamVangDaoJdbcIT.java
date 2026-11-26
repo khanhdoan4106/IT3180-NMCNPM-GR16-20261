@@ -2,11 +2,13 @@ package com.bluemoon.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
@@ -20,6 +22,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -83,6 +91,70 @@ class TamTruTamVangDaoJdbcIT {
                 taoKhaiBao(nkId), quanTri));
         assertEquals(0, dem("SELECT COUNT(*) FROM tam_tru_tam_vang"));
         assertEquals(soNhatKyTruoc, demNhatKy());
+    }
+
+    @Test
+    void layLoaiCuTruCuaNguoiDangO() {
+        int hoId = taoHo("D-404", "011");
+        int nkId = dao.layNguoiTrongHo(hoId).get(0).id();
+        assertEquals(LoaiCuTru.THUONG_TRU, dao.layLoaiCuTru(nkId));
+        assertNull(dao.layLoaiCuTru(nkId + 1000));
+    }
+
+    @Test
+    void dotChongNgay_DaoTuChoiVaKhongGhiNhatKy() throws SQLException {
+        int hoId = taoHo("E-505", "012");
+        int nkId = dao.layNguoiTrongHo(hoId).get(0).id();
+        LocalDate dau = LocalDate.of(2026, 12, 1);
+        dao.themKhaiBao(tamVang(nkId, dau, dau.plusDays(9)), quanTri);
+        int soNhatKy = demNhatKy();
+
+        assertTrue(dao.coDotChongNgay(nkId, dau.plusDays(9),
+                dau.plusDays(20)));
+        assertFalse(dao.coDotChongNgay(nkId, dau.plusDays(10),
+                dau.plusDays(20)));
+        Exception loi = assertThrows(IllegalArgumentException.class,
+                () -> dao.themKhaiBao(tamVang(nkId, dau.minusDays(3),
+                        dau), quanTri));
+        assertEquals(TamTruTamVangDao.LOI_CHONG_NGAY, loi.getMessage());
+        assertEquals(1, dem("SELECT COUNT(*) FROM tam_tru_tam_vang"));
+        assertEquals(soNhatKy, demNhatKy());
+    }
+
+    @Test
+    void haiMayCungLuuDotChongNgay_ChiMotDotDuocLuu() throws Exception {
+        int hoId = taoHo("F-606", "013");
+        int nkId = dao.layNguoiTrongHo(hoId).get(0).id();
+        LocalDate dau = LocalDate.of(2027, 1, 1);
+        CountDownLatch batDau = new CountDownLatch(1);
+        Callable<Boolean> luu = () -> {
+            batDau.await();
+            try {
+                new TamTruTamVangDaoJdbc(nguon).themKhaiBao(
+                        tamVang(nkId, dau, dau.plusDays(5)), quanTri);
+                return true;
+            } catch (IllegalArgumentException loi) {
+                return false;
+            }
+        };
+        ExecutorService may = Executors.newFixedThreadPool(2);
+        try {
+            Future<Boolean> mot = may.submit(luu);
+            Future<Boolean> hai = may.submit(luu);
+            batDau.countDown();
+            boolean motLuu = mot.get(30, TimeUnit.SECONDS);
+            boolean haiLuu = hai.get(30, TimeUnit.SECONDS);
+            assertTrue(motLuu ^ haiLuu);
+        } finally {
+            may.shutdownNow();
+        }
+        assertEquals(1, dem("SELECT COUNT(*) FROM tam_tru_tam_vang"));
+    }
+
+    private static YeuCauKhaiBao tamVang(int nhanKhauId, LocalDate tu,
+            LocalDate den) {
+        return new YeuCauKhaiBao(nhanKhauId, "TAM_VANG", null, tu, den,
+                "Công tác", "Đà Nẵng");
     }
 
     private int taoHo(String maCanHo, String cccd) {

@@ -1,0 +1,42 @@
+@startuml
+' Máy trạng thái của một Phiếu thu – BlueMoon v1.0
+' Bảng phieu_thu trong database/schema.sql: da_huy (kèm nguoi_huy,
+' thoi_diem_huy, ly_do_huy), so_lan_in. Phiếu không bị xóa; phiếu hủy giữ
+' số biên lai (AC-043, giả định 31).
+' Mỗi sự kiện ghi mã UC sinh ra nó (README mục 2).
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Máy trạng thái của Phiếu thu – BlueMoon v1.0
+
+state "Còn hiệu lực" as ConHieuLuc {
+  state "Chưa in biên lai" as ChuaIn
+  ChuaIn : số lần in = 0
+  state "Đã in biên lai" as DaIn
+  DaIn : số lần in > 0
+  [*] --> ChuaIn
+  ChuaIn --> DaIn : UC019 in biên lai\n[tổng tiền > 0 đ]
+  DaIn --> DaIn : UC019 in lại\n(ghi "bản in lại")
+}
+state "Đã hủy" as DaHuy
+DaHuy : lưu người hủy, thời điểm hủy, lý do
+
+[*] --> ConHieuLuc : UC017 thu phí, UC018 ghi nhận\nđóng góp tự nguyện: lập phiếu
+ConHieuLuc --> DaHuy : UC020 hủy phiếu thu\n[trong ngày lập phiếu, có lý do;\nThủ quỹ chỉ hủy phiếu mình lập]
+
+note right of ConHieuLuc
+  Phiếu tổng 0 đ hiện "Không thu tiền",
+  không in biên lai (giả định 30).
+end note
+
+note right of DaHuy
+  Khoản phải nộp trong phiếu trở lại
+  "chưa đóng"; đóng góp trong phiếu
+  không còn được tính (giả định 28).
+end note
+@enduml

@@ -76,6 +76,26 @@
                GridPane.rowIndex="4" GridPane.columnIndex="2"/>
         <DatePicker fx:id="oNgayChuyenDen" maxWidth="1.7976931348623157E308"
                     GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+
+        <Label text="Loại cư trú chủ hộ *"
+               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="oLoaiCuTruChuHo" maxWidth="1.7976931348623157E308"
+                  GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="Nơi thường trú (tạm trú *)"
+               GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+        <TextField fx:id="oNoiThuongTruChuHo"
+                   GridPane.rowIndex="5" GridPane.columnIndex="3"/>
+
+        <Label text="Tạm trú từ ngày (tạm trú *)"
+               GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="oTamTruTu" maxWidth="1.7976931348623157E308"
+                    GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+        <Label text="Đến ngày (tạm trú *)"
+               GridPane.rowIndex="6" GridPane.columnIndex="2"/>
+        <DatePicker fx:id="oTamTruDen" maxWidth="1.7976931348623157E308"
+                    GridPane.rowIndex="6" GridPane.columnIndex="3"/>
     </GridPane>
 
     <HBox spacing="12">

@@ -1,0 +1,41 @@
+@startuml
+' Máy trạng thái của một Khoản phải nộp – BlueMoon v1.0
+' Bảng phai_nop trong database/schema.sql: so_tien (số đang phải nộp),
+' so_tien_goc (số lúc chốt). "Đã đóng" khi có dòng phieu_thu_chi_tiet còn
+' hiệu lực trỏ tới khoản (cột sinh phai_nop_da_thu, UNIQUE); hủy phiếu thì
+' dòng đó hết hiệu lực. Khoản phải nộp không bị xóa.
+' Mỗi sự kiện ghi mã UC sinh ra nó (README mục 2).
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Máy trạng thái của Khoản phải nộp – BlueMoon v1.0
+
+state "Chưa đóng" as ChuaDong
+ChuaDong : số tiền > 0 đ
+state "Đã đóng" as DaDong
+DaDong : thuộc một phiếu thu chưa hủy
+state "Không cần thu" as KhongCanThu
+KhongCanThu : số tiền đã sửa về 0 đ
+
+[*] --> ChuaDong : UC014 chốt công nợ\n(diện tích × đơn giá)
+ChuaDong --> ChuaDong : UC013 sửa số tiền\n[số mới > 0 đ]
+ChuaDong --> KhongCanThu : UC013 sửa số tiền\n[số mới = 0 đ]
+KhongCanThu --> ChuaDong : UC013 sửa số tiền\n[số mới > 0 đ]
+ChuaDong --> DaDong : UC017 thu phí
+DaDong --> ChuaDong : UC020 hủy phiếu thu
+
+note right of DaDong
+  UC013 bị từ chối, yêu cầu
+  hủy phiếu thu trước (AC-026).
+end note
+
+note right of KhongCanThu
+  Không hiện ở tra cứu phí, không
+  tính vào công nợ (giả định 33).
+end note
+@enduml
