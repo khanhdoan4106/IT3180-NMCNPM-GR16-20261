@@ -1,0 +1,48 @@
+@startuml
+' Máy trạng thái cư trú của một Nhân khẩu – BlueMoon v1.0
+' Cột nhan_khau.trang_thai (DANG_O, DA_CHUYEN_DI) và nhan_khau.loai_cu_tru
+' (THUONG_TRU, TAM_TRU) trong database/schema.sql; loại cư trú không đổi
+' (giả định 13). "Tạm vắng", "tạm trú còn hạn" tính theo đợt trong bảng
+' tam_tru_tam_vang có chứa ngày hôm nay, không lưu thành cột (giả định 12).
+' Mỗi sự kiện ghi mã UC sinh ra nó (README mục 2).
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Máy trạng thái cư trú của Nhân khẩu – BlueMoon v1.0
+
+state "Đang ở" as DangO {
+  state "Thường trú" as ThuongTru
+  state "Tạm vắng" as TamVang
+  state "Tạm trú" as TamTru {
+    state "Còn hạn" as ConHan
+    state "Quá hạn" as QuaHan
+    [*] --> ConHan
+    ConHan --> QuaHan : Qua ngày kết thúc đợt cuối\n(đợt ghi ở UC005, UC006, UC007)
+    QuaHan --> ConHan : UC007 ghi đợt tạm trú mới\n(gia hạn)
+  }
+  state c <<choice>>
+  [*] --> c
+  c --> ThuongTru : [loại cư trú\nthường trú]
+  c --> TamTru : [loại cư trú tạm trú]\nlưu cùng đợt tạm trú đầu tiên
+  ThuongTru -right-> TamVang : Đến ngày bắt đầu\nđợt tạm vắng\n(đợt ghi ở UC007)
+  TamVang -left-> ThuongTru : Qua ngày kết thúc\nđợt tạm vắng
+}
+state "Đã chuyển đi" as DaChuyenDi
+
+[*] --> DangO : UC005 thêm hộ (chủ hộ)\nUC006 khai báo nhân khẩu
+DangO --> DaChuyenDi : UC006 đánh dấu nhân khẩu chuyển đi\n[không phải chủ hộ]
+DangO --> DaChuyenDi : UC005 đánh dấu cả hộ chuyển đi
+DangO --> DaChuyenDi : UC009 đổi chủ hộ\n[chủ hộ cũ rời hộ]
+DaChuyenDi --> [*]
+
+note right of DaChuyenDi
+  Không xóa, giữ lịch sử (giả định 7).
+  Khai báo lại ở hộ khác là một
+  nhân khẩu mới (giả định 6).
+end note
+@enduml
