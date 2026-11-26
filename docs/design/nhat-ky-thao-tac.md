@@ -45,10 +45,23 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
 - Service: `NhatKyService`.
 - Màn hình: `nhat-ky.fxml`, `NhatKyController`, đã đăng ký trong
   `ManHinh.NHAT_KY` và chỉ cho `VaiTro.QUAN_TRI`.
-- `NhatKyService.ghiTrongGiaoDich(...)` nhận **chính Connection của
-  giao dịch nghiệp vụ**. DAO chỉ INSERT trên connection đó; không mở
-  connection riêng, không commit và không nuốt lỗi. Lỗi ghi phải được
-  truyền lên để giao dịch nghiệp vụ rollback.
+- DAO nghiệp vụ ghi nhật ký bằng `NhatKyDao.ghi(ketNoi, ...)` với
+  **chính Connection của giao dịch nghiệp vụ**, trước khi commit.
+  `NhatKyDao.ghi` chỉ INSERT trên connection đó; không mở connection
+  riêng, không commit và không nuốt lỗi. Lỗi ghi được truyền lên để giao
+  dịch nghiệp vụ rollback. `NhatKyService.ghiTrongGiaoDich(...)` theo
+  cùng quy tắc (kiểm tra đủ thông tin rồi gọi `NhatKyDao.ghi`), hiện
+  chưa DAO nào dùng.
+
+## Cách viết đối tượng và nội dung
+
+- Không ghi mã thô hay `#id`: đối tượng ghi tên để người đọc nhận ra,
+  vd "Hộ A-101", "Nhân khẩu Nguyễn Văn A (hộ A-101)", "Tài khoản
+  thuquy01".
+- Nội dung dùng nhãn tiếng Việt (loại khai báo, quan hệ, vai trò, trạng
+  thái) và ngày dạng dd/MM/yyyy (`Ngay.dinhDang`), vd "Tạm trú: Nguyễn
+  Văn A, từ 01/11/2026 đến 30/04/2027", "Vai trò: Thủ quỹ → Quản trị
+  viên". Giá trị trống ghi "(trống)".
 
 ## Kiểm soát truy cập và bất biến
 
@@ -85,8 +98,9 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
   `PhanQuyen.yeuCau(ManHinh.NHAN_KHAU)`, chuẩn hóa và kiểm tra dữ liệu,
   sau đó truyền người đang đăng nhập xuống DAO.
 - `NhanKhauDaoJdbc` thêm nhân khẩu, ghi `THEM_NHAN_KHAU` bằng cùng
-  `Connection`, rồi mới commit. Đối tượng nhật ký là ID nhân khẩu;
-  nội dung ghi tên nhân khẩu và ID hộ.
+  `Connection`, rồi mới commit. Đối tượng nhật ký là tên nhân khẩu
+  kèm mã căn hộ; nội dung ghi tên, quan hệ, mã căn hộ và thời hạn tạm
+  trú nếu có.
 - Nếu ghi nhật ký lỗi, thao tác thêm nhân khẩu rollback; không để lại
   nhân khẩu không có nhật ký tương ứng.
 - Test đơn vị kiểm tra Thủ quỹ và phiên chưa đăng nhập bị từ chối.
@@ -100,7 +114,8 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
   truyền người đang đăng nhập xuống DAO.
 - `TamTruTamVangDaoJdbc` thêm đợt khai báo và ghi
   `GHI_TAM_TRU_TAM_VANG` trên cùng Connection trước khi commit.
-- Nhật ký lưu ID khai báo, loại khai báo, ID nhân khẩu và khoảng ngày.
+- Đối tượng nhật ký là tên nhân khẩu kèm mã căn hộ; nội dung ghi loại
+  khai báo, tên, khoảng ngày và nơi đến (với tạm vắng).
 - Nếu ghi nhật ký lỗi, bản ghi khai báo rollback. Integration test MySQL
   kiểm tra cả trường hợp thành công và rollback.
 
