@@ -24,6 +24,12 @@ trước.
 | Use case nhóm Thống kê | [use-case-thong-ke.puml](use-case-thong-ke.puml) | [use-case-thong-ke.png](use-case-thong-ke.png) | TV5 Huy |
 | Hoạt động UC024 – Thống kê theo khoản thu | [hoat-dong-uc024-thong-ke-khoan-thu.puml](hoat-dong-uc024-thong-ke-khoan-thu.puml) | [hoat-dong-uc024-thong-ke-khoan-thu.png](hoat-dong-uc024-thong-ke-khoan-thu.png) | TV5 Huy |
 | Tuần tự UC023 – Xuất báo cáo thu | [tuan-tu-uc023-xuat-bao-cao.puml](tuan-tu-uc023-xuat-bao-cao.puml) | [tuan-tu-uc023-xuat-bao-cao.png](tuan-tu-uc023-xuat-bao-cao.png) | TV5 Huy |
+| Use case nhóm Cư trú | [use-case-cu-tru.puml](use-case-cu-tru.puml) | [use-case-cu-tru.png](use-case-cu-tru.png) | TV1 Khánh |
+| Use case nhóm Khoản thu | [use-case-khoan-thu.puml](use-case-khoan-thu.puml) | [use-case-khoan-thu.png](use-case-khoan-thu.png) | TV1 Khánh |
+| Use case nhóm Thu phí | [use-case-thu-phi.puml](use-case-thu-phi.puml) | [use-case-thu-phi.png](use-case-thu-phi.png) | TV1 Khánh |
+| Máy trạng thái cư trú của Nhân khẩu | [trang-thai-nhan-khau.puml](trang-thai-nhan-khau.puml) | [trang-thai-nhan-khau.png](trang-thai-nhan-khau.png) | TV1 Khánh |
+| Máy trạng thái Khoản phải nộp | [trang-thai-khoan-phai-nop.puml](trang-thai-khoan-phai-nop.puml) | [trang-thai-khoan-phai-nop.png](trang-thai-khoan-phai-nop.png) | TV1 Khánh |
+| Máy trạng thái Phiếu thu | [trang-thai-phieu-thu.puml](trang-thai-phieu-thu.puml) | [trang-thai-phieu-thu.png](trang-thai-phieu-thu.png) | TV1 Khánh |
 
 **Xuất ảnh.** Tải `plantuml.jar` từ
 [trang phát hành PlantUML](https://github.com/plantuml/plantuml/releases) về
@@ -176,9 +182,9 @@ có gắn «dự kiến». Tên lớp, thuộc tính theo bảng trong `schema.s
 
 | Thành viên | Sơ đồ |
 |---|---|
-| TV2 Dũng | Biểu đồ UC nhóm Cư trú (UC005 – UC010); đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009); máy trạng thái Nhân khẩu. Review ERD khái niệm và lược đồ CSDL |
-| TV3 Hùng | Biểu đồ UC nhóm Khoản thu (UC011 – UC015); đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014); máy trạng thái Khoản phải nộp |
-| TV4 Đạt | Biểu đồ UC nhóm Thu phí (UC016 – UC020); đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí; máy trạng thái Phiếu thu |
+| TV2 Dũng | Đặc tả và biểu đồ hoạt động "Đổi chủ hộ" (UC009). Review ERD khái niệm và lược đồ CSDL. Biểu đồ UC nhóm Cư trú (UC005 – UC010) và máy trạng thái Nhân khẩu: TV1 Khánh |
+| TV3 Hùng | Đặc tả và biểu đồ hoạt động "Chốt công nợ đầu tháng" (UC014). Biểu đồ UC nhóm Khoản thu (UC011 – UC015) và máy trạng thái Khoản phải nộp: TV1 Khánh |
+| TV4 Đạt | Đặc tả và biểu đồ hoạt động "Thu phí" (UC017); biểu đồ tuần tự Thu phí. Biểu đồ UC nhóm Thu phí (UC016 – UC020) và máy trạng thái Phiếu thu: TV1 Khánh |
 | TV5 Huy | Biểu đồ UC nhóm Thống kê (UC021 – UC024); đặc tả và biểu đồ hoạt động "Thống kê khoản thu" (UC024); biểu đồ tuần tự Xuất báo cáo (UC023). Đặc tả UC024: [dac-ta-uc024-thong-ke-khoan-thu.md](dac-ta-uc024-thong-ke-khoan-thu.md) |
 
 Ghi chú:
@@ -236,3 +242,20 @@ mục 4, và giả định 51.
     `soDienThoai`, `email`, `ngayTao` dù `schema.sql` đã có cột; thêm khi làm
     US-023.
     Các lớp khác đặt tên theo bảng và quy ước đặt tên, có thể đổi khi cài.
+11. **Chuyển đi thuộc UC nào.** Bảng mã UC không có UC riêng cho việc đánh
+    dấu chuyển đi. Máy trạng thái Nhân khẩu ghi: một nhân khẩu chuyển đi là
+    một phần của UC006 (US-002, giả định 7); cả hộ chuyển đi là một phần của
+    UC005 (US-001, giả định 6, 21); chủ hộ cũ rời hộ khi đổi chủ hộ thuộc
+    UC009 (giả định 26).
+12. **Trạng thái cư trú tính theo ngày.** Thường trú, tạm vắng, tạm trú còn
+    hạn, quá hạn không phải cột trong `schema.sql` mà suy ra từ loại cư trú
+    và đợt có chứa ngày hôm nay (giả định 12, 13). Sự kiện "đến ngày bắt
+    đầu", "qua ngày kết thúc" là sự kiện thời gian; sơ đồ ghi UC tạo ra đợt
+    đó.
+13. **Khoản phải nộp 0 đ sửa lại được.** Khoản đã sửa về 0 đ chưa có thanh
+    toán nên UC013 sửa lại thành số lớn hơn 0 được (AC-025); khi đó khoản
+    trở lại "Chưa đóng".
+14. **Phiếu thu lập ở UC017 hoặc UC018.** Một phiếu có thể gồm khoản phải
+    nộp và đóng góp tự nguyện trên cùng màn hình (AC-024, bảng
+    `phieu_thu_chi_tiet`), nên máy trạng thái Phiếu thu ghi cả hai UC cho
+    sự kiện lập phiếu.

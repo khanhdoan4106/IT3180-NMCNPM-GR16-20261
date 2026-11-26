@@ -122,6 +122,13 @@ class NhanKhauServiceTest {
     }
 
     @Test
+    void themChuHoThuHai_BaoLoi() {
+        baoLoi(new YeuCauThemNhanKhau(1, "Nguyễn K",
+                LocalDate.now().minusYears(5), "NAM", "CHU_HO", "", null,
+                null, null), "Mỗi hộ chỉ có một chủ hộ.");
+    }
+
+    @Test
     void quanHeKhongHopLe_BaoLoi() {
         baoLoi(new YeuCauThemNhanKhau(1, "Nguyễn E",
                 LocalDate.now().minusYears(5), "NU", "ONG_BA", "", null,

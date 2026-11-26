@@ -16,6 +16,10 @@ import java.time.LocalDate;
  * @param ngaySinhChuHo ngày sinh chủ hộ (bắt buộc)
  * @param gioiTinhChuHo giới tính chủ hộ: {@code NAM} hoặc {@code NU}
  * @param cccdChuHo     số CCCD 12 chữ số của chủ hộ (bắt buộc nếu đủ 14 tuổi)
+ * @param loaiCuTruChuHo loại cư trú của chủ hộ (bắt buộc, giả định 10)
+ * @param noiThuongTruChuHo nơi thường trú (bắt buộc khi chủ hộ tạm trú)
+ * @param tamTruTu      ngày bắt đầu đợt tạm trú đầu tiên của chủ hộ
+ * @param tamTruDen     ngày kết thúc đợt tạm trú đầu tiên của chủ hộ
  */
 public record YeuCauThemHo(
         String maCanHo,
@@ -27,5 +31,19 @@ public record YeuCauThemHo(
         String tenChuHo,
         LocalDate ngaySinhChuHo,
         String gioiTinhChuHo,
-        String cccdChuHo) {
+        String cccdChuHo,
+        LoaiCuTru loaiCuTruChuHo,
+        String noiThuongTruChuHo,
+        LocalDate tamTruTu,
+        LocalDate tamTruDen) {
+
+    /** Yêu cầu có chủ hộ thường trú. */
+    public YeuCauThemHo(String maCanHo, LoaiCanHo loaiCanHo, Integer tang,
+            BigDecimal dienTich, String soDienThoai, LocalDate ngayChuyenDen,
+            String tenChuHo, LocalDate ngaySinhChuHo, String gioiTinhChuHo,
+            String cccdChuHo) {
+        this(maCanHo, loaiCanHo, tang, dienTich, soDienThoai, ngayChuyenDen,
+                tenChuHo, ngaySinhChuHo, gioiTinhChuHo, cccdChuHo,
+                LoaiCuTru.THUONG_TRU, null, null, null);
+    }
 }

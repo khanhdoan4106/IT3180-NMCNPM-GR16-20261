@@ -1,12 +1,14 @@
 package com.bluemoon.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bluemoon.dao.HoGiaDinhDao;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.VaiTro;
 import com.bluemoon.model.YeuCauThemHo;
@@ -136,6 +138,73 @@ class HoGiaDinhServiceTest {
         assertTrue(dao.danhSach.isEmpty());
     }
 
+    private static YeuCauThemHo chuHoTamTru(String noiThuongTru,
+            LocalDate tu, LocalDate den) {
+        return new YeuCauThemHo(
+                "T-501", LoaiCanHo.CAN_HO, 5,
+                new BigDecimal("60.00"), null,
+                LocalDate.of(2026, 11, 1), "Trần Thị Thuê",
+                LocalDate.of(1995, 3, 3), "NU", "001195012345",
+                LoaiCuTru.TAM_TRU, noiThuongTru, tu, den);
+    }
+
+    private static void baoLoi(YeuCauThemHo yc, String cauBao) {
+        HoGiaDinhDaoGia dao = new HoGiaDinhDaoGia();
+        Exception loi = assertThrows(IllegalArgumentException.class,
+                () -> new HoGiaDinhService(dao).themHoGiaDinh(yc));
+        assertEquals(cauBao, loi.getMessage());
+        assertTrue(dao.danhSach.isEmpty());
+    }
+
+    @Test
+    void chuHoTamTruThieuNoiThuongTru_BaoLoi() {
+        baoLoi(chuHoTamTru(" ", LocalDate.of(2026, 11, 1),
+                LocalDate.of(2027, 4, 30)),
+                "Chủ hộ tạm trú bắt buộc nhập nơi thường trú.");
+    }
+
+    @Test
+    void chuHoTamTruThieuThoiHan_BaoLoi() {
+        baoLoi(chuHoTamTru("Nam Định", LocalDate.of(2026, 11, 1), null),
+                "Chủ hộ tạm trú bắt buộc nhập thời hạn tạm trú.");
+    }
+
+    @Test
+    void chuHoTamTruDenTruocTu_BaoLoi() {
+        baoLoi(chuHoTamTru("Nam Định", LocalDate.of(2027, 4, 30),
+                LocalDate.of(2026, 11, 1)),
+                "Ngày kết thúc tạm trú không được trước ngày bắt đầu.");
+    }
+
+    @Test
+    void chuHoTamTruHopLe_LuuNoiThuongTruVaDotDau() {
+        HoGiaDinhDaoGia dao = new HoGiaDinhDaoGia();
+        new HoGiaDinhService(dao).themHoGiaDinh(chuHoTamTru(
+                "  Nam Định ", LocalDate.of(2026, 11, 1),
+                LocalDate.of(2027, 4, 30)));
+        assertEquals(LoaiCuTru.TAM_TRU, dao.daLuu.loaiCuTruChuHo());
+        assertEquals("Nam Định", dao.daLuu.noiThuongTruChuHo());
+        assertEquals(LocalDate.of(2026, 11, 1), dao.daLuu.tamTruTu());
+        assertEquals(LocalDate.of(2027, 4, 30), dao.daLuu.tamTruDen());
+    }
+
+    @Test
+    void chuHoThuongTru_BoThongTinTamTru() {
+        HoGiaDinhDaoGia dao = new HoGiaDinhDaoGia();
+        YeuCauThemHo mau = chuHoTamTru("Nam Định",
+                LocalDate.of(2026, 11, 1), LocalDate.of(2027, 4, 30));
+        new HoGiaDinhService(dao).themHoGiaDinh(new YeuCauThemHo(
+                mau.maCanHo(), mau.loaiCanHo(), mau.tang(), mau.dienTich(),
+                null, mau.ngayChuyenDen(), mau.tenChuHo(),
+                mau.ngaySinhChuHo(), mau.gioiTinhChuHo(), mau.cccdChuHo(),
+                LoaiCuTru.THUONG_TRU, "Nam Định", mau.tamTruTu(),
+                mau.tamTruDen()));
+        assertEquals(LoaiCuTru.THUONG_TRU, dao.daLuu.loaiCuTruChuHo());
+        assertNull(dao.daLuu.noiThuongTruChuHo());
+        assertNull(dao.daLuu.tamTruTu());
+        assertNull(dao.daLuu.tamTruDen());
+    }
+
     private YeuCauThemHo taoYeuCauHopLe() {
         return new YeuCauThemHo(
                 "Z-999", LoaiCanHo.CAN_HO, 9,
@@ -148,6 +217,7 @@ class HoGiaDinhServiceTest {
 
         private final List<HoGiaDinh> danhSach = new ArrayList<>();
         private final List<String> dsCccd = new ArrayList<>();
+        private YeuCauThemHo daLuu;
 
         @Override
         public List<HoGiaDinh> layDanhSachDangO() {
@@ -167,6 +237,7 @@ class HoGiaDinhServiceTest {
 
         @Override
         public int themHoGiaDinh(YeuCauThemHo yc, NguoiDung nguoiDung) {
+            daLuu = yc;
             int id = danhSach.size() + 1;
             danhSach.add(new HoGiaDinh(
                     id,
