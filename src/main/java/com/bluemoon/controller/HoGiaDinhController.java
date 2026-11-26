@@ -7,6 +7,7 @@ import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.util.DienTich;
 import com.bluemoon.util.Ngay;
 import java.math.BigDecimal;
@@ -176,7 +177,7 @@ public class HoGiaDinhController {
                     ? "Chưa có hộ nào đang ở."
                     : "Không có hộ nào khớp với “" + tuKhoa.trim() + "”.");
             bangHo.getItems().setAll(danhSach);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bangHo.getItems().clear();
             hienLoi(loi.getMessage());
         }
@@ -209,7 +210,7 @@ public class HoGiaDinhController {
             xoaTrangForm();
             napBang();
             hienThanhCong("Đã thêm hộ gia đình thành công.");
-        } catch (IllegalArgumentException | LoiCsdl loi) {
+        } catch (IllegalArgumentException | LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }

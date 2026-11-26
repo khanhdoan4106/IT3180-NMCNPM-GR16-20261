@@ -4,10 +4,11 @@ import com.bluemoon.dao.HoGiaDinhDaoJdbc;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TamTruTamVangDaoJdbc;
 import com.bluemoon.model.HoGiaDinh;
-import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
+import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.YeuCauKhaiBao;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.TamTruTamVangService;
 import com.bluemoon.util.Ngay;
 import java.time.format.DateTimeFormatter;
@@ -179,7 +180,7 @@ public class TamTruTamVangController {
             oHoGiaDinh.getItems().setAll(dsHo);
             oHoGiaDinh.setValue(null);
             oNhanKhau.getItems().clear();
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
@@ -192,7 +193,7 @@ public class TamTruTamVangController {
         try {
             List<NguoiTrongHo> dsNk = ttvService.layNguoiTrongHo(ho.id());
             oNhanKhau.getItems().setAll(dsNk);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
@@ -208,7 +209,7 @@ public class TamTruTamVangController {
             bang.getItems().setAll(ds);
             bangTrong.setText(
                     "Hộ này chưa có đợt tạm trú, tạm vắng nào.");
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bang.getItems().clear();
             hienLoi(loi.getMessage());
         }
@@ -242,7 +243,7 @@ public class TamTruTamVangController {
             xoaTrangForm();
             napBangKhaiBao(oHoGiaDinh.getValue());
             hienThanhCong("Đã thêm khai báo thành công.");
-        } catch (IllegalArgumentException | LoiCsdl loi) {
+        } catch (IllegalArgumentException | LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }

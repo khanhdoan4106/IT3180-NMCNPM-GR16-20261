@@ -209,4 +209,12 @@ class NhanKhauServiceTest {
                 LocalDate.now().minusYears(20), "NAM", "CON",
                 "123456789012", null, null, null);
     }
+
+    @Test
+    void thuQuyKhongDuocXemThanhVienHo() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.layDanhSachTheoHo(1));
+    }
 }

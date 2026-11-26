@@ -34,6 +34,7 @@ public class NhanKhauService {
      * @return danh sách nhân khẩu
      */
     public List<NhanKhau> layDanhSachTheoHo(int hoId) {
+        PhanQuyen.yeuCau(ManHinh.NHAN_KHAU);
         return nhanKhauDao.layDanhSachTheoHo(hoId);
     }
 

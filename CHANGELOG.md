@@ -43,6 +43,10 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   ("Tải lại", "Nơi đến", "Số điện thoại", "Số giấy tạm trú/tạm vắng").
 - TS-002: màn Nhật ký thao tác mở được (sửa cách khai báo
   `columnResizePolicy` trong `nhat-ky.fxml`); bảng trống có câu báo.
+- US-022: các hàm đọc của Hộ gia đình, Nhân khẩu, Tạm trú tạm vắng kiểm
+  tra vai trò như hàm ghi (giả định 17). Các màn Hộ gia đình, Nhân khẩu,
+  Tạm trú tạm vắng, Nhật ký, Trang chính, Tài khoản của tôi hiện câu báo
+  khi không đủ quyền thay cho lỗi không bắt.
 - TS-002: nội dung nhật ký dễ đọc. Đối tượng ghi tên thay cho "#id"
   (vd "Nhân khẩu Nguyễn Văn A (hộ A-101)", "Tài khoản thuquy01"); nội
   dung dùng nhãn tiếng Việt và ngày dd/MM/yyyy (vd "Tạm trú: Nguyễn Văn
