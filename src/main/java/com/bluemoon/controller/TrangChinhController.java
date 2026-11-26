@@ -4,6 +4,7 @@ import com.bluemoon.dao.CuDanDaoJdbc;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.model.SoLieuCuDan;
 import com.bluemoon.service.CuDanService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import java.text.NumberFormat;
 import java.util.Locale;
 import javafx.fxml.FXML;
@@ -45,7 +46,7 @@ public class TrangChinhController {
             soHo.setText(dinhDangSo.format(soLieu.soHo()));
             soNhanKhau.setText(dinhDangSo.format(soLieu.soNhanKhau()));
             thongBaoLoi.setVisible(false);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             soHo.setText(CHUA_CO_SO);
             soNhanKhau.setText(CHUA_CO_SO);
             thongBaoLoi.setText(loi.getMessage());

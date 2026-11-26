@@ -4,10 +4,11 @@ import com.bluemoon.dao.HoGiaDinhDaoJdbc;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TamTruTamVangDaoJdbc;
 import com.bluemoon.model.HoGiaDinh;
-import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
+import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.YeuCauKhaiBao;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.TamTruTamVangService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -155,7 +156,7 @@ public class TamTruTamVangController {
             oHoGiaDinh.getItems().setAll(dsHo);
             oHoGiaDinh.setValue(null);
             oNhanKhau.getItems().clear();
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
@@ -168,7 +169,7 @@ public class TamTruTamVangController {
         try {
             List<NguoiTrongHo> dsNk = ttvService.layNguoiTrongHo(ho.id());
             oNhanKhau.getItems().setAll(dsNk);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
@@ -181,7 +182,7 @@ public class TamTruTamVangController {
         try {
             List<TamTruTamVang> ds = ttvService.layDanhSachTheoHo(ho.id());
             bang.getItems().setAll(ds);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bang.getItems().clear();
             hienLoi(loi.getMessage());
         }
@@ -215,7 +216,7 @@ public class TamTruTamVangController {
             xoaTrangForm();
             napBangKhaiBao(oHoGiaDinh.getValue());
             hienThanhCong("Đã thêm khai báo thành công.");
-        } catch (IllegalArgumentException | LoiCsdl loi) {
+        } catch (IllegalArgumentException | LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }

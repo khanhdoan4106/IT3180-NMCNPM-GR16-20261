@@ -6,6 +6,7 @@ import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -145,7 +146,7 @@ public class HoGiaDinhController {
             String tuKhoa = oTimKiem != null ? oTimKiem.getText() : "";
             List<HoGiaDinh> danhSach = hoGiaDinhService.timKiem(tuKhoa);
             bangHo.getItems().setAll(danhSach);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bangHo.getItems().clear();
             hienLoi(loi.getMessage());
         }
@@ -174,7 +175,7 @@ public class HoGiaDinhController {
             xoaTrangForm();
             napBang();
             hienThanhCong("Đã thêm hộ gia đình thành công.");
-        } catch (IllegalArgumentException | LoiCsdl loi) {
+        } catch (IllegalArgumentException | LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }

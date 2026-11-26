@@ -9,6 +9,7 @@ import com.bluemoon.model.NhanKhau;
 import com.bluemoon.model.QuanHe;
 import com.bluemoon.model.YeuCauThemNhanKhau;
 import com.bluemoon.service.HoGiaDinhService;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.NhanKhauService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -155,7 +156,7 @@ public class NhanKhauController {
             } else {
                 napBangNhanKhau(oHoGiaDinh.getValue());
             }
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
@@ -168,7 +169,7 @@ public class NhanKhauController {
         try {
             List<NhanKhau> ds = nkService.layDanhSachTheoHo(ho.id());
             bang.getItems().setAll(ds);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bang.getItems().clear();
             hienLoi(loi.getMessage());
         }
@@ -201,7 +202,7 @@ public class NhanKhauController {
             xoaTrangForm();
             napBangNhanKhau(ho);
             hienThanhCong("Đã thêm nhân khẩu thành công.");
-        } catch (IllegalArgumentException | LoiCsdl loi) {
+        } catch (IllegalArgumentException | LoiKhongCoQuyen | LoiCsdl loi) {
             hienLoi(loi.getMessage());
         }
     }
