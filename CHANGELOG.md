@@ -7,6 +7,12 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-006: màn hình Danh mục khoản thu và chức năng tạo khoản thu tự nguyện
+  theo từng đợt (chỉ Quản trị viên). Cho phép tạo quỹ với hình thức tùy tâm
+  đóng góp (để trống số tiền, AC-021) hoặc mức đóng cố định theo từng hộ
+  (AC-019). Chặn trùng tên khoản thu trong cùng đợt thu (cùng ngày bắt đầu,
+  AC-020). Ngày kết thúc bắt buộc và không trước ngày bắt đầu. Bảng danh mục
+  khoản thu hỗ trợ tìm kiếm không phân biệt hoa thường và dấu.
 - US-002: form thêm nhân khẩu có loại cư trú. Người tạm trú bắt buộc
   nhập nơi thường trú và thời hạn; người và đợt tạm trú đầu tiên lưu
   trong một giao dịch (giả định 8, 9). Danh sách có cột Loại cư trú và
