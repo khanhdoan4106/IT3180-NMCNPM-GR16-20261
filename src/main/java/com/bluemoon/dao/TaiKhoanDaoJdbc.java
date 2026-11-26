@@ -53,6 +53,9 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
             + "tai_khoan WHERE vai_tro = 'QUAN_TRI' AND hoat_dong = TRUE "
             + "FOR UPDATE";
 
+    /** Đối tượng nhật ký là tên đăng nhập, không ghi ID. */
+    private static final String DOI_TUONG = "Tài khoản ";
+
     private static final String SQL_KHOA_DONG = "SELECT ten_dang_nhap, "
             + "ho_ten, so_dien_thoai, vai_tro, hoat_dong "
             + "FROM tai_khoan WHERE id = ? FOR UPDATE";
@@ -108,7 +111,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     }
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), ThaoTac.TAO_TAI_KHOAN,
-                        "Tài khoản #" + id,
+                        DOI_TUONG + taiKhoan.tenDangNhap(),
                         "Tạo tài khoản " + taiKhoan.tenDangNhap()
                                 + ", họ tên " + taiKhoan.hoTen()
                                 + ", vai trò " + taiKhoan.vaiTro());
@@ -181,11 +184,11 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(),
-                        ThaoTac.SUA_THONG_TIN_TAI_KHOAN, "Tài khoản #" + id,
-                        "Tài khoản " + tenDangNhap + ": họ tên "
-                                + hoTenCu + " -> " + hoTen
-                                + "; số điện thoại " + soDienThoaiCu
-                                + " -> " + soDienThoai);
+                        ThaoTac.SUA_THONG_TIN_TAI_KHOAN,
+                        DOI_TUONG + tenDangNhap,
+                        "Họ tên: " + hoTenCu + " → " + hoTen
+                                + "; số điện thoại: " + hoacTrong(soDienThoaiCu)
+                                + " → " + hoacTrong(soDienThoai));
                 ketNoi.commit();
                 return true;
             } catch (SQLException | RuntimeException loi) {
@@ -222,8 +225,8 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), ThaoTac.DOI_MAT_KHAU,
-                        "Tài khoản #" + id,
-                        "Người dùng đổi mật khẩu tài khoản " + tenDangNhap);
+                        DOI_TUONG + tenDangNhap,
+                        "Tự đổi mật khẩu của tài khoản " + tenDangNhap);
                 ketNoi.commit();
                 return true;
             } catch (SQLException | RuntimeException loi) {
@@ -259,7 +262,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.setString(1, vaiTro.name());
                     lenh.setInt(2, id);
                 }, nguoiThucHien, ThaoTac.DOI_VAI_TRO,
-                vaiTro.name());
+                vaiTro.getTen());
     }
 
     @Override
@@ -270,7 +273,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
         return ghiGiuQuanTri(id, !hoatDong, SQL_DAT_HOAT_DONG, lenh -> {
             lenh.setBoolean(1, hoatDong);
             lenh.setInt(2, id);
-        }, nguoiThucHien, thaoTac, hoatDong ? "Mở khóa" : "Khóa");
+        }, nguoiThucHien, thaoTac, trangThai(hoatDong));
     }
 
     @Override
@@ -298,7 +301,7 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(),
-                        ThaoTac.DAT_LAI_MAT_KHAU, "Tài khoản #" + id,
+                        ThaoTac.DAT_LAI_MAT_KHAU, DOI_TUONG + tenDangNhap,
                         "Đặt lại mật khẩu cho tài khoản " + tenDangNhap);
                 ketNoi.commit();
                 return true;
@@ -350,8 +353,9 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                         }
                         tenDangNhap = kq.getString("ten_dang_nhap");
                         giaTriCu = thaoTac == ThaoTac.DOI_VAI_TRO
-                                ? kq.getString("vai_tro")
-                                : Boolean.toString(kq.getBoolean("hoat_dong"));
+                                ? VaiTro.valueOf(kq.getString("vai_tro"))
+                                        .getTen()
+                                : trangThai(kq.getBoolean("hoat_dong"));
                     }
                 }
                 if (boQuanTri && quanTri.contains(id) && quanTri.size() == 1) {
@@ -363,9 +367,10 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                     lenh.executeUpdate();
                 }
                 nhatKyDao.ghi(ketNoi, nguoiThucHien.id(), thaoTac,
-                        "Tài khoản #" + id,
-                        "Tài khoản " + tenDangNhap + ": " + giaTriCu
-                                + " -> " + thayDoi);
+                        DOI_TUONG + tenDangNhap,
+                        (thaoTac == ThaoTac.DOI_VAI_TRO
+                                ? "Vai trò: " : "Trạng thái: ")
+                                + giaTriCu + " → " + thayDoi);
                 ketNoi.commit();
                 return true;
             } catch (SQLException | RuntimeException loi) {
@@ -404,5 +409,13 @@ public class TaiKhoanDaoJdbc implements TaiKhoanDao {
                 kq.getString("mat_khau_bam"),
                 kq.getBoolean("hoat_dong"),
                 kq.getString("so_dien_thoai"));
+    }
+
+    private static String trangThai(boolean hoatDong) {
+        return hoatDong ? "Đang hoạt động" : "Đã khóa";
+    }
+
+    private static String hoacTrong(String giaTri) {
+        return giaTri == null || giaTri.isBlank() ? "(trống)" : giaTri;
     }
 }

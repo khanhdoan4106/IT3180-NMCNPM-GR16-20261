@@ -122,6 +122,10 @@ class TaiKhoanDaoJdbcIT {
         assertNull(dao.timTheoId(id).orElseThrow().soDienThoai());
         assertFalse(dao.capNhatThongTin(id + 1000, "Ai đó", null, quanTri));
         assertEquals("SUA_THONG_TIN_TAI_KHOAN", thaoTacNhatKyCuoi());
+        assertEquals("Tài khoản thuquy01", docCotNhatKyCuoi("doi_tuong"));
+        assertEquals("Họ tên: Trần Thị Mai Anh → Trần Thị Mai Anh; "
+                + "số điện thoại: 0912345678 → (trống)",
+                noiDungNhatKyCuoi());
     }
 
     /** AC-063: đổi mật khẩu cá nhân chỉ lưu bản băm. */
@@ -174,6 +178,9 @@ class TaiKhoanDaoJdbcIT {
         assertEquals(VaiTro.QUAN_TRI, dao.timTheoId(a).orElseThrow().vaiTro());
         assertFalse(dao.doiVaiTro(a + 1000, VaiTro.THU_QUY, quanTri));
         assertEquals("DOI_VAI_TRO", thaoTacNhatKyCuoi());
+        assertEquals("Tài khoản thuquy01", docCotNhatKyCuoi("doi_tuong"));
+        assertEquals("Vai trò: Quản trị viên → Thủ quỹ",
+                noiDungNhatKyCuoi());
         assertEquals(5, demNhatKy()); // 2 lần tạo + 3 lần đổi vai trò
     }
 
@@ -190,6 +197,8 @@ class TaiKhoanDaoJdbcIT {
         assertTrue(dao.datHoatDong(a, false, quanTri));
         assertFalse(dao.datHoatDong(a + 1000, true, quanTri));
         assertEquals("KHOA_TAI_KHOAN", thaoTacNhatKyCuoi());
+        assertEquals("Trạng thái: Đang hoạt động → Đã khóa",
+                noiDungNhatKyCuoi());
         assertEquals(4, demNhatKy()); // 1 tạo + khóa/mở/khóa thành công
     }
 

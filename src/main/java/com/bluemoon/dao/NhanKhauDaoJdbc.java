@@ -5,8 +5,10 @@ import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.NhanKhau;
+import com.bluemoon.model.QuanHe;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemNhanKhau;
+import com.bluemoon.util.Ngay;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -38,6 +40,9 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
     private static final String SQL_THEM_DOT_TAM_TRU =
             "INSERT INTO tam_tru_tam_vang (nhan_khau_id, loai, tu_ngay, "
             + "den_ngay) VALUES (?, 'TAM_TRU', ?, ?)";
+
+    private static final String SQL_MA_CAN_HO =
+            "SELECT ma_can_ho FROM ho_gia_dinh WHERE id = ?";
 
     private final NguonKetNoi nguonKetNoi;
     private final NhatKyDao nhatKyDao;
@@ -109,9 +114,10 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
                 if (yc.loaiCuTru() == LoaiCuTru.TAM_TRU) {
                     chenDotTamTru(ketNoi, id, yc);
                 }
+                String maCanHo = docMaCanHo(ketNoi, yc.hoId());
                 nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_NHAN_KHAU,
-                        "Nhân khẩu #" + id,
-                        "Thêm " + yc.hoTen() + " vào hộ #" + yc.hoId());
+                        "Nhân khẩu " + yc.hoTen() + " (hộ " + maCanHo + ")",
+                        noiDungNhatKy(yc, maCanHo));
                 ketNoi.commit();
                 return id;
             } catch (SQLException | RuntimeException loi) {
@@ -161,6 +167,28 @@ public class NhanKhauDaoJdbc implements NhanKhauDao {
             ps.setDate(2, Date.valueOf(yc.tamTruTu()));
             ps.setDate(3, Date.valueOf(yc.tamTruDen()));
             ps.executeUpdate();
+        }
+    }
+
+    /** Vd "Thêm Nguyễn Văn B (Con) vào hộ A-101, tạm trú từ 01/11/2026…". */
+    private static String noiDungNhatKy(YeuCauThemNhanKhau yc,
+            String maCanHo) {
+        String noiDung = "Thêm " + yc.hoTen() + " ("
+                + QuanHe.tuMa(yc.quanHe()).getNhan() + ") vào hộ " + maCanHo;
+        if (yc.loaiCuTru() == LoaiCuTru.TAM_TRU) {
+            noiDung += ", tạm trú từ " + Ngay.dinhDang(yc.tamTruTu())
+                    + " đến " + Ngay.dinhDang(yc.tamTruDen());
+        }
+        return noiDung;
+    }
+
+    private static String docMaCanHo(Connection ketNoi, int hoId)
+            throws SQLException {
+        try (PreparedStatement ps = ketNoi.prepareStatement(SQL_MA_CAN_HO)) {
+            ps.setInt(1, hoId);
+            try (ResultSet kq = ps.executeQuery()) {
+                return kq.next() ? kq.getString(1) : "#" + hoId;
+            }
         }
     }
 }

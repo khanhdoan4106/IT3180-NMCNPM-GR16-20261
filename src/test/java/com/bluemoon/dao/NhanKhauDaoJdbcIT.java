@@ -52,6 +52,11 @@ class NhanKhauDaoJdbcIT {
         assertTrue(dao.tonTaiCccdDangO("002"));
         assertEquals(2, demNhatKy()); // THEM_HO + THEM_NHAN_KHAU
         assertEquals("THEM_NHAN_KHAU", thaoTacNhatKyCuoi());
+        assertEquals("Nhân khẩu Vo Chu Ho (hộ A-101)",
+                cotNhatKyCuoi("doi_tuong"));
+        assertTrue(cotNhatKyCuoi("noi_dung")
+                .startsWith("Thêm Vo Chu Ho ("));
+        assertTrue(cotNhatKyCuoi("noi_dung").endsWith(") vào hộ A-101"));
     }
 
     @Test
@@ -111,6 +116,18 @@ class NhanKhauDaoJdbcIT {
 
     private String thaoTacNhatKyCuoi() {
         String sql = "SELECT thao_tac FROM nhat_ky "
+                + "ORDER BY id DESC LIMIT 1";
+        try (Connection ketNoi = nguon.moKetNoi();
+                PreparedStatement lenh = ketNoi.prepareStatement(sql);
+                ResultSet kq = lenh.executeQuery()) {
+            return kq.next() ? kq.getString(1) : null;
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    private String cotNhatKyCuoi(String cot) {
+        String sql = "SELECT " + cot + " FROM nhat_ky "
                 + "ORDER BY id DESC LIMIT 1";
         try (Connection ketNoi = nguon.moKetNoi();
                 PreparedStatement lenh = ketNoi.prepareStatement(sql);
