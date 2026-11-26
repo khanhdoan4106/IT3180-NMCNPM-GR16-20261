@@ -11,16 +11,21 @@ start
 
 |View|
 :Hiển thị danh sách khoản thu;
+if (Có khoản thu?) then (Có)
+else (Không)
+  :Thông báo "Chưa có khoản thu";
+  stop
+endif
 
 |Quản trị viên|
 :Chọn khoản thu;
 
 |View|
-if (Khoản thu có tồn tại?) then (Có)
-  :Hiển thị lựa chọn đợt phù hợp;
-else (Không)
-  :Thông báo chưa có khoản thu;
+if (Khoản bắt buộc chưa có tháng đã chốt?) then (Có)
+  :Thông báo "Chưa có đợt thu đã chốt";
   stop
+else (Không)
+  :Hiển thị lựa chọn đợt phù hợp;
 endif
 
 |Quản trị viên|

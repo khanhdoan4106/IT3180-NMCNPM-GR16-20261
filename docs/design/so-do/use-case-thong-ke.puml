@@ -25,13 +25,13 @@ rectangle "Phần mềm quản lý thu phí BlueMoon" {
   usecase "UC024 Thống kê theo khoản thu" as UC024
 }
 
-' Chỉ Quản trị viên sử dụng các chức năng thống kê nội bộ.
-QT -- UC021
+' UC022, UC024 chỉ Quản trị viên dùng.
 QT -- UC022
 QT -- UC024
 
-' Theo bảng mã UC chung, UC023 là chức năng của Người dùng
-' (Quản trị viên và Thủ quỹ kế thừa Người dùng).
+' UC021, UC023 là chức năng của Người dùng (chốt ở họp 22/11, giả định 51;
+' Quản trị viên và Thủ quỹ kế thừa Người dùng).
+ND -- UC021
 ND -- UC023
 
 ' Kế thừa vai trò
