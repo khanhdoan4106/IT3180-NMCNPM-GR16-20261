@@ -4,12 +4,14 @@ import com.bluemoon.dao.HoGiaDinhDaoJdbc;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.service.HoGiaDinhService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -64,6 +66,14 @@ public class HoGiaDinhController {
     private ComboBox<String> oGioiTinhChuHo;
     @FXML
     private TextField oCccdChuHo;
+    @FXML
+    private ComboBox<LoaiCuTru> oLoaiCuTruChuHo;
+    @FXML
+    private TextField oNoiThuongTruChuHo;
+    @FXML
+    private DatePicker oTamTruTu;
+    @FXML
+    private DatePicker oTamTruDen;
 
     @FXML
     private TableView<HoGiaDinh> bangHo;
@@ -98,6 +108,15 @@ public class HoGiaDinhController {
                 FXCollections.observableArrayList(NHAN_NAM, NHAN_NU));
         oGioiTinhChuHo.setValue(NHAN_NAM);
         oNgayChuyenDen.setValue(LocalDate.now());
+
+        oLoaiCuTruChuHo.setItems(
+                FXCollections.observableArrayList(LoaiCuTru.values()));
+        oLoaiCuTruChuHo.setValue(LoaiCuTru.THUONG_TRU);
+        BooleanBinding khongTamTru = oLoaiCuTruChuHo.valueProperty()
+                .isNotEqualTo(LoaiCuTru.TAM_TRU);
+        oNoiThuongTruChuHo.disableProperty().bind(khongTamTru);
+        oTamTruTu.disableProperty().bind(khongTamTru);
+        oTamTruDen.disableProperty().bind(khongTamTru);
 
         cauHinhBang();
         taiLai();
@@ -168,7 +187,11 @@ public class HoGiaDinhController {
                     oTenChuHo.getText(),
                     oNgaySinhChuHo.getValue(),
                     maGioiTinh(oGioiTinhChuHo.getValue()),
-                    oCccdChuHo.getText());
+                    oCccdChuHo.getText(),
+                    oLoaiCuTruChuHo.getValue(),
+                    oNoiThuongTruChuHo.getText(),
+                    oTamTruTu.getValue(),
+                    oTamTruDen.getValue());
 
             hoGiaDinhService.themHoGiaDinh(yc);
             xoaTrangForm();
@@ -230,6 +253,10 @@ public class HoGiaDinhController {
         oNgaySinhChuHo.setValue(null);
         oGioiTinhChuHo.setValue(NHAN_NAM);
         oCccdChuHo.clear();
+        oLoaiCuTruChuHo.setValue(LoaiCuTru.THUONG_TRU);
+        oNoiThuongTruChuHo.clear();
+        oTamTruTu.setValue(null);
+        oTamTruDen.setValue(null);
     }
 
     private void anThongBao() {

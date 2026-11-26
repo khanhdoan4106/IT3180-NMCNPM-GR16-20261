@@ -2,6 +2,7 @@ package com.bluemoon.service;
 
 import com.bluemoon.dao.HoGiaDinhDao;
 import com.bluemoon.model.HoGiaDinh;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.YeuCauThemHo;
 import com.bluemoon.util.ManHinh;
@@ -89,6 +90,7 @@ public class HoGiaDinhService {
                     "Số CCCD " + cccd + " đã tồn tại.");
         }
 
+        boolean tamTru = yc.loaiCuTruChuHo() == LoaiCuTru.TAM_TRU;
         YeuCauThemHo daChuanHoa = new YeuCauThemHo(
                 maCanHo,
                 yc.loaiCanHo(),
@@ -99,7 +101,11 @@ public class HoGiaDinhService {
                 yc.tenChuHo().trim(),
                 yc.ngaySinhChuHo(),
                 yc.gioiTinhChuHo(),
-                cccd);
+                cccd,
+                yc.loaiCuTruChuHo(),
+                tamTru ? chuanHoaTuyChon(yc.noiThuongTruChuHo()) : null,
+                tamTru ? yc.tamTruTu() : null,
+                tamTru ? yc.tamTruDen() : null);
         return hoGiaDinhDao.themHoGiaDinh(daChuanHoa, nguoiDung);
     }
 
@@ -132,6 +138,9 @@ public class HoGiaDinhService {
         if (trong(yc.gioiTinhChuHo())) {
             thieu.add("giới tính chủ hộ");
         }
+        if (yc.loaiCuTruChuHo() == null) {
+            thieu.add("loại cư trú chủ hộ");
+        }
         if (!thieu.isEmpty()) {
             throw new IllegalArgumentException(
                     "Vui lòng nhập đầy đủ: " + String.join(", ", thieu) + ".");
@@ -157,6 +166,25 @@ public class HoGiaDinhService {
         if (cccd != null && !cccd.matches("\\d{12}")) {
             throw new IllegalArgumentException(
                     "Số CCCD phải gồm đúng 12 chữ số.");
+        }
+        if (yc.loaiCuTruChuHo() == LoaiCuTru.TAM_TRU) {
+            kiemTraChuHoTamTru(yc);
+        }
+    }
+
+    /** Chủ hộ tạm trú cần nơi thường trú và đợt tạm trú đầu (giả định 10). */
+    private void kiemTraChuHoTamTru(YeuCauThemHo yc) {
+        if (trong(yc.noiThuongTruChuHo())) {
+            throw new IllegalArgumentException(
+                    "Chủ hộ tạm trú bắt buộc nhập nơi thường trú.");
+        }
+        if (yc.tamTruTu() == null || yc.tamTruDen() == null) {
+            throw new IllegalArgumentException(
+                    "Chủ hộ tạm trú bắt buộc nhập thời hạn tạm trú.");
+        }
+        if (yc.tamTruDen().isBefore(yc.tamTruTu())) {
+            throw new IllegalArgumentException(
+                    "Ngày kết thúc tạm trú không được trước ngày bắt đầu.");
         }
     }
 
