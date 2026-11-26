@@ -18,8 +18,13 @@
     </HBox>
     <Label fx:id="thongBaoLoi" styleClass="thong-bao-loi"
            wrapText="true" visible="false"/>
-    <TableView fx:id="bangNhatKy" VBox.vgrow="ALWAYS"
-               columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+    <TableView fx:id="bangNhatKy" VBox.vgrow="ALWAYS">
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <placeholder>
+            <Label text="Chưa có thao tác nào được ghi."/>
+        </placeholder>
         <columns>
             <TableColumn fx:id="cotThoiDiem" text="Thời điểm"
                          prefWidth="150"/>
