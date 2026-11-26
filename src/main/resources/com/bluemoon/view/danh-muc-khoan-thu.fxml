@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Màn hình Danh mục khoản thu (US-005, US-006). -->
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.bluemoon.controller.DanhMucKhoanThuController"
+            fitToWidth="true" hbarPolicy="NEVER"
+            styleClass="cuon-form">
+    <VBox styleClass="trang" spacing="12">
+
+        <Label text="Danh mục khoản thu" styleClass="tieu-de-trang"/>
+
+        <Label fx:id="thongBaoLoi" styleClass="thong-bao-loi"
+               wrapText="true" visible="false"/>
+        <Label fx:id="thongBaoThanhCong" styleClass="thong-bao-thanh-cong"
+               wrapText="true" visible="false"/>
+
+        <!-- HBox gồm Cập nhật đơn giá (US-005) và Tính thử phí (AC-015, AC-018) -->
+        <HBox spacing="16">
+            <VBox styleClass="khung" spacing="12" HBox.hgrow="ALWAYS">
+                <Label text="Cập nhật đơn giá phí bắt buộc (US-005)"
+                       styleClass="tieu-de-khung"/>
+
+                <GridPane hgap="16" vgap="10">
+                    <Label text="Khoản phí *"
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="cboKhoanPhiBatBuoc"
+                              maxWidth="1.7976931348623157E308"
+                              GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Đơn giá hiện tại"
+                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblDonGiaHienTai" text="-"
+                           styleClass="chu-phu"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Đơn giá mới (đ/m²) *"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="oDonGiaMoi" promptText="VD: 8000"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Label text="Phí dịch vụ: 2.500 – 16.500 đ/m²; Phí quản lý: tối thiểu 7.000 đ/m²."
+                       styleClass="chu-goi-y" wrapText="true"/>
+
+                <HBox styleClass="hang-nut">
+                    <Button text="Cập nhật đơn giá" onAction="#capNhatDonGia"
+                            styleClass="nut-chinh"/>
+                </HBox>
+            </VBox>
+
+            <VBox styleClass="khung" spacing="12" HBox.hgrow="ALWAYS">
+                <Label text="Tính thử phí theo diện tích (AC-015, AC-018)"
+                       styleClass="tieu-de-khung"/>
+
+                <GridPane hgap="16" vgap="10">
+                    <Label text="Diện tích căn hộ (m²) *"
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="oDienTichTinhThu" promptText="VD: 72.50"
+                               onKeyReleased="#tinhThuPhi"
+                               GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Phí dịch vụ:"
+                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblKetQuaPhiDichVu" text="-"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Phí quản lý:"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblKetQuaPhiQuanLy" text="-"
+                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Tổng phí hàng tháng:"
+                           style="-fx-font-weight: bold;"
+                           GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblTongCongPhi" text="-"
+                           style="-fx-font-weight: bold; -fx-text-fill: -mau-chinh;"
+                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <HBox styleClass="hang-nut">
+                    <Button text="Tính phí" onAction="#tinhThuPhi"
+                            styleClass="nut-chinh"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Khung tạo khoản thu tự nguyện mới (US-006) -->
+        <VBox styleClass="khung" spacing="12">
+            <Label text="Tạo khoản thu tự nguyện mới" styleClass="tieu-de-khung"/>
+
+            <GridPane hgap="16" vgap="10">
+                <Label text="Tên khoản thu *"
+                       GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="oTenKhoanThu"
+                           promptText="VD: Quỹ vì người nghèo 2026"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Hình thức đóng góp *"
+                       GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <ComboBox fx:id="oCachTinh" maxWidth="1.7976931348623157E308"
+                          GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                <Label text="Số tiền cố định (đ)"
+                       GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="oDonGia"
+                           promptText="Để trống nếu tùy tâm đóng góp"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Ghi chú"
+                       GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <TextField fx:id="oGhiChu" promptText="Ghi chú thêm (tùy chọn)"
+                           GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                <Label text="Ngày bắt đầu *"
+                       GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="oTuNgay" maxWidth="1.7976931348623157E308"
+                            GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Ngày kết thúc *"
+                       GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                <DatePicker fx:id="oDenNgay" maxWidth="1.7976931348623157E308"
+                            GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+            </GridPane>
+
+            <HBox styleClass="hang-nut">
+                <Button text="Tạo khoản thu" onAction="#taoKhoan"
+                        styleClass="nut-chinh"/>
+                <Button text="Nhập lại" onAction="#nhapLai"/>
+            </HBox>
+        </VBox>
+
+        <!-- Danh sách các khoản thu hiện có trong hệ thống -->
+        <VBox styleClass="khung" spacing="12" VBox.vgrow="ALWAYS">
+            <Label text="Danh sách các khoản thu" styleClass="tieu-de-khung"/>
+
+            <HBox spacing="12">
+                <TextField fx:id="oTimKiem"
+                           promptText="Tìm theo tên khoản thu..."
+                           onKeyReleased="#timKiem" HBox.hgrow="ALWAYS"/>
+                <Button text="Tải lại" onAction="#taiLai"/>
+            </HBox>
+
+            <TableView fx:id="bangKhoanThu" VBox.vgrow="ALWAYS" prefHeight="320">
+                <columns>
+                    <TableColumn fx:id="cotTen" text="Tên khoản thu"
+                                 prefWidth="220"/>
+                    <TableColumn fx:id="cotLoai" text="Loại"
+                                 prefWidth="110"/>
+                    <TableColumn fx:id="cotCachTinh" text="Cách tính"
+                                 prefWidth="160"/>
+                    <TableColumn fx:id="cotDonGia" text="Mức thu / Đơn giá"
+                                 prefWidth="160"/>
+                    <TableColumn fx:id="cotTuNgay" text="Từ ngày"
+                                 prefWidth="120"/>
+                    <TableColumn fx:id="cotDenNgay" text="Đến ngày"
+                                 prefWidth="120"/>
+                    <TableColumn fx:id="cotTrangThai" text="Trạng thái"
+                                 prefWidth="110"/>
+                    <TableColumn fx:id="cotGhiChu" text="Ghi chú"
+                                 prefWidth="180"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+    </VBox>
+</ScrollPane>

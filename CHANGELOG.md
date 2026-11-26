@@ -7,6 +7,19 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Thêm
 
+- US-005: tự động tính phí dịch vụ và phí quản lý theo diện tích × đơn giá,
+  làm tròn đến đơn vị đồng (AC-015, AC-018). Cho phép Quản trị viên cập nhật
+  đơn giá cho các khoản phí bắt buộc (AC-016), ghi nhật ký thao tác
+  `ThaoTac.SUA_DON_GIA` trong cùng giao dịch CSDL (TS-002, giả định 51). Kiểm
+  soát khung đơn giá: phí dịch vụ trong khoảng 2.500–16.500 đ/m² (AC-017),
+  phí quản lý từ 7.000 đ/m² trở lên (giả định 14). Tích hợp công cụ tính thử
+  phí theo diện tích trên màn hình Danh mục khoản thu.
+- US-006: màn hình Danh mục khoản thu và chức năng tạo khoản thu tự nguyện
+  theo từng đợt (chỉ Quản trị viên). Cho phép tạo quỹ với hình thức tùy tâm
+  đóng góp (để trống số tiền, AC-021) hoặc mức đóng cố định theo từng hộ
+  (AC-019). Chặn trùng tên khoản thu trong cùng đợt thu (cùng ngày bắt đầu,
+  AC-020). Ngày kết thúc bắt buộc và không trước ngày bắt đầu. Bảng danh mục
+  khoản thu hỗ trợ tìm kiếm không phân biệt hoa thường và dấu.
 - US-002: form thêm nhân khẩu có loại cư trú. Người tạm trú bắt buộc
   nhập nơi thường trú và thời hạn; người và đợt tạm trú đầu tiên lưu
   trong một giao dịch (giả định 8, 9). Danh sách có cột Loại cư trú và
