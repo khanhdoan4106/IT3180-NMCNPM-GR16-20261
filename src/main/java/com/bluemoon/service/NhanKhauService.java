@@ -52,7 +52,9 @@ public class NhanKhauService {
             throw new IllegalArgumentException(
                     "Ngày sinh không được sau ngày hôm nay.");
         }
-        QuanHe.tuMa(yc.quanHe());
+        if (QuanHe.tuMa(yc.quanHe()) == QuanHe.CHU_HO) {
+            throw new IllegalArgumentException("Mỗi hộ chỉ có một chủ hộ.");
+        }
         boolean tamTru = yc.loaiCuTru() == LoaiCuTru.TAM_TRU;
         if (tamTru) {
             kiemTraTamTru(yc);

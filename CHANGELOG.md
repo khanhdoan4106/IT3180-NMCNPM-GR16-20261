@@ -27,6 +27,15 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
 
 ### Sửa
 
+- US-001: form thêm hộ có loại cư trú của chủ hộ. Chủ hộ tạm trú bắt
+  buộc nhập nơi thường trú và thời hạn; hộ, chủ hộ và đợt tạm trú đầu
+  tiên lưu trong một giao dịch (giả định 10).
+- US-003: chặn các đợt tạm trú, tạm vắng của cùng một người chồng ngày
+  nhau, kể cả khi hai máy cùng lưu một lúc (giao dịch khóa dòng nhân
+  khẩu rồi kiểm tra lại). Tạm trú chỉ ghi cho người tạm trú, tạm vắng chỉ
+  ghi cho người thường trú (giả định 11).
+- US-002: thêm thành viên với quan hệ "Chủ hộ" báo "Mỗi hộ chỉ có một
+  chủ hộ." thay cho câu báo lỗi CSDL chung (AC-007).
 - TS-002: nội dung nhật ký dễ đọc. Đối tượng ghi tên thay cho "#id"
   (vd "Nhân khẩu Nguyễn Văn A (hộ A-101)", "Tài khoản thuquy01"); nội
   dung dùng nhãn tiếng Việt và ngày dd/MM/yyyy (vd "Tạm trú: Nguyễn Văn

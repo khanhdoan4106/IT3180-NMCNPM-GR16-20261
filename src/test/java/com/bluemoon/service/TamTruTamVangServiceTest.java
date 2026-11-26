@@ -1,9 +1,11 @@
 package com.bluemoon.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.bluemoon.dao.TamTruTamVangDao;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
@@ -20,6 +22,10 @@ class TamTruTamVangServiceTest {
     private static final NguoiDung QUAN_TRI = new NguoiDung(
             1, "admin", "Quản trị viên", VaiTro.QUAN_TRI);
 
+    private LoaiCuTru loaiCuTru = LoaiCuTru.TAM_TRU;
+    private boolean chongNgay;
+    private YeuCauKhaiBao daLuu;
+
     private final TamTruTamVangDao dao = new TamTruTamVangDao() {
         @Override
         public List<NguoiTrongHo> layNguoiTrongHo(int hoId) {
@@ -32,7 +38,19 @@ class TamTruTamVangServiceTest {
         }
 
         @Override
+        public LoaiCuTru layLoaiCuTru(int nhanKhauId) {
+            return loaiCuTru;
+        }
+
+        @Override
+        public boolean coDotChongNgay(int nhanKhauId, LocalDate tuNgay,
+                LocalDate denNgay) {
+            return chongNgay;
+        }
+
+        @Override
         public int themKhaiBao(YeuCauKhaiBao yc, NguoiDung nguoiDung) {
+            daLuu = yc;
             return 1;
         }
     };
@@ -84,5 +102,65 @@ class TamTruTamVangServiceTest {
         return new YeuCauKhaiBao(1, "TAM_TRU", null,
                 LocalDate.now(), LocalDate.now().plusDays(5),
                 "Test", null);
+    }
+
+    private void baoLoi(YeuCauKhaiBao yc, String cauBao) {
+        Exception loi = assertThrows(IllegalArgumentException.class,
+                () -> service.themKhaiBao(yc));
+        assertEquals(cauBao, loi.getMessage());
+        assertNull(daLuu);
+    }
+
+    private static YeuCauKhaiBao tamVang(LocalDate tu, LocalDate den) {
+        return new YeuCauKhaiBao(1, "TAM_VANG", null, tu, den,
+                "Công tác", "Đà Nẵng");
+    }
+
+    @Test
+    void thieuNgayBatDau_BaoLoi() {
+        baoLoi(new YeuCauKhaiBao(1, "TAM_TRU", null, null,
+                LocalDate.now(), null, null), "Vui lòng nhập đủ ngày tháng.");
+    }
+
+    @Test
+    void thieuNgayKetThuc_BaoLoi() {
+        baoLoi(new YeuCauKhaiBao(1, "TAM_TRU", null, LocalDate.now(),
+                null, null, null), "Vui lòng nhập đủ ngày tháng.");
+    }
+
+    @Test
+    void tamTruChoNguoiThuongTru_BaoLoi() {
+        loaiCuTru = LoaiCuTru.THUONG_TRU;
+        baoLoi(taoYeuCauHopLe(),
+                "Người thường trú không ghi tạm trú, chỉ ghi tạm vắng.");
+    }
+
+    @Test
+    void tamVangChoNguoiTamTru_BaoLoi() {
+        baoLoi(tamVang(LocalDate.now(), LocalDate.now().plusDays(3)),
+                "Người tạm trú không ghi tạm vắng, chỉ ghi thêm đợt "
+                + "tạm trú.");
+    }
+
+    @Test
+    void tamVangChoNguoiThuongTru_DuocLuu() {
+        loaiCuTru = LoaiCuTru.THUONG_TRU;
+        service.themKhaiBao(
+                tamVang(LocalDate.now(), LocalDate.now().plusDays(3)));
+        assertEquals("TAM_VANG", daLuu.loai());
+        assertEquals("Đà Nẵng", daLuu.diaChiTamVang());
+    }
+
+    @Test
+    void nhanKhauKhongConO_BaoLoi() {
+        loaiCuTru = null;
+        baoLoi(taoYeuCauHopLe(),
+                "Không tìm thấy nhân khẩu đang ở trong hộ.");
+    }
+
+    @Test
+    void dotChongNgay_BaoLoi() {
+        chongNgay = true;
+        baoLoi(taoYeuCauHopLe(), TamTruTamVangDao.LOI_CHONG_NGAY);
     }
 }

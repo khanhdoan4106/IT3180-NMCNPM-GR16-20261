@@ -88,7 +88,8 @@ UPDATE/DELETE đã có trong `database/schema.sql`.
   thêm nhân khẩu chủ hộ, rồi gọi `NhatKyDao.ghi(...)` với **chính
   Connection đó** trước khi commit.
 - Nhật ký lưu mã thao tác `THEM_HO`, đối tượng là mã căn hộ và nội dung
-  gồm thao tác thêm hộ/chủ hộ.
+  ghi tên chủ hộ, kèm thời hạn tạm trú khi chủ hộ tạm trú (đợt tạm trú
+  đầu tiên lưu cùng giao dịch, không ghi thêm dòng nhật ký riêng).
 - Nếu INSERT nhật ký lỗi, transaction rollback cả hộ, chủ hộ và nhật ký;
   lỗi CSDL được chuyển thành `LoiCsdl`.
 

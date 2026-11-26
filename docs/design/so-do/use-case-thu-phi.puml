@@ -1,0 +1,42 @@
+@startuml
+' Biểu đồ use case nhóm Thu phí – BlueMoon v1.0
+' Mã UC, tên UC và tác nhân theo docs/design/so-do/README.md.
+' UC017 Thu phí gồm US-011 và US-012: chọn hình thức thanh toán, lưu người
+' thu là một bước của lần thu, không phải UC riêng.
+' Mọi UC trừ UC001 có tiền điều kiện: Người dùng đã đăng nhập.
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+}
+
+title Biểu đồ use case nhóm Thu phí – BlueMoon v1.0
+
+actor "Quản trị viên" as QT
+actor "Người dùng" as ND
+note top of ND : {abstract}
+actor "Thủ quỹ" as TQ
+
+rectangle "Phần mềm quản lý thu phí BlueMoon" {
+  usecase "UC016 Tra cứu phí" as UC016
+  usecase "UC017 Thu phí" as UC017
+  usecase "UC018 Ghi nhận đóng góp tự nguyện" as UC018
+  usecase "UC019 In biên lai" as UC019
+  usecase "UC020 Hủy phiếu thu" as UC020
+}
+
+' Mọi UC nhóm Thu phí là chức năng của Người dùng (AC-060, giả định 51;
+' Quản trị viên và Thủ quỹ kế thừa Người dùng).
+UC016 -- ND
+UC017 -- ND
+UC018 -- ND
+UC019 -- ND
+UC020 -- ND
+
+' Kế thừa: Quản trị viên, Thủ quỹ là Người dùng
+QT --|> ND
+ND <|-- TQ
+@enduml

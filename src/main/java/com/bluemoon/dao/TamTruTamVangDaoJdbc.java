@@ -2,6 +2,7 @@ package com.bluemoon.dao;
 
 import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
@@ -14,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,18 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
             "INSERT INTO tam_tru_tam_vang (nhan_khau_id, loai, so_giay, "
             + "tu_ngay, den_ngay, ly_do, dia_chi_tam_vang) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String SQL_LOAI_CU_TRU =
+            "SELECT loai_cu_tru FROM nhan_khau "
+            + "WHERE id = ? AND trang_thai = 'DANG_O'";
+
+    private static final String SQL_KHOA_NHAN_KHAU =
+            SQL_LOAI_CU_TRU + " FOR UPDATE";
+
+    private static final String SQL_CHONG_NGAY =
+            "SELECT 1 FROM tam_tru_tam_vang "
+            + "WHERE nhan_khau_id = ? AND tu_ngay <= ? AND den_ngay >= ? "
+            + "LIMIT 1";
 
     private static final String SQL_TEN_NGUOI =
             "SELECT n.ho_ten, h.ma_can_ho FROM nhan_khau n "
@@ -107,11 +121,35 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
     }
 
     @Override
+    public LoaiCuTru layLoaiCuTru(int nhanKhauId) {
+        try (Connection kn = nguon.moKetNoi()) {
+            return docLoaiCuTru(kn, SQL_LOAI_CU_TRU, nhanKhauId);
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
+    public boolean coDotChongNgay(int nhanKhauId, LocalDate tuNgay,
+            LocalDate denNgay) {
+        try (Connection kn = nguon.moKetNoi()) {
+            return coChongNgay(kn, nhanKhauId, tuNgay, denNgay);
+        } catch (SQLException e) {
+            throw LoiCsdl.tu(e);
+        }
+    }
+
+    @Override
     public int themKhaiBao(YeuCauKhaiBao yc, NguoiDung nguoiDung) {
         int co = Statement.RETURN_GENERATED_KEYS;
         try (Connection kn = nguon.moKetNoi()) {
             kn.setAutoCommit(false);
             try {
+                docLoaiCuTru(kn, SQL_KHOA_NHAN_KHAU, yc.nhanKhauId());
+                if (coChongNgay(kn, yc.nhanKhauId(), yc.tuNgay(),
+                        yc.denNgay())) {
+                    throw new IllegalArgumentException(LOI_CHONG_NGAY);
+                }
                 int khaiBaoId;
                 try (PreparedStatement ps = kn.prepareStatement(SQL_THEM, co)) {
                     ps.setInt(1, yc.nhanKhauId());
@@ -147,6 +185,29 @@ public class TamTruTamVangDaoJdbc implements TamTruTamVangDao {
             }
         } catch (SQLException e) {
             throw LoiCsdl.tu(e);
+        }
+    }
+
+    private static LoaiCuTru docLoaiCuTru(Connection kn, String sql,
+            int nhanKhauId) throws SQLException {
+        try (PreparedStatement ps = kn.prepareStatement(sql)) {
+            ps.setInt(1, nhanKhauId);
+            try (ResultSet kq = ps.executeQuery()) {
+                return kq.next()
+                        ? LoaiCuTru.valueOf(kq.getString(1)) : null;
+            }
+        }
+    }
+
+    private static boolean coChongNgay(Connection kn, int nhanKhauId,
+            LocalDate tuNgay, LocalDate denNgay) throws SQLException {
+        try (PreparedStatement ps = kn.prepareStatement(SQL_CHONG_NGAY)) {
+            ps.setInt(1, nhanKhauId);
+            ps.setDate(2, Date.valueOf(denNgay));
+            ps.setDate(3, Date.valueOf(tuNgay));
+            try (ResultSet kq = ps.executeQuery()) {
+                return kq.next();
+            }
         }
     }
 

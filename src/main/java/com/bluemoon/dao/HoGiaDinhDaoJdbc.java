@@ -4,9 +4,11 @@ import com.bluemoon.config.KetNoiCsdl;
 import com.bluemoon.config.NguonKetNoi;
 import com.bluemoon.model.HoGiaDinh;
 import com.bluemoon.model.LoaiCanHo;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.ThaoTac;
 import com.bluemoon.model.YeuCauThemHo;
+import com.bluemoon.util.Ngay;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -56,8 +58,12 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
     private static final String SQL_THEM_CHU_HO =
             "INSERT INTO nhan_khau "
             + "(ho_id, ho_ten, ngay_sinh, gioi_tinh, "
-            + "so_cccd, quan_he) "
-            + "VALUES (?, ?, ?, ?, ?, 'CHU_HO')";
+            + "so_cccd, quan_he, loai_cu_tru, noi_thuong_tru) "
+            + "VALUES (?, ?, ?, ?, ?, 'CHU_HO', ?, ?)";
+
+    private static final String SQL_THEM_DOT_TAM_TRU =
+            "INSERT INTO tam_tru_tam_vang (nhan_khau_id, loai, tu_ngay, "
+            + "den_ngay) VALUES (?, 'TAM_TRU', ?, ?)";
 
     private final NguonKetNoi nguonKetNoi;
     private final NhatKyDao nhatKyDao;
@@ -144,11 +150,12 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
             ketNoi.setAutoCommit(false);
             try {
                 int hoId = chenHo(ketNoi, yeuCau);
-                chenChuHo(ketNoi, hoId, yeuCau);
+                int chuHoId = chenChuHo(ketNoi, hoId, yeuCau);
+                if (yeuCau.loaiCuTruChuHo() == LoaiCuTru.TAM_TRU) {
+                    chenDotTamTru(ketNoi, chuHoId, yeuCau);
+                }
                 nhatKyDao.ghi(ketNoi, nguoiDung.id(), ThaoTac.THEM_HO,
-                        "Hộ " + yeuCau.maCanHo(),
-                        "Thêm hộ gia đình và chủ hộ "
-                                + yeuCau.tenChuHo());
+                        "Hộ " + yeuCau.maCanHo(), noiDungNhatKy(yeuCau));
                 ketNoi.commit();
                 return hoId;
             } catch (SQLException | RuntimeException e) {
@@ -182,15 +189,51 @@ public class HoGiaDinhDaoJdbc implements HoGiaDinhDao {
         }
     }
 
-    private void chenChuHo(Connection ketNoi, int hoId, YeuCauThemHo yc)
+    private int chenChuHo(Connection ketNoi, int hoId, YeuCauThemHo yc)
             throws SQLException {
-        try (PreparedStatement ps = ketNoi.prepareStatement(SQL_THEM_CHU_HO)) {
+        int co = Statement.RETURN_GENERATED_KEYS;
+        try (PreparedStatement ps =
+                ketNoi.prepareStatement(SQL_THEM_CHU_HO, co)) {
             ps.setInt(1, hoId);
             ps.setString(2, yc.tenChuHo());
             ps.setDate(3, Date.valueOf(yc.ngaySinhChuHo()));
             ps.setString(4, yc.gioiTinhChuHo());
             ps.setString(5, yc.cccdChuHo());
+            ps.setString(6, yc.loaiCuTruChuHo().name());
+            ps.setString(7, yc.noiThuongTruChuHo());
+            ps.executeUpdate();
+            try (ResultSet khoa = ps.getGeneratedKeys()) {
+                if (!khoa.next()) {
+                    throw new SQLException(
+                            "Không nhận được ID chủ hộ vừa thêm.");
+                }
+                return khoa.getInt(1);
+            }
+        }
+    }
+
+    /** Đợt tạm trú đầu của chủ hộ tạm trú (giả định 10). */
+    private void chenDotTamTru(Connection ketNoi, int chuHoId,
+            YeuCauThemHo yc) throws SQLException {
+        try (PreparedStatement ps =
+                ketNoi.prepareStatement(SQL_THEM_DOT_TAM_TRU)) {
+            ps.setInt(1, chuHoId);
+            ps.setDate(2, Date.valueOf(yc.tamTruTu()));
+            ps.setDate(3, Date.valueOf(yc.tamTruDen()));
             ps.executeUpdate();
         }
+    }
+
+    /**
+     * Vd "Thêm hộ gia đình và chủ hộ Nguyễn Văn A, tạm trú từ 01/11/2026
+     * đến 30/04/2027" (phần tạm trú chỉ có khi chủ hộ tạm trú).
+     */
+    private static String noiDungNhatKy(YeuCauThemHo yc) {
+        String noiDung = "Thêm hộ gia đình và chủ hộ " + yc.tenChuHo();
+        if (yc.loaiCuTruChuHo() == LoaiCuTru.TAM_TRU) {
+            noiDung += ", tạm trú từ " + Ngay.dinhDang(yc.tamTruTu())
+                    + " đến " + Ngay.dinhDang(yc.tamTruDen());
+        }
+        return noiDung;
     }
 }

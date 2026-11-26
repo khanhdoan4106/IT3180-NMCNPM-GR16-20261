@@ -1,6 +1,7 @@
 package com.bluemoon.service;
 
 import com.bluemoon.dao.TamTruTamVangDao;
+import com.bluemoon.model.LoaiCuTru;
 import com.bluemoon.model.NguoiDung;
 import com.bluemoon.model.TamTruTamVang;
 import com.bluemoon.model.TamTruTamVang.NguoiTrongHo;
@@ -44,6 +45,10 @@ public class TamTruTamVangService {
         if (!"TAM_TRU".equals(yc.loai()) && !"TAM_VANG".equals(yc.loai())) {
             throw new IllegalArgumentException("Loại khai báo không hợp lệ.");
         }
+        kiemTraLoaiCuTru(yc);
+        if (dao.coDotChongNgay(yc.nhanKhauId(), yc.tuNgay(), yc.denNgay())) {
+            throw new IllegalArgumentException(TamTruTamVangDao.LOI_CHONG_NGAY);
+        }
 
         String diaChi = yc.diaChiTamVang();
         if ("TAM_TRU".equals(yc.loai())
@@ -56,5 +61,25 @@ public class TamTruTamVangService {
                 yc.denNgay(), yc.lyDo(), diaChi);
 
         return dao.themKhaiBao(chuan, nguoiDung);
+    }
+
+    /** Tạm trú chỉ ghi cho người tạm trú, tạm vắng cho người thường trú. */
+    private void kiemTraLoaiCuTru(YeuCauKhaiBao yc) {
+        LoaiCuTru loaiCuTru = dao.layLoaiCuTru(yc.nhanKhauId());
+        if (loaiCuTru == null) {
+            throw new IllegalArgumentException(
+                    "Không tìm thấy nhân khẩu đang ở trong hộ.");
+        }
+        if ("TAM_TRU".equals(yc.loai())
+                && loaiCuTru == LoaiCuTru.THUONG_TRU) {
+            throw new IllegalArgumentException(
+                    "Người thường trú không ghi tạm trú, chỉ ghi tạm vắng.");
+        }
+        if ("TAM_VANG".equals(yc.loai())
+                && loaiCuTru == LoaiCuTru.TAM_TRU) {
+            throw new IllegalArgumentException(
+                    "Người tạm trú không ghi tạm vắng, chỉ ghi thêm đợt "
+                    + "tạm trú.");
+        }
     }
 }
