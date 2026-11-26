@@ -3,6 +3,7 @@ package com.bluemoon.controller;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.NhatKyDaoJdbc;
 import com.bluemoon.model.NhatKy;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.NhatKyService;
 import java.time.format.DateTimeFormatter;
 import javafx.collections.FXCollections;
@@ -64,7 +65,7 @@ public class NhatKyController {
             bangNhatKy.setItems(FXCollections.observableArrayList(
                     nhatKyService.xemMoiNhat()));
             thongBaoLoi.setVisible(false);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             bangNhatKy.getItems().clear();
             thongBaoLoi.setText(loi.getMessage());
             thongBaoLoi.setVisible(true);

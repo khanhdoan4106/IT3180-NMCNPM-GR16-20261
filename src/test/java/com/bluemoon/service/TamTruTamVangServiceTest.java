@@ -163,4 +163,14 @@ class TamTruTamVangServiceTest {
         chongNgay = true;
         baoLoi(taoYeuCauHopLe(), TamTruTamVangDao.LOI_CHONG_NGAY);
     }
+
+    @Test
+    void thuQuyKhongDuocXemTamTruTamVang() {
+        PhienDangNhap.batDau(new NguoiDung(
+                2, "thuquy", "Thủ quỹ", VaiTro.THU_QUY));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.layNguoiTrongHo(1));
+        assertThrows(LoiKhongCoQuyen.class,
+                () -> service.layDanhSachTheoHo(1));
+    }
 }

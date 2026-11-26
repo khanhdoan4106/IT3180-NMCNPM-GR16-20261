@@ -3,9 +3,10 @@ package com.bluemoon.controller;
 import com.bluemoon.dao.LoiCsdl;
 import com.bluemoon.dao.TaiKhoanDaoJdbc;
 import com.bluemoon.model.TaiKhoan;
+import com.bluemoon.service.LoiKhongCoQuyen;
 import com.bluemoon.service.LoiNhapLieu;
-import com.bluemoon.service.TaiKhoanService;
 import com.bluemoon.service.TaiKhoanService.O;
+import com.bluemoon.service.TaiKhoanService;
 import java.util.EnumMap;
 import java.util.Map;
 import javafx.fxml.FXML;
@@ -101,7 +102,7 @@ public class TaiKhoanCuaToiController {
             hoTen.setText(tk.hoTen());
             soDienThoai.setText(tk.soDienThoai() == null
                     ? "" : tk.soDienThoai());
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienThongBao(thongBaoThongTin, loi.getMessage(), KIEU_LOI);
         }
     }
@@ -117,7 +118,7 @@ public class TaiKhoanCuaToiController {
                     KIEU_THANH_CONG);
         } catch (LoiNhapLieu loi) {
             hienLoiTheoO(loi, oThongTin, loiThongTin);
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienThongBao(thongBaoThongTin, loi.getMessage(), KIEU_LOI);
         }
     }
@@ -140,7 +141,7 @@ public class TaiKhoanCuaToiController {
                     && !matKhauCu.getText().isEmpty()) {
                 matKhauCu.clear();
             }
-        } catch (LoiCsdl loi) {
+        } catch (LoiKhongCoQuyen | LoiCsdl loi) {
             hienThongBao(thongBaoMatKhau, loi.getMessage(), KIEU_LOI);
         }
     }
