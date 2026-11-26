@@ -1,0 +1,81 @@
+@startuml
+' Biểu đồ hoạt động UC017 – Thu phí (US-011, US-012)
+' Làn theo cột "Thực hiện bởi" của dac-ta-uc017-thu-phi.md; số bước ghi
+' trong ngoặc vuông khớp đặc tả.
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+title Biểu đồ hoạt động UC017 – Thu phí
+
+' Khai báo trước để làn Người dùng nằm bên trái.
+|Người dùng|
+|View|
+|Controller|
+|Service|
+|DAO|
+
+|View|
+start
+if (Hộ còn khoản chưa đóng?) then (Không)
+  :[1a] Báo "Hộ không còn khoản cần đóng";
+  stop
+else (Có)
+endif
+
+|Người dùng|
+repeat
+  :[1] Chọn khoản cần thu hoặc nhấn "Thu tất cả";
+  |View|
+  :[2] Hiển thị tổng tiền tự cộng;
+  |Người dùng|
+  :[3] Chọn hình thức thanh toán, nhập người nộp,
+  ghi chú (nếu có), nhấn "Xác nhận thu";
+  |Controller|
+backward :[4a, 4b] Báo chưa chọn khoản
+hoặc hình thức thanh toán;
+repeat while (Đã chọn khoản và hình thức?) is (Không) not (Có)
+:[4] Gọi Service;
+
+|Service|
+:[5] Kiểm tra quyền, lấy người thu từ phiên;
+if (Có quyền?) then (Không)
+  :[5a] Từ chối, báo không đủ quyền;
+  stop
+else (Có)
+endif
+
+|DAO|
+:[6] Bắt đầu giao dịch,
+khóa các khoản phải nộp được chọn;
+if (Khoản còn chưa đóng và số tiền không đổi?) then (Không)
+  :[6a] Hủy giao dịch;
+  |View|
+  :Báo khoản vừa thay đổi, nhắc tra cứu lại;
+  stop
+else (Có)
+endif
+|DAO|
+:Lấy thời điểm từ máy chủ,
+cấp số biên lai tiếp theo của năm;
+:Lưu phiếu thu và từng khoản;
+:Ghi nhật ký LAP_PHIEU_THU;
+if (Lỗi CSDL?) then (Không)
+  :Xác nhận giao dịch;
+else (Có)
+  :[6b] Hủy giao dịch;
+  |View|
+  :Hiển thị câu báo lỗi;
+  stop
+endif
+
+|Service|
+:[7] Trả phiếu thu vừa lập;
+
+|Controller|
+:[8] Yêu cầu View hiển thị;
+
+|View|
+:[9] Hiển thị số biên lai, tổng tiền, ngày thu, người thu,
+cập nhật khoản chưa đóng, cho "In biên lai" (UC019);
+stop
+@enduml
