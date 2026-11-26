@@ -25,6 +25,14 @@ Mọi thay đổi đáng chú ý của dự án được ghi ở đây, theo
   bằng `database/migration_ts002_tai_khoan.sql` (thêm hai mã
   `SUA_THONG_TIN_TAI_KHOAN`, `DOI_MAT_KHAU`).
 
+### Sửa
+
+- TS-002: nội dung nhật ký dễ đọc. Đối tượng ghi tên thay cho "#id"
+  (vd "Nhân khẩu Nguyễn Văn A (hộ A-101)", "Tài khoản thuquy01"); nội
+  dung dùng nhãn tiếng Việt và ngày dd/MM/yyyy (vd "Tạm trú: Nguyễn Văn
+  A, từ 01/11/2026 đến 30/04/2027", "Vai trò: Thủ quỹ → Quản trị viên").
+  Dòng nhật ký đã ghi trước bản này giữ nguyên.
+
 ## [v0.1.0] – 23/11/2026 – Sprint 1
 
 Kết thúc Sprint 1. Gồm cả US-022 và US-023 của Sprint 2 đã làm xong sớm.
